@@ -39,10 +39,12 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 40),
-                Icon(
-                  Icons.school,
-                  size: 80,
-                  color: Theme.of(context).primaryColor,
+                Center(
+                  child: Image.asset(
+                    'assets/images/logo.png',
+                    width: 150,
+                    height: 150,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -58,10 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Text(
                   _isLogin ? 'Login to continue' : 'Create your account',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 40),
                 Form(
@@ -164,7 +163,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                             child: Text(
                               _isLogin ? 'Sign Up' : 'Login',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ],
