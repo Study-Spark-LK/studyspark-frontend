@@ -88,7 +88,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 
     // Navigate to login after all animations complete (increased to ~16 seconds)
     Timer(const Duration(milliseconds: 16000), () {
-      Navigator.of(context).pushReplacementNamed('/login');
+      Navigator.of(context).pushReplacementNamed('/onboard1');
     });
   }
 
