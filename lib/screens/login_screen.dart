@@ -30,19 +30,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      // In a real app, you'd authenticate with a backend
-      Navigator.of(context).pushReplacementNamed('/home');
+      // Navigate to personality test welcome screen
+      Navigator.of(context).pushReplacementNamed('/personality-test-welcome'); // ← FIXED
     }
   }
 
   void _signInWithFacebook() {
     // Handle Facebook sign in
-    Navigator.of(context).pushReplacementNamed('/home');
+    Navigator.of(context).pushReplacementNamed('/personality-test-welcome'); // ← FIXED
   }
 
   void _signInWithGoogle() {
     // Handle Google sign in
-    Navigator.of(context).pushReplacementNamed('/home');
+    Navigator.of(context).pushReplacementNamed('/personality-test-welcome'); // ← FIXED
   }
 
   @override
@@ -409,10 +409,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       // Google Button
                       OutlinedButton.icon(
                         onPressed: _signInWithGoogle,
-                        icon: Image.asset(
-                          'assets/images/google.png', // Add Google icon to assets
-                          width: 20,
-                          height: 20,
+                        icon: const Icon(
+                          Icons.g_mobiledata,
+                          color: Colors.white,
+                          size: 28,
                         ),
                         label: Text(
                           _isLogin ? 'Sign In With Google' : 'Sign Up With Google',

@@ -93,13 +93,13 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   }
 
   void _startAnimationSequence() async {
-    // Step 1: Fade in logo
+    // Fade in logo
     await _logoController.forward();
     
-    // Step 2: Hold logo (increased)
+    // Hold logo (increased)
     await Future.delayed(const Duration(milliseconds: 2000));
     
-    // Step 3: Fade out logo
+    //  Fade out logo
     await _logoController.reverse();
     
     // Pause before tagline
@@ -110,7 +110,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       _showLine1 = true;
     });
     
-    // Step 4: Show "Your Path." (increased delay)
+    // Show "Your Path." (increased delay)
     await _line1Controller.forward();
     await Future.delayed(const Duration(milliseconds: 1200));
     
@@ -118,7 +118,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       _showLine2 = true;
     });
     
-    // Step 5: Show "Your pace." (increased delay)
+    //Show "Your pace." (increased delay)
     await _line2Controller.forward();
     await Future.delayed(const Duration(milliseconds: 1200));
     
@@ -126,7 +126,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       _showLine3 = true;
     });
     
-    // Step 6: Show "Your Spark..." (increased delay)
+    //Show "Your Spark..." (increased delay)
     await _line3Controller.forward();
     await Future.delayed(const Duration(milliseconds: 1500));
     
@@ -134,7 +134,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       _showBrand = true;
     });
     
-    // Step 7: Show StudySpark brand (increased delay before appearing)
+    //Show StudySpark brand (increased delay before appearing)
     await _brandController.forward();
     
     // Hold final screen (increased)
