@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'screens/splash_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/personality_test_welcome_screen.dart';
+import 'screens/personality_test_questionnaire_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/onboarding_screen1.dart';
 import 'screens/onboarding_screen2.dart';
+
+
 //import 'screens/learning_path_screen.dart';
 //import 'screens/quiz_screen.dart';
 //import 'screens/progress_screen.dart';
@@ -62,6 +65,8 @@ class StudySparkApp extends StatelessWidget {
         '/home': (context) => const HomeScreen(),
         '/onboard1': (context) => const OnboardingScreen1(),
         '/onboard2': (context) => const OnboardingScreen2(),
+        '/questionnaire': (context) => const PersonalityTestQuestionnaireScreen(),
+        
         //'/learning-path': (context) => const LearningPathScreen(),
         //'/quiz': (context) => const QuizScreen(),
         //'/progress': (context) => const ProgressScreen(),

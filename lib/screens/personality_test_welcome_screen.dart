@@ -76,8 +76,9 @@ class PersonalityTestWelcomeScreen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // Navigate to home screen (or personality test questions if you create that screen)
-                  Navigator.of(context).pushReplacementNamed('/home'); // ← FIXED
+                  Navigator.pushNamed(context, '/questionnaire'); 
                 },
+                
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF4FC3F7),
                   foregroundColor: Colors.white,
