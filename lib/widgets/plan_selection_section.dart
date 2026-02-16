@@ -61,8 +61,12 @@ class CurrentPlanSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: const Color(0xFF1a1f2e),
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: const Color(0xFF8b92a0),
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,16 +76,16 @@ class CurrentPlanSection extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: Colors.black87,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 8),
-          Text(
+          const Text(
             '• Limited PDF uploads per day\n• Limited chatbot messages\n• PDF summaries only',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w400,
-              color: Colors.grey.shade700,
+              color: Color(0xFF8b92a0),
               height: 1.6,
             ),
           ),

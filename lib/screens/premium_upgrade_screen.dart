@@ -52,18 +52,19 @@ class _PremiumUpgradeScreenState extends State<PremiumUpgradeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF1a1f2e),
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFF1a1f2e),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         centerTitle: true,
         title: const Text(
           'Upgrade to Premium',
           style: TextStyle(
-            color: Colors.black87,
+            color: Colors.white,
             fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
@@ -74,7 +75,7 @@ class _PremiumUpgradeScreenState extends State<PremiumUpgradeScreen> {
           children: [
             // Header Section
             Container(
-              color: Colors.white,
+              color: const Color(0xFF1a1f2e),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
               child: Column(
                 children: [
@@ -97,7 +98,7 @@ class _PremiumUpgradeScreenState extends State<PremiumUpgradeScreen> {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w700,
-                      color: Colors.black87,
+                      color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -106,7 +107,7 @@ class _PremiumUpgradeScreenState extends State<PremiumUpgradeScreen> {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: Colors.grey,
+                      color: Color(0xFF8b92a0),
                     ),
                   ),
                 ],
@@ -114,7 +115,7 @@ class _PremiumUpgradeScreenState extends State<PremiumUpgradeScreen> {
             ),
             // Plans Section
             Container(
-              color: Colors.grey.shade50,
+              color: const Color(0xFF0f1419),
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,7 +125,7 @@ class _PremiumUpgradeScreenState extends State<PremiumUpgradeScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
-                      color: Colors.black87,
+                      color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -138,7 +139,7 @@ class _PremiumUpgradeScreenState extends State<PremiumUpgradeScreen> {
             ),
             // Features Section
             Container(
-              color: Colors.white,
+              color: const Color(0xFF1a1f2e),
               padding: const EdgeInsets.all(16),
               child: PremiumFeaturesList(
                 features: premiumFeatures,
@@ -146,7 +147,7 @@ class _PremiumUpgradeScreenState extends State<PremiumUpgradeScreen> {
             ),
             // Feature Cards Section
             Container(
-              color: Colors.grey.shade50,
+              color: const Color(0xFF0f1419),
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
@@ -172,7 +173,7 @@ class _PremiumUpgradeScreenState extends State<PremiumUpgradeScreen> {
             ),
             // CTA Button & Terms
             Container(
-              color: Colors.white,
+              color: const Color(0xFF1a1f2e),
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
@@ -183,7 +184,7 @@ class _PremiumUpgradeScreenState extends State<PremiumUpgradeScreen> {
                       onPressed: isLoading ? null : _handleContinueToUpgrade,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFFFA500),
-                        disabledBackgroundColor: Colors.grey.shade300,
+                        disabledBackgroundColor: Colors.grey.shade700,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -215,10 +216,10 @@ class _PremiumUpgradeScreenState extends State<PremiumUpgradeScreen> {
                     child: Text(
                       'By continuing, you agree to our Terms of Service and Privacy Policy',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
-                        color: Colors.grey.shade600,
+                        color: Color(0xFF8b92a0),
                       ),
                     ),
                   ),
@@ -243,9 +244,9 @@ class _PremiumUpgradeScreenState extends State<PremiumUpgradeScreen> {
           height: 60,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.white,
+            color: const Color(0xFF1a1f2e),
             border: Border.all(
-              color: Colors.grey.shade300,
+              color: const Color(0xFF8b92a0),
               width: 1,
             ),
           ),
@@ -262,7 +263,7 @@ class _PremiumUpgradeScreenState extends State<PremiumUpgradeScreen> {
           style: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Colors.white,
           ),
         ),
       ],
@@ -278,10 +279,10 @@ class CurrentPlanSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFF1a1f2e),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.grey.shade300,
+          color: const Color(0xFF8b92a0),
           width: 1,
         ),
       ),
@@ -293,16 +294,16 @@ class CurrentPlanSection extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: Colors.black87,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 8),
-          Text(
+          const Text(
             '• Limited PDF uploads per day\n• Limited chatbot messages\n• PDF summaries only',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w400,
-              color: Colors.grey.shade600,
+              color: Color(0xFF8b92a0),
               height: 1.6,
             ),
           ),

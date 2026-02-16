@@ -19,7 +19,7 @@ class PremiumFeaturesList extends StatelessWidget {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: Colors.black87,
+            color: Colors.white,
           ),
         ),
         const SizedBox(height: 16),
@@ -57,16 +57,16 @@ class PremiumFeaturesList extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black87,
+                            color: Colors.white,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           feature.description,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
-                            color: Colors.grey.shade600,
+                            color: Color(0xFF8b92a0),
                           ),
                         ),
                       ],

@@ -19,10 +19,10 @@ class PremiumPlanCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFF0f1419),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? const Color(0xFFFFA500) : Colors.grey.shade300,
+            color: isSelected ? const Color(0xFFFFA500) : const Color(0xFF8b92a0),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
@@ -35,7 +35,7 @@ class PremiumPlanCard extends StatelessWidget {
                 ]
               : [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
+                    color: Colors.black.withOpacity(0.2),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -57,7 +57,7 @@ class PremiumPlanCard extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                          color: Colors.white,
                         ),
                       ),
                       if (plan.isPopular)
@@ -91,16 +91,16 @@ class PremiumPlanCard extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.w700,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       ),
                       const SizedBox(width: 4),
                       Text(
                         '/${plan.period}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: Colors.grey.shade600,
+                          color: Color(0xFF8b92a0),
                         ),
                       ),
                     ],
@@ -112,15 +112,15 @@ class PremiumPlanCard extends StatelessWidget {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
+                      color: const Color(0xFF1a1f2e),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       plan.billDescription,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: Colors.grey.shade700,
+                        color: Color(0xFF8b92a0),
                       ),
                     ),
                   ),
