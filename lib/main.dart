@@ -6,6 +6,7 @@ import 'screens/home_screen.dart';
 import 'screens/onboarding_screen1.dart';
 import 'screens/onboarding_screen2.dart';
 import 'screens/profile_screen.dart';
+import 'screens/premium_upgrade_screen.dart';
 
 void main() {
   runApp(const StudySparkApp());
@@ -60,6 +61,7 @@ class StudySparkApp extends StatelessWidget {
         '/onboard1': (context) => const OnboardingScreen1(),
         '/onboard2': (context) => const OnboardingScreen2(),
         '/profile': (context) => const ProfileScreen(),
+        '/premium-upgrade': (context) => const PremiumUpgradeScreen(),
       },
     );
   }
