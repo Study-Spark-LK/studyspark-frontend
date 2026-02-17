@@ -468,6 +468,87 @@ class _PersonalityTestQuestionnaireScreenState
               ],
             ),
           ],
+          // Display selected hobbies
+          if (selectedValues.isNotEmpty) ...[
+            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF2A2A3E),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFF4FC3F7).withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: const [
+                      Icon(
+                        Icons.check_circle,
+                        color: Color(0xFF4FC3F7),
+                        size: 20,
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        'Selected Hobbies',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: selectedValues.map((hobby) {
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF4FC3F7).withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: const Color(0xFF4FC3F7),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              hobby,
+                              style: const TextStyle(
+                                color: Color(0xFF4FC3F7),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            GestureDetector(
+                              onTap: () => onToggle(hobby),
+                              child: const Icon(
+                                Icons.close,
+                                size: 16,
+                                color: Color(0xFF4FC3F7),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+          ],
           const SizedBox(height: 16),
           // Continue later button
           Center(
@@ -693,31 +774,81 @@ class _PersonalityTestQuestionnaireScreenState
   }
 
   void _completeTest() {
-    // Show completion dialog or navigate to results
+    // Show completion dialog or navigate directly to home
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF2A2A3E),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        title: const Text(
-          'Test Completed!',
-          style: TextStyle(color: Colors.white),
+        title: Row(
+          children: const [
+            Icon(
+              Icons.check_circle,
+              color: Color(0xFF4FC3F7),
+              size: 32,
+            ),
+            SizedBox(width: 12),
+            Text(
+              'Test Completed!',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
-        content: const Text(
-          'Your personality test is complete. Your learning preferences have been saved.',
-          style: TextStyle(color: Colors.white70),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            Text(
+              'Your personality test is complete!',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Your learning preferences have been saved and we\'ll personalize your experience accordingly.',
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 14,
+              ),
+            ),
+          ],
         ),
         actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Close dialog
-              Navigator.of(context).pushReplacementNamed('/home'); // Go to home
-            },
-            child: const Text(
-              'Continue',
-              style: TextStyle(color: Color(0xFF4FC3F7)),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+                // Navigate to home and clear all previous routes
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/home',
+                  (route) => false,
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF4FC3F7),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text(
+                'Go to Home',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ),
         ],
