@@ -8,6 +8,7 @@ import 'screens/onboarding_screen1.dart';
 import 'screens/onboarding_screen4.dart';
 import 'screens/onboarding_screen2.dart';
 import 'screens/onboarding_screen3.dart';
+import 'screens/upload_screen.dart';
 //import 'screens/learning_path_screen.dart';
 //import 'screens/quiz_screen.dart';
 //import 'screens/progress_screen.dart';
@@ -68,6 +69,7 @@ class StudySparkApp extends StatelessWidget {
         '/onboard3': (context) => const OnboardingScreen3(),
         '/onboard4': (context) => const OnboardingScreen4(),
         '/questionnaire': (context) => const PersonalityTestQuestionnaireScreen(),
+         '/upload': (context) => const UploadScreen(),
         //'/learning-path': (context) => const LearningPathScreen(),
         //'/quiz': (context) => const QuizScreen(),
         //'/progress': (context) => const ProgressScreen(),
