@@ -1065,7 +1065,7 @@ class _HomeScreenState extends State<HomeScreen> {
             width: 180,
             child: ElevatedButton.icon(
               onPressed: () {
-                // TODO: Navigator.pushNamed(context, '/upload');
+                Navigator.pushNamed(context, '/upload');
                 setState(() => _selectedIndex = 2);
               },
               icon: const Icon(Icons.add, size: 18),
