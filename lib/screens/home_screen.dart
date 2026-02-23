@@ -1,9 +1,732 @@
-import 'package:flutter/material.dart';
-import '../models/subject.dart';
-import '../services/api_service.dart';
-import '../widgets/subject_card.dart';
-import '../widgets/progress_widget.dart';
+// import 'package:flutter/material.dart';
 
+// class HomeScreen extends StatefulWidget {
+//   const HomeScreen({super.key});
+
+//   @override
+//   State<HomeScreen> createState() => _HomeScreenState();
+// }
+
+// class _HomeScreenState extends State<HomeScreen> {
+//   int _selectedIndex = 0;
+
+//   // This will later come from shared preferences or passed via route args
+//   // For now pulling from route arguments, fallback to 'User'
+//   String _userName = 'User';
+//   String _learningStyle = 'Visual Learner';
+//   List<String> _interests = ['Photography', 'Gaming', 'Cooking'];
+
+//   @override
+//   void didChangeDependencies() {
+//     super.didChangeDependencies();
+//     // Try to get name passed as argument from questionnaire
+//     final args = ModalRoute.of(context)?.settings.arguments;
+//     if (args != null && args is Map<String, dynamic>) {
+//       setState(() {
+//         _userName = args['name'] ?? 'User';
+//         _learningStyle = _determineLearningStyle(args['learningPreference']);
+//         final interests = args['interests'] as List<dynamic>?;
+//         if (interests != null && interests.isNotEmpty) {
+//           _interests = interests.cast<String>().take(3).toList();
+//         }
+//       });
+//     }
+//   }
+
+//   String _determineLearningStyle(String? pref) {
+//     switch (pref) {
+//       case 'visual':
+//         return 'Visual Learner';
+//       case 'auditory':
+//         return 'Auditory Learner';
+//       case 'reading':
+//         return 'Reading/Writing Learner';
+//       case 'kinesthetic':
+//         return 'Kinesthetic Learner';
+//       default:
+//         return 'Visual Learner';
+//     }
+//   }
+
+//   final List<Map<String, dynamic>> _continueLearning = [
+//     {
+//       'title': 'Introduction to Photosynthesis',
+//       'subject': 'Biology',
+//       'time': '15 min',
+//       'progress': 0.75,
+//       'progressLabel': '75%',
+//     },
+//     {
+//       'title': 'Quadratic Equations',
+//       'subject': 'Mathematics',
+//       'time': '25 min',
+//       'progress': 0.30,
+//       'progressLabel': '30%',
+//     },
+//     {
+//       'title': 'Nervous System',
+//       'subject': 'Biology',
+//       'time': '35 min',
+//       'progress': 0.45,
+//       'progressLabel': '45%',
+//     },
+//   ];
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: const Color(0xFF0D1117),
+//       body: SafeArea(
+//         child: Column(
+//           children: [
+//             // Scrollable body
+//             Expanded(
+//               child: SingleChildScrollView(
+//                 physics: const BouncingScrollPhysics(),
+//                 child: Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       const SizedBox(height: 24),
+
+//                       // ── Welcome Header ──
+//                       _buildWelcomeHeader(),
+//                       const SizedBox(height: 20),
+
+//                       // ── Learning Style Card ──
+//                       _buildLearningStyleCard(),
+//                       const SizedBox(height: 24),
+
+//                       // ── Stats Row ──
+//                       _buildStatsRow(),
+//                       const SizedBox(height: 28),
+
+//                       // ── Continue Learning ──
+//                       _buildSectionTitle('Continue Learning'),
+//                       const SizedBox(height: 16),
+//                       ..._continueLearning
+//                           .map((lesson) => _buildLessonCard(lesson))
+//                           .toList(),
+//                       const SizedBox(height: 28),
+
+//                       // ── Quick Actions ──
+//                       _buildSectionTitle('Quick Actions'),
+//                       const SizedBox(height: 16),
+//                       _buildQuickActions(),
+//                       const SizedBox(height: 32),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//             ),
+
+//             // ── Bottom Navigation ──
+//             _buildBottomNav(),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+
+//   // ─────────────────────────────────────────────
+//   // Welcome Header
+//   // ─────────────────────────────────────────────
+//   Widget _buildWelcomeHeader() {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Text(
+//           'Welcome back,',
+//           style: TextStyle(
+//             color: Colors.white.withOpacity(0.65),
+//             fontSize: 16,
+//             fontWeight: FontWeight.w400,
+//           ),
+//         ),
+//         const SizedBox(height: 4),
+//         Text(
+//           _userName,
+//           style: const TextStyle(
+//             color: Colors.white,
+//             fontSize: 30,
+//             fontWeight: FontWeight.bold,
+//             letterSpacing: 0.3,
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+
+//   // ─────────────────────────────────────────────
+//   // Learning Style Card
+//   // ─────────────────────────────────────────────
+//   Widget _buildLearningStyleCard() {
+//     return Container(
+//       width: double.infinity,
+//       padding: const EdgeInsets.all(18),
+//       decoration: BoxDecoration(
+//         color: const Color(0xFF1A2332),
+//         borderRadius: BorderRadius.circular(16),
+//         border: Border.all(
+//           color: Colors.white.withOpacity(0.07),
+//           width: 1,
+//         ),
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           // Learning style row
+//           Row(
+//             children: [
+//               Container(
+//                 width: 44,
+//                 height: 44,
+//                 decoration: BoxDecoration(
+//                   color: const Color(0xFF1E3A5F),
+//                   borderRadius: BorderRadius.circular(22),
+//                 ),
+//                 child: const Icon(
+//                   Icons.remove_red_eye_outlined,
+//                   color: Color(0xFF4FC3F7),
+//                   size: 22,
+//                 ),
+//               ),
+//               const SizedBox(width: 14),
+//               Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Text(
+//                     'Your Learning Style',
+//                     style: TextStyle(
+//                       color: Colors.white.withOpacity(0.55),
+//                       fontSize: 12,
+//                     ),
+//                   ),
+//                   const SizedBox(height: 3),
+//                   Text(
+//                     _learningStyle,
+//                     style: const TextStyle(
+//                       color: Colors.white,
+//                       fontSize: 16,
+//                       fontWeight: FontWeight.w600,
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ],
+//           ),
+
+//           // Divider
+//           Padding(
+//             padding: const EdgeInsets.symmetric(vertical: 14),
+//             child: Divider(
+//               color: Colors.white.withOpacity(0.1),
+//               height: 1,
+//             ),
+//           ),
+
+//           // Personalizing row
+//           Text(
+//             'Personalizing with your interests:',
+//             style: TextStyle(
+//               color: Colors.white.withOpacity(0.55),
+//               fontSize: 12,
+//             ),
+//           ),
+//           const SizedBox(height: 10),
+
+//           // Interest chips
+//           Wrap(
+//             spacing: 8,
+//             runSpacing: 8,
+//             children: _interests.map((interest) {
+//               return Container(
+//                 padding: const EdgeInsets.symmetric(
+//                   horizontal: 12,
+//                   vertical: 6,
+//                 ),
+//                 decoration: BoxDecoration(
+//                   color: const Color(0xFF0D1117),
+//                   borderRadius: BorderRadius.circular(20),
+//                   border: Border.all(
+//                     color: Colors.white.withOpacity(0.12),
+//                     width: 1,
+//                   ),
+//                 ),
+//                 child: Row(
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     Icon(
+//                       _getInterestIcon(interest),
+//                       size: 14,
+//                       color: const Color(0xFF4FC3F7),
+//                     ),
+//                     const SizedBox(width: 6),
+//                     Text(
+//                       interest,
+//                       style: const TextStyle(
+//                         color: Colors.white,
+//                         fontSize: 12,
+//                         fontWeight: FontWeight.w500,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               );
+//             }).toList(),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   IconData _getInterestIcon(String interest) {
+//     switch (interest.toLowerCase()) {
+//       case 'photography':
+//         return Icons.camera_alt_outlined;
+//       case 'gaming':
+//         return Icons.sports_esports_outlined;
+//       case 'cooking':
+//         return Icons.restaurant_outlined;
+//       case 'music':
+//         return Icons.music_note_outlined;
+//       case 'fitness':
+//         return Icons.fitness_center_outlined;
+//       case 'art & drawing':
+//         return Icons.palette_outlined;
+//       case 'reading':
+//         return Icons.menu_book_outlined;
+//       case 'sports':
+//         return Icons.sports_soccer_outlined;
+//       case 'gardening':
+//         return Icons.eco_outlined;
+//       case 'technology':
+//         return Icons.computer_outlined;
+//       case 'travel':
+//         return Icons.flight_outlined;
+//       case 'movies & tv':
+//         return Icons.movie_outlined;
+//       case 'writing':
+//         return Icons.edit_outlined;
+//       case 'finance':
+//         return Icons.attach_money_outlined;
+//       case 'crafts':
+//         return Icons.construction_outlined;
+//       case 'science':
+//         return Icons.science_outlined;
+//       default:
+//         return Icons.interests_outlined;
+//     }
+//   }
+
+//   // ─────────────────────────────────────────────
+//   // Stats Row
+//   // ─────────────────────────────────────────────
+//   Widget _buildStatsRow() {
+//     return Row(
+//       children: [
+//         Expanded(
+//           child: _buildStatCard(
+//             icon: Icons.circle_outlined,
+//             iconColor: const Color(0xFF4FC3F7),
+//             bgColor: const Color(0xFFD6F0FF),
+//             label: 'Lessons\nCompleted',
+//             value: '6',
+//             cardBg: const Color(0xFFB8E4FF),
+//             textColor: const Color(0xFF1A2332),
+//           ),
+//         ),
+//         const SizedBox(width: 12),
+//         Expanded(
+//           child: _buildStatCard(
+//             icon: Icons.trending_up_rounded,
+//             iconColor: const Color(0xFF4CAF50),
+//             bgColor: const Color(0xFFE8F5E9),
+//             label: 'Streak',
+//             value: '5d',
+//             cardBg: const Color(0xFFD4EDDA),
+//             textColor: const Color(0xFF1A2332),
+//           ),
+//         ),
+//         const SizedBox(width: 12),
+//         Expanded(
+//           child: _buildStatCard(
+//             icon: Icons.access_time_rounded,
+//             iconColor: const Color(0xFFFFB74D),
+//             bgColor: const Color(0xFFFFF3E0),
+//             label: 'Study Time',
+//             value: '8h 30m',
+//             cardBg: const Color(0xFFFFE0B2),
+//             textColor: const Color(0xFF1A2332),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+
+//   Widget _buildStatCard({
+//     required IconData icon,
+//     required Color iconColor,
+//     required Color bgColor,
+//     required String label,
+//     required String value,
+//     required Color cardBg,
+//     required Color textColor,
+//   }) {
+//     return Container(
+//       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+//       decoration: BoxDecoration(
+//         color: cardBg,
+//         borderRadius: BorderRadius.circular(16),
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Container(
+//             width: 34,
+//             height: 34,
+//             decoration: BoxDecoration(
+//               color: bgColor,
+//               borderRadius: BorderRadius.circular(17),
+//             ),
+//             child: Icon(icon, color: iconColor, size: 18),
+//           ),
+//           const SizedBox(height: 10),
+//           Text(
+//             label,
+//             style: TextStyle(
+//               color: textColor.withOpacity(0.65),
+//               fontSize: 11,
+//               height: 1.4,
+//             ),
+//           ),
+//           const SizedBox(height: 6),
+//           Text(
+//             value,
+//             style: TextStyle(
+//               color: textColor,
+//               fontSize: 20,
+//               fontWeight: FontWeight.bold,
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   // ─────────────────────────────────────────────
+//   // Section Title
+//   // ─────────────────────────────────────────────
+//   Widget _buildSectionTitle(String title) {
+//     return Text(
+//       title,
+//       style: const TextStyle(
+//         color: Colors.white,
+//         fontSize: 20,
+//         fontWeight: FontWeight.w700,
+//       ),
+//     );
+//   }
+
+//   // ─────────────────────────────────────────────
+//   // Lesson Card
+//   // ─────────────────────────────────────────────
+//   Widget _buildLessonCard(Map<String, dynamic> lesson) {
+//     return Container(
+//       margin: const EdgeInsets.only(bottom: 14),
+//       padding: const EdgeInsets.all(18),
+//       decoration: BoxDecoration(
+//         gradient: const LinearGradient(
+//           begin: Alignment.topLeft,
+//           end: Alignment.bottomRight,
+//           colors: [
+//             Color(0xFF1A2E44),
+//             Color(0xFF0F1E2E),
+//           ],
+//         ),
+//         borderRadius: BorderRadius.circular(16),
+//         border: Border.all(
+//           color: const Color(0xFF4FC3F7).withOpacity(0.25),
+//           width: 1,
+//         ),
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           // Title
+//           Text(
+//             lesson['title'],
+//             style: const TextStyle(
+//               color: Colors.white,
+//               fontSize: 16,
+//               fontWeight: FontWeight.w600,
+//             ),
+//           ),
+//           const SizedBox(height: 6),
+
+//           // Subject & time
+//           Row(
+//             children: [
+//               Text(
+//                 lesson['subject'],
+//                 style: TextStyle(
+//                   color: Colors.white.withOpacity(0.55),
+//                   fontSize: 13,
+//                 ),
+//               ),
+//               Text(
+//                 '  •  ',
+//                 style: TextStyle(
+//                   color: Colors.white.withOpacity(0.35),
+//                   fontSize: 13,
+//                 ),
+//               ),
+//               const Icon(
+//                 Icons.access_time_rounded,
+//                 size: 13,
+//                 color: Color(0xFF4FC3F7),
+//               ),
+//               const SizedBox(width: 4),
+//               Text(
+//                 lesson['time'],
+//                 style: TextStyle(
+//                   color: Colors.white.withOpacity(0.55),
+//                   fontSize: 13,
+//                 ),
+//               ),
+//             ],
+//           ),
+//           const SizedBox(height: 16),
+
+//           // Progress row
+//           Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//             children: [
+//               Text(
+//                 'Progress',
+//                 style: TextStyle(
+//                   color: Colors.white.withOpacity(0.55),
+//                   fontSize: 12,
+//                 ),
+//               ),
+//               Text(
+//                 lesson['progressLabel'],
+//                 style: const TextStyle(
+//                   color: Color(0xFF4FC3F7),
+//                   fontSize: 12,
+//                   fontWeight: FontWeight.w600,
+//                 ),
+//               ),
+//             ],
+//           ),
+//           const SizedBox(height: 8),
+
+//           // Progress bar
+//           ClipRRect(
+//             borderRadius: BorderRadius.circular(4),
+//             child: LinearProgressIndicator(
+//               value: lesson['progress'],
+//               backgroundColor: Colors.white.withOpacity(0.1),
+//               valueColor:
+//                   const AlwaysStoppedAnimation<Color>(Color(0xFF4FC3F7)),
+//               minHeight: 5,
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   // ─────────────────────────────────────────────
+//   // Quick Actions
+//   // ─────────────────────────────────────────────
+//   Widget _buildQuickActions() {
+//     final actions = [
+//       {
+//         'icon': Icons.menu_book_outlined,
+//         'label': 'Library',
+//         'route': '/library',
+//       },
+//       {
+//         'icon': Icons.upload_outlined,
+//         'label': 'Upload',
+//         'route': '/upload',
+//       },
+//       {
+//         'icon': Icons.psychology_outlined,
+//         'label': 'Practice',
+//         'route': '/practice',
+//       },
+//     ];
+
+//     return Row(
+//       children: actions.map((action) {
+//         return Expanded(
+//           child: Padding(
+//             padding: EdgeInsets.only(
+//               right: action == actions.last ? 0 : 12,
+//             ),
+//             child: GestureDetector(
+//               onTap: () {
+//                 // Navigate to respective screens when built
+//               },
+//               child: Container(
+//                 padding: const EdgeInsets.symmetric(vertical: 22),
+//                 decoration: BoxDecoration(
+//                   color: const Color(0xFF1A2332),
+//                   borderRadius: BorderRadius.circular(16),
+//                   border: Border.all(
+//                     color: const Color(0xFF4FC3F7).withOpacity(0.2),
+//                     width: 1,
+//                   ),
+//                 ),
+//                 child: Column(
+//                   children: [
+//                     Icon(
+//                       action['icon'] as IconData,
+//                       color: const Color(0xFF4FC3F7),
+//                       size: 32,
+//                     ),
+//                     const SizedBox(height: 10),
+//                     Text(
+//                       action['label'] as String,
+//                       style: const TextStyle(
+//                         color: Colors.white,
+//                         fontSize: 14,
+//                         fontWeight: FontWeight.w500,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           ),
+//         );
+//       }).toList(),
+//     );
+//   }
+
+//   // ─────────────────────────────────────────────
+//   // Bottom Navigation
+//   // ─────────────────────────────────────────────
+//   Widget _buildBottomNav() {
+//     final items = [
+//       {'icon': Icons.home_rounded, 'label': 'Home'},
+//       {'icon': Icons.menu_book_outlined, 'label': 'Library'},
+//       {'icon': Icons.upload_outlined, 'label': 'Upload'},
+//       {'icon': Icons.psychology_outlined, 'label': 'Practice'},
+//       {'icon': Icons.person_outline_rounded, 'label': 'Profile'},
+//     ];
+
+//     return Container(
+//       decoration: BoxDecoration(
+//         color: const Color(0xFF0D1117),
+//         border: Border(
+//           top: BorderSide(
+//             color: Colors.white.withOpacity(0.08),
+//             width: 1,
+//           ),
+//         ),
+//       ),
+//       child: SafeArea(
+//         top: false,
+//         child: SizedBox(
+//           height: 64,
+//           child: Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceAround,
+//             children: List.generate(items.length, (index) {
+//               final isSelected = _selectedIndex == index;
+//               return GestureDetector(
+//                 onTap: () => setState(() => _selectedIndex = index),
+//                 behavior: HitTestBehavior.opaque,
+//                 child: SizedBox(
+//                   width: 64,
+//                   child: Column(
+//                     mainAxisAlignment: MainAxisAlignment.center,
+//                     children: [
+//                       Icon(
+//                         items[index]['icon'] as IconData,
+//                         color: isSelected
+//                             ? const Color(0xFF4FC3F7)
+//                             : Colors.white.withOpacity(0.4),
+//                         size: 26,
+//                       ),
+//                       const SizedBox(height: 4),
+//                       Text(
+//                         items[index]['label'] as String,
+//                         style: TextStyle(
+//                           color: isSelected
+//                               ? const Color(0xFF4FC3F7)
+//                               : Colors.white.withOpacity(0.4),
+//                           fontSize: 10,
+//                           fontWeight: isSelected
+//                               ? FontWeight.w600
+//                               : FontWeight.normal,
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               );
+//             }),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+import 'package:flutter/material.dart';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Data model for an uploaded / in-progress lesson
+// ─────────────────────────────────────────────────────────────────────────────
+class UploadedLesson {
+  final String title;
+  final String subject;
+  final String estimatedTime;
+  final double progress; // 0.0 – 1.0
+  final String fileType; // 'pdf', 'video', 'doc', etc.
+
+  const UploadedLesson({
+    required this.title,
+    required this.subject,
+    required this.estimatedTime,
+    required this.progress,
+    required this.fileType,
+  });
+
+  String get progressLabel => '${(progress * 100).round()}%';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Global lesson list — your Upload screen adds items here
+// (Replace with Provider/Riverpod when you add state management)
+// ─────────────────────────────────────────────────────────────────────────────
+class LessonRepository {
+  static final List<UploadedLesson> lessons = [];
+
+  static void addLesson(UploadedLesson lesson) => lessons.add(lesson);
+
+  static void updateProgress(String title, double progress) {
+    final i = lessons.indexWhere((l) => l.title == title);
+    if (i != -1) {
+      final old = lessons[i];
+      lessons[i] = UploadedLesson(
+        title: old.title,
+        subject: old.subject,
+        estimatedTime: old.estimatedTime,
+        progress: progress,
+        fileType: old.fileType,
+      );
+    }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Home Screen
+// ─────────────────────────────────────────────────────────────────────────────
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -12,391 +735,548 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0;
-  List<Subject> subjects = [];
-  bool isLoading = true;
-  String? errorMessage;
+  int _selectedIndex = 0;
+
+  String _userName      = 'User';
+  String _learningStyle = 'Visual Learner';
+  List<String> _interests = [];
 
   @override
-  void initState() {
-    super.initState();
-    _loadSubjects();
-  }
-
-  Future<void> _loadSubjects() async {
-    setState(() {
-      isLoading = true;
-      errorMessage = null;
-    });
-
-    try {
-      final apiService = ApiService();
-      final fetchedSubjects = await apiService.fetchSubjects();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args != null && args is Map<String, dynamic>) {
       setState(() {
-        subjects = fetchedSubjects;
-        isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        errorMessage = e.toString();
-        isLoading = false;
+        _userName      = args['name'] ?? 'User';
+        _learningStyle = _determineLearningStyle(args['learningPreference']);
+        final interests = args['interests'] as List<dynamic>?;
+        if (interests != null && interests.isNotEmpty) {
+          _interests = interests.cast<String>().take(3).toList();
+        }
       });
     }
   }
 
+  String _determineLearningStyle(String? pref) {
+    switch (pref) {
+      case 'visual':      return 'Visual Learner';
+      case 'auditory':    return 'Auditory Learner';
+      case 'reading':     return 'Reading/Writing Learner';
+      case 'kinesthetic': return 'Kinesthetic Learner';
+      default:            return 'Visual Learner';
+    }
+  }
+
+  List<UploadedLesson> get _lessons => LessonRepository.lessons;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('StudySpark'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {
-              // Handle notifications
-            },
-          ),
-        ],
-      ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : errorMessage != null
-              ? _buildErrorView()
-              : _buildMainContent(),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-          switch (index) {
-            case 0:
-              // Already on home
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/progress');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/profile');
-              break;
-          }
-        },
-        selectedItemColor: Theme.of(context).primaryColor,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.trending_up_outlined),
-            activeIcon: Icon(Icons.trending_up),
-            label: 'Progress',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildErrorView() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+      backgroundColor: const Color(0xFF0D1117),
+      body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.error_outline,
-              size: 64,
-              color: Colors.red,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Failed to load subjects',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              errorMessage ?? 'Unknown error',
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.grey),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: _loadSubjects,
-              icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMainContent() {
-    return RefreshIndicator(
-      onRefresh: _loadSubjects,
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Welcome Section
-              Card(
-                color: Theme.of(context).primaryColor,
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 child: Padding(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Welcome back!',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Continue your learning journey',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white70,
-                        ),
-                      ),
+                      const SizedBox(height: 24),
+                      _buildWelcomeHeader(),
+                      const SizedBox(height: 20),
+                      _buildLearningStyleCard(),
+                      const SizedBox(height: 24),
+                      _buildStatsRow(),
+                      const SizedBox(height: 28),
+                      _buildSectionTitle('Continue Learning'),
                       const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildStatCard(
-                              'Streak',
-                              '7 days',
-                              Icons.local_fire_department,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: _buildStatCard(
-                              'Points',
-                              '1,250',
-                              Icons.star,
-                            ),
-                          ),
-                        ],
-                      ),
+                      _lessons.isEmpty
+                          ? _buildEmptyLearning()
+                          : Column(children: _lessons.map(_buildLessonCard).toList()),
+                      const SizedBox(height: 28),
+                      _buildSectionTitle('Quick Actions'),
+                      const SizedBox(height: 16),
+                      _buildQuickActions(),
+                      const SizedBox(height: 32),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
-              
-              // Daily Goal Progress
-              const Text(
-                'Daily Goal',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 12),
-              ProgressWidget(
-                title: 'Complete 3 lessons',
-                current: 2,
-                total: 3,
-                color: Colors.purple,
-              ),
-              const SizedBox(height: 24),
-
-              // Premium Upgrade Card
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, '/premium-upgrade');
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        const Color(0xFFFFA500),
-                        const Color(0xFFFFB84D),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  padding: const EdgeInsets.all(20),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.star,
-                        size: 40,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              'Unlock Premium',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              'Get unlimited features',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.white70,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Icon(
-                        Icons.arrow_forward,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Subjects Section
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Your Subjects',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      // View all subjects
-                    },
-                    child: const Text('View All'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              subjects.isEmpty
-                  ? _buildEmptyState()
-                  : GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.85,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                      ),
-                      itemCount: subjects.length,
-                      itemBuilder: (context, index) {
-                        return SubjectCard(
-                          subject: subjects[index],
-                          onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              '/learning-path',
-                              arguments: subjects[index],
-                            );
-                          },
-                        );
-                      },
-                    ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32.0),
-        child: Column(
-          children: [
-            Icon(
-              Icons.school_outlined,
-              size: 64,
-              color: Colors.grey[400],
             ),
-            const SizedBox(height: 16),
-            Text(
-              'No subjects yet',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Your subjects will appear here',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[500],
-              ),
-            ),
+            _buildBottomNav(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon) {
+  // ── Welcome Header ───────────────────────────────────────────────────────
+  Widget _buildWelcomeHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Welcome back,',
+            style: TextStyle(
+                color: Colors.white.withOpacity(0.65),
+                fontSize: 16,
+                fontWeight: FontWeight.w400)),
+        const SizedBox(height: 4),
+        Text(_userName,
+            style: const TextStyle(
+                color: Colors.white,
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.3)),
+      ],
+    );
+  }
+
+  // ── Learning Style Card ──────────────────────────────────────────────────
+  Widget _buildLearningStyleCard() {
     return Container(
-      padding: const EdgeInsets.all(12),
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(12),
+        color: const Color(0xFF1A2332),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(0.07), width: 1),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: Colors.white, size: 24),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 12,
-                  ),
+          Row(
+            children: [
+              Container(
+                width: 44, height: 44,
+                decoration: BoxDecoration(
+                    color: const Color(0xFF1E3A5F),
+                    borderRadius: BorderRadius.circular(22)),
+                child: const Icon(Icons.remove_red_eye_outlined,
+                    color: Color(0xFF4FC3F7), size: 22),
+              ),
+              const SizedBox(width: 14),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Your Learning Style',
+                      style: TextStyle(
+                          color: Colors.white.withOpacity(0.55), fontSize: 12)),
+                  const SizedBox(height: 3),
+                  Text(_learningStyle,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600)),
+                ],
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            child: Divider(color: Colors.white.withOpacity(0.1), height: 1),
+          ),
+          Text('Personalizing with your interests:',
+              style: TextStyle(
+                  color: Colors.white.withOpacity(0.55), fontSize: 12)),
+          const SizedBox(height: 10),
+          _interests.isEmpty
+              ? Text('No interests selected yet',
+                  style: TextStyle(
+                      color: Colors.white.withOpacity(0.35), fontSize: 12))
+              : Wrap(
+                  spacing: 8, runSpacing: 8,
+                  children: _interests.map((interest) => Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0D1117),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                              color: Colors.white.withOpacity(0.12), width: 1),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(_getInterestIcon(interest),
+                                size: 14, color: const Color(0xFF4FC3F7)),
+                            const SizedBox(width: 6),
+                            Text(interest,
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                      )).toList(),
                 ),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+        ],
+      ),
+    );
+  }
+
+  IconData _getInterestIcon(String interest) {
+    switch (interest.toLowerCase()) {
+      case 'photography':   return Icons.camera_alt_outlined;
+      case 'gaming':        return Icons.sports_esports_outlined;
+      case 'cooking':       return Icons.restaurant_outlined;
+      case 'music':         return Icons.music_note_outlined;
+      case 'fitness':       return Icons.fitness_center_outlined;
+      case 'art & drawing': return Icons.palette_outlined;
+      case 'reading':       return Icons.menu_book_outlined;
+      case 'sports':        return Icons.sports_soccer_outlined;
+      case 'gardening':     return Icons.eco_outlined;
+      case 'technology':    return Icons.computer_outlined;
+      case 'travel':        return Icons.flight_outlined;
+      case 'movies & tv':   return Icons.movie_outlined;
+      case 'writing':       return Icons.edit_outlined;
+      case 'finance':       return Icons.attach_money_outlined;
+      case 'crafts':        return Icons.construction_outlined;
+      case 'science':       return Icons.science_outlined;
+      default:              return Icons.interests_outlined;
+    }
+  }
+
+  // ── Stats Row ────────────────────────────────────────────────────────────
+  Widget _buildStatsRow() {
+    final completed = _lessons.where((l) => l.progress >= 1.0).length;
+    return Row(
+      children: [
+        Expanded(child: _buildStatCard(
+          icon: Icons.circle_outlined,
+          iconColor: const Color(0xFF4FC3F7),
+          bgColor: const Color(0xFFD6F0FF),
+          label: 'Lessons\nCompleted',
+          value: '$completed',
+          cardBg: const Color(0xFFB8E4FF),
+          textColor: const Color(0xFF1A2332),
+        )),
+        const SizedBox(width: 12),
+        Expanded(child: _buildStatCard(
+          icon: Icons.trending_up_rounded,
+          iconColor: const Color(0xFF4CAF50),
+          bgColor: const Color(0xFFE8F5E9),
+          label: 'Streak',
+          value: '0d',
+          cardBg: const Color(0xFFD4EDDA),
+          textColor: const Color(0xFF1A2332),
+        )),
+        const SizedBox(width: 12),
+        Expanded(child: _buildStatCard(
+          icon: Icons.access_time_rounded,
+          iconColor: const Color(0xFFFFB74D),
+          bgColor: const Color(0xFFFFF3E0),
+          label: 'Study Time',
+          value: '0h 0m',
+          cardBg: const Color(0xFFFFE0B2),
+          textColor: const Color(0xFF1A2332),
+        )),
+      ],
+    );
+  }
+
+  Widget _buildStatCard({
+    required IconData icon,
+    required Color iconColor,
+    required Color bgColor,
+    required String label,
+    required String value,
+    required Color cardBg,
+    required Color textColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+      decoration: BoxDecoration(
+          color: cardBg, borderRadius: BorderRadius.circular(16)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 34, height: 34,
+            decoration: BoxDecoration(
+                color: bgColor, borderRadius: BorderRadius.circular(17)),
+            child: Icon(icon, color: iconColor, size: 18),
+          ),
+          const SizedBox(height: 10),
+          Text(label,
+              style: TextStyle(
+                  color: textColor.withOpacity(0.65),
+                  fontSize: 11,
+                  height: 1.4)),
+          const SizedBox(height: 6),
+          Text(value,
+              style: TextStyle(
+                  color: textColor,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+
+  // ── Section Title ────────────────────────────────────────────────────────
+  Widget _buildSectionTitle(String title) => Text(title,
+      style: const TextStyle(
+          color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700));
+
+  // ── Empty State ──────────────────────────────────────────────────────────
+  Widget _buildEmptyLearning() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A2332),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+            color: const Color(0xFF4FC3F7).withOpacity(0.15), width: 1),
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 72, height: 72,
+            decoration: BoxDecoration(
+              color: const Color(0xFF4FC3F7).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(36),
+              border: Border.all(
+                  color: const Color(0xFF4FC3F7).withOpacity(0.3), width: 2),
+            ),
+            child: const Icon(Icons.upload_file_outlined,
+                color: Color(0xFF4FC3F7), size: 32),
+          ),
+          const SizedBox(height: 20),
+          const Text('No content yet',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600)),
+          const SizedBox(height: 10),
+          Text(
+            'Upload your study materials — PDFs, notes,\nor documents — and they\'ll appear here.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Colors.white.withOpacity(0.5),
+                fontSize: 13,
+                height: 1.6),
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: 180,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                // TODO: Navigator.pushNamed(context, '/upload');
+                setState(() => _selectedIndex = 2);
+              },
+              icon: const Icon(Icons.add, size: 18),
+              label: const Text('Upload Content',
+                  style: TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w600)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF4FC3F7),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                elevation: 0,
+              ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // ── Lesson Card ──────────────────────────────────────────────────────────
+  Widget _buildLessonCard(UploadedLesson lesson) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF1A2E44), Color(0xFF0F1E2E)],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+            color: const Color(0xFF4FC3F7).withOpacity(0.25), width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(lesson.title,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600)),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF4FC3F7).withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(lesson.fileType.toUpperCase(),
+                    style: const TextStyle(
+                        color: Color(0xFF4FC3F7),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              Text(lesson.subject,
+                  style: TextStyle(
+                      color: Colors.white.withOpacity(0.55), fontSize: 13)),
+              Text('  •  ',
+                  style: TextStyle(
+                      color: Colors.white.withOpacity(0.35), fontSize: 13)),
+              const Icon(Icons.access_time_rounded,
+                  size: 13, color: Color(0xFF4FC3F7)),
+              const SizedBox(width: 4),
+              Text(lesson.estimatedTime,
+                  style: TextStyle(
+                      color: Colors.white.withOpacity(0.55), fontSize: 13)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Progress',
+                  style: TextStyle(
+                      color: Colors.white.withOpacity(0.55), fontSize: 12)),
+              Text(lesson.progressLabel,
+                  style: const TextStyle(
+                      color: Color(0xFF4FC3F7),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: lesson.progress,
+              backgroundColor: Colors.white.withOpacity(0.1),
+              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF4FC3F7)),
+              minHeight: 5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Quick Actions ────────────────────────────────────────────────────────
+  Widget _buildQuickActions() {
+    final actions = [
+      {'icon': Icons.menu_book_outlined,   'label': 'Library',  'index': 1},
+      {'icon': Icons.upload_outlined,      'label': 'Upload',   'index': 2},
+      {'icon': Icons.psychology_outlined,  'label': 'Practice', 'index': 3},
+    ];
+
+    return Row(
+      children: List.generate(actions.length, (i) {
+        final a = actions[i];
+        return Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(right: i < actions.length - 1 ? 12 : 0),
+            child: GestureDetector(
+              onTap: () => setState(() => _selectedIndex = a['index'] as int),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 22),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1A2332),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                      color: const Color(0xFF4FC3F7).withOpacity(0.2),
+                      width: 1),
+                ),
+                child: Column(
+                  children: [
+                    Icon(a['icon'] as IconData,
+                        color: const Color(0xFF4FC3F7), size: 32),
+                    const SizedBox(height: 10),
+                    Text(a['label'] as String,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  // ── Bottom Navigation ────────────────────────────────────────────────────
+  Widget _buildBottomNav() {
+    final items = [
+      {'icon': Icons.home_rounded,           'label': 'Home'},
+      {'icon': Icons.menu_book_outlined,     'label': 'Library'},
+      {'icon': Icons.upload_outlined,        'label': 'Upload'},
+      {'icon': Icons.psychology_outlined,    'label': 'Practice'},
+      {'icon': Icons.person_outline_rounded, 'label': 'Profile'},
+    ];
+
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF0D1117),
+        border: Border(
+            top: BorderSide(
+                color: Colors.white.withOpacity(0.08), width: 1)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 64,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: List.generate(items.length, (index) {
+              final isSelected = _selectedIndex == index;
+              return GestureDetector(
+                onTap: () => setState(() => _selectedIndex = index),
+                behavior: HitTestBehavior.opaque,
+                child: SizedBox(
+                  width: 64,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(items[index]['icon'] as IconData,
+                          color: isSelected
+                              ? const Color(0xFF4FC3F7)
+                              : Colors.white.withOpacity(0.4),
+                          size: 26),
+                      const SizedBox(height: 4),
+                      Text(items[index]['label'] as String,
+                          style: TextStyle(
+                              color: isSelected
+                                  ? const Color(0xFF4FC3F7)
+                                  : Colors.white.withOpacity(0.4),
+                              fontSize: 10,
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.normal)),
+                    ],
+                  ),
+                ),
+              );
+            }),
+          ),
+        ),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'personality_test_questionnaire_screen.dart'; // ← This import
 
 class PersonalityTestWelcomeScreen extends StatelessWidget {
   const PersonalityTestWelcomeScreen({super.key});
@@ -75,8 +76,13 @@ class PersonalityTestWelcomeScreen extends StatelessWidget {
               // Start Now Button
               ElevatedButton(
                 onPressed: () {
-                  // Navigate to home screen (or personality test questions if you create that screen)
-                  Navigator.of(context).pushReplacementNamed('/home'); // ← FIXED
+                  // Navigate to questionnaire screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PersonalityTestQuestionnaireScreen(),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF4FC3F7),
