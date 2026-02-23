@@ -1248,7 +1248,12 @@ class _HomeScreenState extends State<HomeScreen> {
             children: List.generate(items.length, (index) {
               final isSelected = _selectedIndex == index;
               return GestureDetector(
-                onTap: () => setState(() => _selectedIndex = index),
+                onTap: () {
+                  setState(() => _selectedIndex = index);
+                  if (index == 4) {
+                    Navigator.pushNamed(context, '/profile');
+                  }
+                },
                 behavior: HitTestBehavior.opaque,
                 child: SizedBox(
                   width: 64,
