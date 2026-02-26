@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'personality_test_questionnaire_screen.dart'; // ← This import
+import 'questionnaire_screen.dart'; // ← This import
 
-class PersonalityTestWelcomeScreen extends StatelessWidget {
-  const PersonalityTestWelcomeScreen({super.key});
+class QuestionnaireWelcomeScreen extends StatelessWidget {
+  const QuestionnaireWelcomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +80,8 @@ class PersonalityTestWelcomeScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const PersonalityTestQuestionnaireScreen(),
+                      builder: (context) =>
+                          const PersonalityTestQuestionnaireScreen(),
                     ),
                   );
                 },
