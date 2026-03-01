@@ -8,19 +8,20 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
   late AnimationController _logoController;
   late AnimationController _line1Controller;
   late AnimationController _line2Controller;
   late AnimationController _line3Controller;
   late AnimationController _brandController;
-  
+
   late Animation<double> _logoFadeIn;
   late Animation<double> _line1FadeIn;
   late Animation<double> _line2FadeIn;
   late Animation<double> _line3FadeIn;
   late Animation<double> _brandFadeIn;
-  
+
   bool _showLogo = true;
   bool _showLine1 = false;
   bool _showLine2 = false;
@@ -30,54 +31,58 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   @override
   void initState() {
     super.initState();
-    
+
     // Initialize all controllers
     _logoController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
-    
+
     _line1Controller = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
-    
+
     _line2Controller = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
-    
+
     _line3Controller = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
-    
+
     _brandController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
-    
+
     // Create animations
-    _logoFadeIn = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _logoController, curve: Curves.easeIn)
-    );
-    
-    _line1FadeIn = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _line1Controller, curve: Curves.easeIn)
-    );
-    
-    _line2FadeIn = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _line2Controller, curve: Curves.easeIn)
-    );
-    
-    _line3FadeIn = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _line3Controller, curve: Curves.easeIn)
-    );
-    
+    _logoFadeIn = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _logoController, curve: Curves.easeIn));
+
+    _line1FadeIn = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _line1Controller, curve: Curves.easeIn));
+
+    _line2FadeIn = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _line2Controller, curve: Curves.easeIn));
+
+    _line3FadeIn = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _line3Controller, curve: Curves.easeIn));
+
     _brandFadeIn = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _brandController, curve: Curves.easeInOut)
+      CurvedAnimation(parent: _brandController, curve: Curves.easeInOut),
     );
-    
+
     // Start animation sequence
     _startAnimationSequence();
 
@@ -90,48 +95,48 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   void _startAnimationSequence() async {
     // Fade in logo
     await _logoController.forward();
-    
+
     // Hold logo (increased)
     await Future.delayed(const Duration(milliseconds: 2000));
-    
+
     //  Fade out logo
     await _logoController.reverse();
-    
+
     // Pause before tagline
     await Future.delayed(const Duration(milliseconds: 500));
-    
+
     setState(() {
       _showLogo = false;
       _showLine1 = true;
     });
-    
+
     // Show "Your Path." (increased delay)
     await _line1Controller.forward();
     await Future.delayed(const Duration(milliseconds: 1200));
-    
+
     setState(() {
       _showLine2 = true;
     });
-    
+
     //Show "Your pace." (increased delay)
     await _line2Controller.forward();
     await Future.delayed(const Duration(milliseconds: 1200));
-    
+
     setState(() {
       _showLine3 = true;
     });
-    
+
     //Show "Your Spark..." (increased delay)
     await _line3Controller.forward();
     await Future.delayed(const Duration(milliseconds: 1500));
-    
+
     setState(() {
       _showBrand = true;
     });
-    
+
     //Show StudySpark brand (increased delay before appearing)
     await _brandController.forward();
-    
+
     // Hold final screen (increased)
     await Future.delayed(const Duration(milliseconds: 2500));
   }
@@ -165,7 +170,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                   ),
                 ),
               ),
-            
+
             // Tagline and Brand
             if (!_showLogo)
               Center(
@@ -187,7 +192,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                           ),
                         ),
                       ),
-                    
+
                     // Line 2: "Your pace."
                     if (_showLine2)
                       FadeTransition(
@@ -203,7 +208,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                           ),
                         ),
                       ),
-                    
+
                     // Line 3: "Your Spark..."
                     if (_showLine3)
                       FadeTransition(
@@ -236,11 +241,10 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                           ),
                         ),
                       ),
-                    
+
                     // Spacer for better separation
-                    if (_showBrand)
-                      const SizedBox(height: 80),
-                    
+                    if (_showBrand) const SizedBox(height: 80),
+
                     // StudySpark Brand with divider
                     if (_showBrand)
                       FadeTransition(
