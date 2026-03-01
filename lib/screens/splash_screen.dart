@@ -16,7 +16,6 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   late AnimationController _brandController;
   
   late Animation<double> _logoFadeIn;
-  late Animation<double> _logoFadeOut;
   late Animation<double> _line1FadeIn;
   late Animation<double> _line2FadeIn;
   late Animation<double> _line3FadeIn;
@@ -61,10 +60,6 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     // Create animations
     _logoFadeIn = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _logoController, curve: Curves.easeIn)
-    );
-    
-    _logoFadeOut = Tween<double>(begin: 1.0, end: 0.0).animate(
-      CurvedAnimation(parent: _logoController, curve: Curves.easeOut)
     );
     
     _line1FadeIn = Tween<double>(begin: 0.0, end: 1.0).animate(
