@@ -1,14 +1,10 @@
 
 import 'package:flutter/material.dart';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Data model for an uploaded / in-progress lesson
-// ─────────────────────────────────────────────────────────────────────────────
 class UploadedLesson {
   final String title;
   final String subject;
   final String estimatedTime;
-  final double progress; // 0.0 – 1.0
+  final double progress; 
   final String fileType; // 'pdf', 'video', 'doc', etc.
 
   const UploadedLesson({
@@ -21,11 +17,6 @@ class UploadedLesson {
 
   String get progressLabel => '${(progress * 100).round()}%';
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Global lesson list — your Upload screen adds items here
-// (Replace with Provider/Riverpod when you add state management)
-// ─────────────────────────────────────────────────────────────────────────────
 class LessonRepository {
   static final List<UploadedLesson> lessons = [];
 
@@ -46,9 +37,6 @@ class LessonRepository {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Home Screen
-// ─────────────────────────────────────────────────────────────────────────────
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -135,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ── Welcome Header ───────────────────────────────────────────────────────
+  //Welcome Header 
   Widget _buildWelcomeHeader() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ── Learning Style Card ──────────────────────────────────────────────────
+  // Learning Style Card 
   Widget _buildLearningStyleCard() {
     return Container(
       width: double.infinity,
@@ -261,7 +249,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // ── Stats Row ────────────────────────────────────────────────────────────
+  //Stats Row 
   Widget _buildStatsRow() {
     final completed = _lessons.where((l) => l.progress >= 1.0).length;
     return Row(
@@ -338,12 +326,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ── Section Title ────────────────────────────────────────────────────────
+  //Section Title 
   Widget _buildSectionTitle(String title) => Text(title,
       style: const TextStyle(
           color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700));
 
-  // ── Empty State ──────────────────────────────────────────────────────────
+  // Empty State
   Widget _buildEmptyLearning() {
     return Container(
       width: double.infinity,
@@ -409,7 +397,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ── Lesson Card ──────────────────────────────────────────────────────────
+  // Lesson Card
   Widget _buildLessonCard(UploadedLesson lesson) {
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
@@ -499,7 +487,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ── Quick Actions ────────────────────────────────────────────────────────
+  //Quick Actions 
   Widget _buildQuickActions() {
     final actions = [
       {'icon': Icons.menu_book_outlined,   'label': 'Library',  'index': 1},
@@ -544,7 +532,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ── Bottom Navigation ────────────────────────────────────────────────────
+  // Bottom Navigation 
   Widget _buildBottomNav() {
     final items = [
       {'icon': Icons.home_rounded,           'label': 'Home'},
