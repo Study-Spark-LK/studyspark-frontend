@@ -142,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         Text('Welcome back,',
             style: TextStyle(
-                color: Colors.white.withOpacity(0.65),
+                color: Color.fromRGBO(255, 255, 255, 0.65),
                 fontSize: 16,
                 fontWeight: FontWeight.w400)),
         const SizedBox(height: 4),
@@ -164,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFF1A2332),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.07), width: 1),
+        border: Border.all(color: Color.fromRGBO(255, 255, 255, 0.07), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Text('Your Learning Style',
                       style: TextStyle(
-                          color: Colors.white.withOpacity(0.55), fontSize: 12)),
+                          color: Color.fromRGBO(255, 255, 255, 0.55), fontSize: 12)),
                   const SizedBox(height: 3),
                   Text(_learningStyle,
                       style: const TextStyle(
@@ -198,16 +198,16 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 14),
-            child: Divider(color: Colors.white.withOpacity(0.1), height: 1),
+            child: Divider(color: Color.fromRGBO(255, 255, 255, 0.1), height: 1),
           ),
           Text('Personalizing with your interests:',
               style: TextStyle(
-                  color: Colors.white.withOpacity(0.55), fontSize: 12)),
+                  color: Color.fromRGBO(255, 255, 255, 0.55), fontSize: 12)),
           const SizedBox(height: 10),
           _interests.isEmpty
               ? Text('No interests selected yet',
                   style: TextStyle(
-                      color: Colors.white.withOpacity(0.35), fontSize: 12))
+                      color: Color.fromRGBO(255, 255, 255, 0.35), fontSize: 12))
               : Wrap(
                   spacing: 8, runSpacing: 8,
                   children: _interests.map((interest) => Container(
@@ -217,13 +217,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: const Color(0xFF0D1117),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                              color: Colors.white.withOpacity(0.12), width: 1),
+                              color: Color.fromRGBO(255, 255, 255, 0.12), width: 1),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(_getInterestIcon(interest),
                                 size: 14, color: const Color(0xFF4FC3F7)),
+
                             const SizedBox(width: 6),
                             Text(interest,
                                 style: const TextStyle(
@@ -324,7 +325,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 10),
           Text(label,
               style: TextStyle(
-                  color: textColor.withOpacity(0.65),
+                  color: textColor.withAlpha((0.65 * 255).round()),
                   fontSize: 11,
                   height: 1.4)),
           const SizedBox(height: 6),
@@ -352,17 +353,17 @@ class _HomeScreenState extends State<HomeScreen> {
         color: const Color(0xFF1A2332),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-            color: const Color(0xFF4FC3F7).withOpacity(0.15), width: 1),
+            color: Color.fromRGBO(79, 195, 247, 0.15), width: 1),
       ),
       child: Column(
         children: [
           Container(
             width: 72, height: 72,
             decoration: BoxDecoration(
-              color: const Color(0xFF4FC3F7).withOpacity(0.1),
+              color: Color.fromRGBO(79, 195, 247, 0.1),
               borderRadius: BorderRadius.circular(36),
               border: Border.all(
-                  color: const Color(0xFF4FC3F7).withOpacity(0.3), width: 2),
+                  color: Color.fromRGBO(79, 195, 247, 0.3), width: 2),
             ),
             child: const Icon(Icons.upload_file_outlined,
                 color: Color(0xFF4FC3F7), size: 32),
@@ -378,7 +379,7 @@ class _HomeScreenState extends State<HomeScreen> {
             'Upload your study materials — PDFs, notes,\nor documents — and they\'ll appear here.',
             textAlign: TextAlign.center,
             style: TextStyle(
-                color: Colors.white.withOpacity(0.5),
+                color: Color.fromRGBO(255, 255, 255, 0.5),
                 fontSize: 13,
                 height: 1.6),
           ),
@@ -422,7 +423,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-            color: const Color(0xFF4FC3F7).withOpacity(0.25), width: 1),
+            color: Color.fromRGBO(79, 195, 247, 0.25), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -441,7 +442,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF4FC3F7).withOpacity(0.15),
+                  color: Color.fromRGBO(79, 195, 247, 0.15),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(lesson.fileType.toUpperCase(),
@@ -458,16 +459,16 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Text(lesson.subject,
                   style: TextStyle(
-                      color: Colors.white.withOpacity(0.55), fontSize: 13)),
+                      color: Color.fromRGBO(255, 255, 255, 0.55), fontSize: 13)),
               Text('  •  ',
                   style: TextStyle(
-                      color: Colors.white.withOpacity(0.35), fontSize: 13)),
+                      color: Color.fromRGBO(255, 255, 255, 0.35), fontSize: 13)),
               const Icon(Icons.access_time_rounded,
                   size: 13, color: Color(0xFF4FC3F7)),
               const SizedBox(width: 4),
               Text(lesson.estimatedTime,
                   style: TextStyle(
-                      color: Colors.white.withOpacity(0.55), fontSize: 13)),
+                      color: Color.fromRGBO(255, 255, 255, 0.55), fontSize: 13)),
             ],
           ),
           const SizedBox(height: 16),
@@ -489,7 +490,7 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: lesson.progress,
-              backgroundColor: Colors.white.withOpacity(0.1),
+              backgroundColor: Color.fromRGBO(255, 255, 255, 0.1),
               valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF4FC3F7)),
               minHeight: 5,
             ),
@@ -559,7 +560,7 @@ class _HomeScreenState extends State<HomeScreen> {
         color: const Color(0xFF0D1117),
         border: Border(
             top: BorderSide(
-                color: Colors.white.withOpacity(0.08), width: 1)),
+                color: Color.fromRGBO(255, 255, 255, 0.08), width: 1)),
       ),
       child: SafeArea(
         top: false,

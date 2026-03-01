@@ -255,7 +255,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                                 gradient: LinearGradient(
                                   colors: [
                                     Colors.transparent,
-                                    Colors.white.withOpacity(0.3),
+                                    Color.fromRGBO(255, 255, 255, 0.3),
                                     Colors.transparent,
                                   ],
                                 ),
