@@ -6,8 +6,10 @@ import 'screens/questionnaire_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/onboarding_screen1.dart';
 import 'screens/onboarding_screen2.dart';
-//import 'screens/library_screen.dart';
+import 'screens/upload_screen.dart';
 
+//import 'screens/uplod_screen.dart';
+//import 'screens/library_screen.dart';
 //import 'screens/learning_path_screen.dart';
 //import 'screens/quiz_screen.dart';
 //import 'screens/progress_screen.dart';
@@ -61,14 +63,18 @@ class StudySparkApp extends StatelessWidget {
       routes: {
         '/': (context) => const SplashScreen(),
         '/login': (context) => const LoginScreen(),
-        '/personality-test-welcome': (context) => const QuestionnaireWelcomeScreen(),
+        '/personality-test-welcome': (context) =>
+            const QuestionnaireWelcomeScreen(),
         '/home': (context) => const HomeScreen(),
         '/onboard1': (context) => const OnboardingScreen1(),
         '/onboard2': (context) => const OnboardingScreen2(),
-        '/questionnaire': (context) => const PersonalityTestQuestionnaireScreen(),
+        '/questionnaire': (context) =>
+            const PersonalityTestQuestionnaireScreen(),
+        '/upload': (context) => const UploadScreen(),
+        //'/upload': (context) => const UploadScreen(),
+
         //'/library': (context) => const LibraryScreen(),
-        
-        
+
         //'/learning-path': (context) => const LearningPathScreen(),
         //'/quiz': (context) => const QuizScreen(),
         //'/progress': (context) => const ProgressScreen(),
