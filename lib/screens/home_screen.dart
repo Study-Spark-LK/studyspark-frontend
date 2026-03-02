@@ -475,7 +475,7 @@ class _HomeScreenState extends State<HomeScreen> {
             width: 180,
             child: ElevatedButton.icon(
               onPressed: () {
-                // TODO: Navigator.pushNamed(context, '/upload');
+                Navigator.pushNamed(context, '/upload');
                 setState(() => _selectedIndex = 2);
               },
               icon: const Icon(Icons.add, size: 18),
@@ -633,7 +633,13 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Padding(
             padding: EdgeInsets.only(right: i < actions.length - 1 ? 12 : 0),
             child: GestureDetector(
-              onTap: () => setState(() => _selectedIndex = a['index'] as int),
+              onTap: () {
+                            if (a['index'] == 2) {
+                              Navigator.pushNamed(context, '/upload');
+                            } else {
+                              setState(() => _selectedIndex = a['index'] as int);
+                            }
+                          },
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 22),
                 decoration: const BoxDecoration(
@@ -696,7 +702,13 @@ class _HomeScreenState extends State<HomeScreen> {
             children: List.generate(items.length, (index) {
               final isSelected = _selectedIndex == index;
               return GestureDetector(
-                onTap: () => setState(() => _selectedIndex = index),
+                onTap: () {
+                          if (index == 2) {
+                            Navigator.pushNamed(context, '/upload');
+                          } else {
+                            setState(() => _selectedIndex = index);
+                          }
+                        },
                 behavior: HitTestBehavior.opaque,
                 child: SizedBox(
                   width: 64,
