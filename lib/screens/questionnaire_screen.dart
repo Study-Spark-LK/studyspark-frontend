@@ -87,7 +87,7 @@ class _PersonalityTestQuestionnaireScreenState
           const SizedBox(height: 16),
           // Progress bar
           ClipRRect(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.zero,
             child: LinearProgressIndicator(
               value: (currentStep + 1) / totalSteps,
               backgroundColor: const Color(0xFF2A2A3E),
@@ -463,7 +463,7 @@ class _PersonalityTestQuestionnaireScreenState
                 color: const Color(0xFF2A2A3E),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Color.fromRGBO(79, 195, 247, 0.2),
+                  color: const Color.fromARGB(51, 79, 195, 247),
                   width: 1,
                 ),
               ),
@@ -499,10 +499,10 @@ class _PersonalityTestQuestionnaireScreenState
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: Color.fromRGBO(79, 195, 247, 0.2),
+                          color: Color.fromARGB(51, 79, 195, 247),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: const Color(0xFF4FC3F7),
+                            color: Color(0xFF4FC3F7),
                             width: 1,
                           ),
                         ),
@@ -550,8 +550,8 @@ class _PersonalityTestQuestionnaireScreenState
                   horizontal: 32,
                   vertical: 12,
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
                 ),
               ),
               child: Row(
@@ -752,7 +752,9 @@ class _PersonalityTestQuestionnaireScreenState
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF2A2A3E),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+        ),
         title: Row(
           children: const [
             Icon(Icons.check_circle, color: Color(0xFF4FC3F7), size: 32),
@@ -817,7 +819,9 @@ class _PersonalityTestQuestionnaireScreenState
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF2A2A3E),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+        ),
         title: const Text(
           'Continue Later?',
           style: TextStyle(color: Colors.white),

@@ -136,10 +136,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Welcome back,',
           style: TextStyle(
-            color: Color.fromRGBO(255, 255, 255, 0.65),
+            color: Color.fromARGB(166, 255, 255, 255),
             fontSize: 16,
             fontWeight: FontWeight.w400,
           ),
@@ -164,12 +164,9 @@ class _HomeScreenState extends State<HomeScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A2332),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Color.fromRGBO(255, 255, 255, 0.07),
-          width: 1,
-        ),
+        color: Color(0xFF1A2332),
+        borderRadius: BorderRadius.all(Radius.circular(16)),
+        border: Border.all(color: Color.fromARGB(18, 255, 255, 255), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,10 +190,10 @@ class _HomeScreenState extends State<HomeScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Your Learning Style',
                     style: TextStyle(
-                      color: Color.fromRGBO(255, 255, 255, 0.55),
+                      color: Color.fromARGB(140, 255, 255, 255),
                       fontSize: 12,
                     ),
                   ),
@@ -215,24 +212,21 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 14),
-            child: Divider(
-              color: Color.fromRGBO(255, 255, 255, 0.1),
-              height: 1,
-            ),
+            child: Divider(color: Color.fromARGB(26, 255, 255, 255), height: 1),
           ),
-          Text(
+          const Text(
             'Personalizing with your interests:',
             style: TextStyle(
-              color: Color.fromRGBO(255, 255, 255, 0.55),
+              color: Color.fromARGB(140, 255, 255, 255),
               fontSize: 12,
             ),
           ),
           const SizedBox(height: 10),
           _interests.isEmpty
-              ? Text(
+              ? const Text(
                   'No interests selected yet',
                   style: TextStyle(
-                    color: Color.fromRGBO(255, 255, 255, 0.35),
+                    color: Color.fromARGB(89, 255, 255, 255),
                     fontSize: 12,
                   ),
                 )
@@ -248,9 +242,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           decoration: BoxDecoration(
                             color: const Color(0xFF0D1117),
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(20),
+                            ),
                             border: Border.all(
-                              color: Color.fromRGBO(255, 255, 255, 0.12),
+                              color: const Color.fromARGB(31, 255, 255, 255),
                               width: 1,
                             ),
                           ),
@@ -379,7 +375,7 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: const BorderRadius.all(Radius.circular(16)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -389,7 +385,7 @@ class _HomeScreenState extends State<HomeScreen> {
             height: 34,
             decoration: BoxDecoration(
               color: bgColor,
-              borderRadius: BorderRadius.circular(17),
+              borderRadius: const BorderRadius.all(Radius.circular(17)),
             ),
             child: Icon(icon, color: iconColor, size: 18),
           ),
@@ -397,7 +393,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Text(
             label,
             style: TextStyle(
-              color: textColor.withAlpha((0.65 * 255).round()),
+              color: textColor.withValues(alpha: 0.65),
               fontSize: 11,
               height: 1.4,
             ),
@@ -431,21 +427,21 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A2332),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Color.fromRGBO(79, 195, 247, 0.15), width: 1),
+      decoration: const BoxDecoration(
+        color: Color(0xFF1A2332),
+        borderRadius: BorderRadius.all(Radius.circular(16)),
+        border: Border.all(color: Color.fromARGB(38, 79, 195, 247), width: 1),
       ),
       child: Column(
         children: [
           Container(
             width: 72,
             height: 72,
-            decoration: BoxDecoration(
-              color: Color.fromRGBO(79, 195, 247, 0.1),
-              borderRadius: BorderRadius.circular(36),
+            decoration: const BoxDecoration(
+              color: Color.fromARGB(26, 79, 195, 247),
+              borderRadius: BorderRadius.all(Radius.circular(36)),
               border: Border.all(
-                color: Color.fromRGBO(79, 195, 247, 0.3),
+                color: Color.fromARGB(77, 79, 195, 247),
                 width: 2,
               ),
             ),
@@ -514,8 +510,8 @@ class _HomeScreenState extends State<HomeScreen> {
           end: Alignment.bottomRight,
           colors: [Color(0xFF1A2E44), Color(0xFF0F1E2E)],
         ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Color.fromRGBO(79, 195, 247, 0.25), width: 1),
+        borderRadius: const BorderRadius.all(Radius.circular(16)),
+        border: Border.all(color: Color.fromARGB(64, 79, 195, 247), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -536,9 +532,9 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: Color.fromRGBO(79, 195, 247, 0.15),
-                  borderRadius: BorderRadius.circular(6),
+                decoration: const BoxDecoration(
+                  color: Color.fromARGB(38, 79, 195, 247),
+                  borderRadius: BorderRadius.all(Radius.circular(6)),
                 ),
                 child: Text(
                   lesson.fileType.toUpperCase(),
@@ -557,15 +553,15 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Text(
                 lesson.subject,
-                style: TextStyle(
-                  color: Color.fromRGBO(255, 255, 255, 0.55),
+                style: const TextStyle(
+                  color: Color.fromARGB(140, 255, 255, 255),
                   fontSize: 13,
                 ),
               ),
-              Text(
+              const Text(
                 '  •  ',
                 style: TextStyle(
-                  color: Color.fromRGBO(255, 255, 255, 0.35),
+                  color: Color.fromARGB(89, 255, 255, 255),
                   fontSize: 13,
                 ),
               ),
@@ -577,8 +573,8 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(width: 4),
               Text(
                 lesson.estimatedTime,
-                style: TextStyle(
-                  color: Color.fromRGBO(255, 255, 255, 0.55),
+                style: const TextStyle(
+                  color: Color.fromARGB(140, 255, 255, 255),
                   fontSize: 13,
                 ),
               ),
@@ -588,10 +584,10 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 'Progress',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.55),
+                  color: Color.fromARGB(140, 255, 255, 255),
                   fontSize: 12,
                 ),
               ),
@@ -610,7 +606,7 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: lesson.progress,
-              backgroundColor: Color.fromRGBO(255, 255, 255, 0.1),
+              backgroundColor: const Color.fromARGB(26, 255, 255, 255),
               valueColor: const AlwaysStoppedAnimation<Color>(
                 Color(0xFF4FC3F7),
               ),
@@ -640,11 +636,11 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () => setState(() => _selectedIndex = a['index'] as int),
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 22),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1A2332),
-                  borderRadius: BorderRadius.circular(16),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF1A2332),
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
                   border: Border.all(
-                    color: const Color(0xFF4FC3F7).withOpacity(0.2),
+                    color: Color.fromARGB(51, 79, 195, 247),
                     width: 1,
                   ),
                 ),
@@ -685,10 +681,10 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
 
     return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF0D1117),
+      decoration: const BoxDecoration(
+        color: Color(0xFF0D1117),
         border: Border(
-          top: BorderSide(color: Color.fromRGBO(255, 255, 255, 0.08), width: 1),
+          top: BorderSide(color: Color.fromARGB(20, 255, 255, 255), width: 1),
         ),
       ),
       child: SafeArea(
@@ -711,7 +707,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         items[index]['icon'] as IconData,
                         color: isSelected
                             ? const Color(0xFF4FC3F7)
-                            : Colors.white.withOpacity(0.4),
+                            : Colors.white.withValues(alpha: 0.4),
                         size: 26,
                       ),
                       const SizedBox(height: 4),
@@ -720,7 +716,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(
                           color: isSelected
                               ? const Color(0xFF4FC3F7)
-                              : Colors.white.withOpacity(0.4),
+                              : Colors.white.withValues(alpha: 0.4),
                           fontSize: 10,
                           fontWeight: isSelected
                               ? FontWeight.w600

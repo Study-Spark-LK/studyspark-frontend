@@ -161,8 +161,8 @@ class _UploadScreenState extends State<UploadScreen> {
 
   Widget _audio() {
     return _infoCard("Audio Material", [
-      Row(
-        children: const [
+      const Row(
+        children: [
           Icon(Icons.play_circle_fill, color: Color(0xFF4FC3F7), size: 40),
           SizedBox(width: 10),
           Text("Audio Preview", style: TextStyle(color: Colors.white)),
