@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class OnboardingScreen2 extends StatelessWidget {
-  const OnboardingScreen2({super.key});
+class OnboardingScreen3 extends StatelessWidget {
+  const OnboardingScreen3({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,27 +26,26 @@ class OnboardingScreen2 extends StatelessWidget {
                 const SizedBox(height: 50),
 
                 Image.asset(
-                  "assets/images/onboard2.png",
+                  "assets/images/onboard3.png",
                   height: 280,
                 ),
 
                 const SizedBox(height: 40),
 
                 const Text(
-                  "Learning with\nengagement",
+                  "Progress tracking",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
-                    height: 1.3,
                   ),
                 ),
 
                 const SizedBox(height: 16),
 
                 const Text(
-                  "Interactive Quizzes\nSimplified Visuals, Audio And Stories",
+                  "Your Study Hours, Completed Lessons Can Be\nMonitored With Quiz Marks Along With The\nPerformance...",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
@@ -57,7 +56,6 @@ class OnboardingScreen2 extends StatelessWidget {
 
                 const Spacer(),
 
-                // Continue Button
                 SizedBox(
                   width: double.infinity,
                   height: 54,
@@ -69,7 +67,7 @@ class OnboardingScreen2 extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.pushNamed(context, '/onboard3');
+                      Navigator.pushReplacementNamed(context, '/onboard4');
                     },
                     child: const Text("continue"),
                   ),
