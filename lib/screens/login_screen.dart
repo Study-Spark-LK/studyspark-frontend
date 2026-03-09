@@ -409,10 +409,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       // Google Button
                       OutlinedButton.icon(
                         onPressed: _signInWithGoogle,
-                        icon: const Icon(
-                          Icons.g_mobiledata,
-                          color: Colors.white,
-                          size: 28,
+                        icon: Image.asset(
+                          'assets/images/google.png',
+                          width: 20,
+                          height: 20,
                         ),
                         label: Text(
                           _isLogin ? 'Sign In With Google' : 'Sign Up With Google',
@@ -425,6 +425,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: OutlinedButton.styleFrom(
                           side: BorderSide(color: Colors.grey[700]!),
                           minimumSize: const Size(double.infinity, 52),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
