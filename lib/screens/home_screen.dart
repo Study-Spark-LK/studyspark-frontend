@@ -46,7 +46,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   int _selectedIndex = 0;
   String _userName = 'User';
   String _learningStyle = 'Visual Learner';
@@ -88,7 +87,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     final completed = _lessons.where((l) => l.progress >= 1.0).length;
 
     return Scaffold(
@@ -97,7 +95,6 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: Column(
           children: [
-
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -105,7 +102,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     const SizedBox(height: 24),
 
                     Text(
@@ -136,7 +132,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-
                           const Text(
                             "Your Learning Style",
                             style: TextStyle(color: Colors.white70),
@@ -156,12 +151,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           Wrap(
                             spacing: 8,
                             children: _interests
-                                .map((i) => Chip(
-                                      label: Text(i),
-                                      backgroundColor: const Color(0xFF0D1117),
-                                      labelStyle:
-                                          const TextStyle(color: Colors.white),
-                                    ))
+                                .map(
+                                  (i) => Chip(
+                                    label: Text(i),
+                                    backgroundColor: const Color(0xFF0D1117),
+                                    labelStyle: const TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                )
                                 .toList(),
                           ),
                         ],
@@ -183,8 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: TextStyle(color: Colors.white70),
                           )
                         : Column(
-                            children:
-                                _lessons.map(_buildLessonCard).toList(),
+                            children: _lessons.map(_buildLessonCard).toList(),
                           ),
 
                     const SizedBox(height: 30),
@@ -211,7 +208,6 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           Text(
             lesson.title,
             style: const TextStyle(
@@ -222,9 +218,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
           const SizedBox(height: 8),
 
-          LinearProgressIndicator(
-            value: lesson.progress,
-          ),
+          LinearProgressIndicator(value: lesson.progress),
 
           Text(
             lesson.progressLabel,
@@ -237,25 +231,72 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildBottomNav() {
     final items = [
-      Icons.home,
-      Icons.menu_book,
-      Icons.upload,
-      Icons.psychology,
-      Icons.person
+      {'icon': Icons.home, 'label': 'Home'},
+      {'icon': Icons.menu_book, 'label': 'Library'},
+      {'icon': Icons.upload, 'label': 'Upload'},
+      {'icon': Icons.psychology, 'label': 'Progress'},
+      {'icon': Icons.person, 'label': 'Profile'},
     ];
 
-    return BottomNavigationBar(
-      currentIndex: _selectedIndex,
-      onTap: (i) => setState(() => _selectedIndex = i),
-      backgroundColor: const Color(0xFF0D1117),
-      selectedItemColor: const Color(0xFF4FC3F7),
-      unselectedItemColor: Colors.white54,
-      items: items
-          .map((icon) => BottomNavigationBarItem(
-                icon: Icon(icon),
-                label: '',
-              ))
-          .toList(),
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF0D1117),
+        border: Border(
+          top: BorderSide(
+            color: Colors.white.withValues(alpha: 0.08),
+            width: 1,
+          ),
+        ),
+      ),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 64,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: List.generate(items.length, (index) {
+              final isSelected = _selectedIndex == index;
+              return GestureDetector(
+                onTap: () {
+                  setState(() => _selectedIndex = index);
+                  if (index == 4) {
+                    Navigator.pushNamed(context, '/profile');
+                  }
+                },
+                behavior: HitTestBehavior.opaque,
+                child: SizedBox(
+                  width: 64,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        items[index]['icon'] as IconData,
+                        color: isSelected
+                            ? const Color(0xFF4FC3F7)
+                            : Colors.white.withValues(alpha: 0.4),
+                        size: 26,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        items[index]['label'] as String,
+                        style: TextStyle(
+                          color: isSelected
+                              ? const Color(0xFF4FC3F7)
+                              : Colors.white.withValues(alpha: 0.4),
+                          fontSize: 10,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+          ),
+        ),
+      ),
     );
   }
 }

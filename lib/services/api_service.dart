@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../models/subject.dart';
 
@@ -73,8 +74,53 @@ class ApiService {
     } on FormatException catch (e) {
       throw Exception('Invalid data received from server: ${e.message}');
     } catch (e) {
+      // Return mock data as fallback if API is not configured
+      if (e.toString().contains('API base URL is not configured')) {
+        return _getMockSubjects();
+      }
       throw Exception('Error fetching subjects: $e');
     }
+  }
+
+  List<Subject> _getMockSubjects() {
+    return [
+      Subject(
+        id: '1',
+        name: 'Mathematics',
+        icon: Icons.calculate,
+        color: const Color(0xFF6C63FF),
+        progress: 0.75,
+        totalLessons: 20,
+        completedLessons: 15,
+      ),
+      Subject(
+        id: '2',
+        name: 'English',
+        icon: Icons.menu_book,
+        color: const Color(0xFFFF6B6B),
+        progress: 0.6,
+        totalLessons: 18,
+        completedLessons: 11,
+      ),
+      Subject(
+        id: '3',
+        name: 'Science',
+        icon: Icons.science,
+        color: const Color(0xFF4ECDC4),
+        progress: 0.8,
+        totalLessons: 22,
+        completedLessons: 18,
+      ),
+      Subject(
+        id: '4',
+        name: 'History',
+        icon: Icons.history_edu,
+        color: const Color(0xFFFFD93D),
+        progress: 0.5,
+        totalLessons: 16,
+        completedLessons: 8,
+      ),
+    ];
   }
 
   // Add more API methods as needed
