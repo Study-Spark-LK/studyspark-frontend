@@ -1002,7 +1002,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 10),
           Text(label,
               style: TextStyle(
-                  color: textColor.withOpacity(0.65),
+                  color: textColor.withValues(alpha: 0.6),
                   fontSize: 11,
                   height: 1.4)),
           const SizedBox(height: 6),
@@ -1065,7 +1065,7 @@ class _HomeScreenState extends State<HomeScreen> {
             width: 180,
             child: ElevatedButton.icon(
               onPressed: () {
-                // TODO: Navigator.pushNamed(context, '/upload');
+                Navigator.pushNamed(context, '/upload');
                 setState(() => _selectedIndex = 2);
               },
               icon: const Icon(Icons.add, size: 18),
@@ -1192,7 +1192,13 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Padding(
             padding: EdgeInsets.only(right: i < actions.length - 1 ? 12 : 0),
             child: GestureDetector(
-              onTap: () => setState(() => _selectedIndex = a['index'] as int),
+              onTap: () {
+                            if (a['index'] == 2) {
+                              Navigator.pushNamed(context, '/upload');
+                            } else {
+                              setState(() => _selectedIndex = a['index'] as int);
+                            }
+                          },
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 22),
                 decoration: BoxDecoration(
@@ -1250,7 +1256,9 @@ class _HomeScreenState extends State<HomeScreen> {
               return GestureDetector(
                 onTap: () {
                   setState(() => _selectedIndex = index);
-                  if (index == 4) {
+                  if (index == 2) {
+                    Navigator.pushNamed(context, '/upload');
+                  } else if (index == 4) {
                     Navigator.pushNamed(context, '/profile');
                   }
                 },
