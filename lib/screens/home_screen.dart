@@ -1,5 +1,8 @@
 
 import 'package:flutter/material.dart';
+import 'package:studyspark/api/api_client.dart';
+import 'package:clerk_flutter/clerk_flutter.dart';
+
 class UploadedLesson {
   final String title;
   final String subject;
@@ -64,6 +67,15 @@ class _HomeScreenState extends State<HomeScreen> {
           _interests = interests.cast<String>().take(3).toList();
         }
       });
+    }
+  }
+
+  void testBackend() async {
+    try {
+      final response = await apiClient.profiles.getProfiles();
+      print("response $response");
+    } catch (e) {
+      print('API Error: $e');
     }
   }
 
@@ -380,6 +392,50 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               icon: const Icon(Icons.add, size: 18),
               label: const Text('Upload Content',
+                  style: TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w600)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF4FC3F7),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                elevation: 0,
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: 180,
+            child: ElevatedButton.icon(
+              onPressed: testBackend,
+              icon: const Icon(Icons.add, size: 18),
+              label: const Text('test button',
+                  style: TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w600)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF4FC3F7),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                elevation: 0,
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: 180,
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                await ClerkAuth.of(context).signOut();
+                print("Signed out");
+                if (mounted) {
+                  Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+                }
+              },
+              icon: const Icon(Icons.add, size: 18),
+              label: const Text('logout',
                   style: TextStyle(
                       fontSize: 14, fontWeight: FontWeight.w600)),
               style: ElevatedButton.styleFrom(
