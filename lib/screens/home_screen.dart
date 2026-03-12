@@ -7,7 +7,7 @@ class UploadedLesson {
   final String title;
   final String subject;
   final String estimatedTime;
-  final double progress; 
+  final double progress;
   final String fileType; // 'pdf', 'video', 'doc', etc.
 
   const UploadedLesson({
@@ -53,6 +53,17 @@ class _HomeScreenState extends State<HomeScreen> {
   String _userName      = 'User';
   String _learningStyle = 'Visual Learner';
   List<String> _interests = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    fetchClerkToken = () async {
+      return ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+    };
+  }
+
+
 
   @override
   void didChangeDependencies() {
@@ -135,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  //Welcome Header 
+  //Welcome Header
   Widget _buildWelcomeHeader() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Learning Style Card 
+  // Learning Style Card
   Widget _buildLearningStyleCard() {
     return Container(
       width: double.infinity,
@@ -261,7 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  //Stats Row 
+  //Stats Row
   Widget _buildStatsRow() {
     final completed = _lessons.where((l) => l.progress >= 1.0).length;
     return Row(
@@ -338,7 +349,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  //Section Title 
+  //Section Title
   Widget _buildSectionTitle(String title) => Text(title,
       style: const TextStyle(
           color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700));
@@ -543,7 +554,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  //Quick Actions 
+  //Quick Actions
   Widget _buildQuickActions() {
     final actions = [
       {'icon': Icons.menu_book_outlined,   'label': 'Library',  'index': 1},
@@ -594,7 +605,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Bottom Navigation 
+  // Bottom Navigation
   Widget _buildBottomNav() {
     final items = [
       {'icon': Icons.home_rounded,           'label': 'Home'},
