@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import '../api/api_client.dart';
+import '../api/models/profiles_request_body.dart';
+import 'package:studyspark/api/models/profiles_request_body.dart';
+import 'package:studyspark/api/models/qna.dart';
+import 'package:clerk_flutter/clerk_flutter.dart';
 
 class PersonalityTestQuestionnaireScreen extends StatefulWidget {
   const PersonalityTestQuestionnaireScreen({super.key});
@@ -13,6 +18,15 @@ class _PersonalityTestQuestionnaireScreenState
   int currentStep = 0;
   final int totalSteps = 5;
 
+  @override
+  void initState() {
+    super.initState();
+
+    fetchClerkToken = () async {
+      return ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+    };
+  }
+
   // Store answers for each question
   Map<String, dynamic> answers = {
     'learningPreference': null, // Question 1
@@ -20,6 +34,14 @@ class _PersonalityTestQuestionnaireScreenState
     'interestCreation': null, // Question 3
     'interests': <String>[], // Question 4 (multi-select)
     'contentConsumption': <String>[], // Question 5 (multi-select)
+  };
+
+  final Map<String, String> _questionTexts = {
+    'learningPreference': 'When learning something new, I prefer to:',
+    'informationRetention': 'I remember information best when:',
+    'interestCreation': 'A topic becomes interesting to me when:',
+    'interests': 'Mark your interests to create personalized learning content',
+    'contentConsumption': 'Content consumption preferences',
   };
 
   final TextEditingController _customInterestController =
@@ -484,8 +506,8 @@ class _PersonalityTestQuestionnaireScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: const [
+                  const Row(
+                    children: [
                       Icon(
                         Icons.check_circle,
                         color: Color(0xFF4FC3F7),
@@ -772,89 +794,154 @@ class _PersonalityTestQuestionnaireScreenState
       _completeTest();
     }
   }
+  List<Qna> _generateQnaPayload() {
 
-  void _completeTest() {
-    // Show completion dialog or navigate directly to home
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF2A2A3E),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        title: Row(
-          children: const [
-            Icon(
-              Icons.check_circle,
-              color: Color(0xFF4FC3F7),
-              size: 32,
+    List<Qna> qnaList = [];
+
+    answers.forEach((key, value) {
+      if (value != null) {
+        String answerString = '';
+
+        if (value is List) {
+          if (value.isNotEmpty) {
+            answerString = value.join(', ');
+          }
+        } else {
+          answerString = value.toString();
+        }
+
+        if (answerString.isNotEmpty) {
+          qnaList.add(
+            Qna(
+              question: _questionTexts[key] ?? key,
+              answer: answerString,
             ),
-            SizedBox(width: 12),
-            Text(
-              'Test Completed!',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text(
-              'Your personality test is complete!',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Your learning preferences have been saved and we\'ll personalize your experience accordingly.',
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close dialog
-                // Navigate to home and clear all previous routes
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/home',
-                  (route) => false,
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4FC3F7),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text(
-                'Go to Home',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+          );
+        }
+      }
+    });
+
+    return qnaList;
   }
+
+
+  void _completeTest() async {
+
+    final qnaPayload = _generateQnaPayload();
+
+    print("Payload: $qnaPayload");
+
+
+    try {
+
+      final requestBody = ProfilesRequestBody(
+        qna: qnaPayload, name: 'test',
+      );
+
+      await apiClient.profiles.postProfiles(body: requestBody);
+
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+
+      _showSuccessDialog();
+
+    } catch (e) {
+      if (mounted) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save profile: $e')),
+        );
+      }
+    }
+  }
+
+  void _showSuccessDialog() {
+     // Show completion dialog or navigate directly to home
+     showDialog(
+       context: context,
+       barrierDismissible: false,
+       builder: (context) => AlertDialog(
+         backgroundColor: const Color(0xFF2A2A3E),
+         shape: RoundedRectangleBorder(
+           borderRadius: BorderRadius.circular(20),
+         ),
+         title: const Row(
+           children: [
+             Icon(
+               Icons.check_circle,
+               color: Color(0xFF4FC3F7),
+               size: 32,
+             ),
+             SizedBox(width: 12),
+             Text(
+               'Test Completed!',
+               style: TextStyle(
+                 color: Colors.white,
+                 fontSize: 22,
+                 fontWeight: FontWeight.bold,
+               ),
+             ),
+           ],
+         ),
+         content: const Column(
+           mainAxisSize: MainAxisSize.min,
+           crossAxisAlignment: CrossAxisAlignment.start,
+           children: [
+             Text(
+               'Your personality test is complete!',
+               style: TextStyle(
+                 color: Colors.white,
+                 fontSize: 16,
+               ),
+             ),
+             SizedBox(height: 8),
+             Text(
+               'Your learning preferences have been saved and we\'ll personalize your experience accordingly.',
+               style: TextStyle(
+                 color: Colors.white70,
+                 fontSize: 14,
+               ),
+             ),
+           ],
+         ),
+         actions: [
+           SizedBox(
+             width: double.infinity,
+             child: ElevatedButton(
+               onPressed: () {
+                 Navigator.of(context).pop(); // Close dialog
+                 // Navigate to home and clear all previous routes
+                 Navigator.of(context).pushNamedAndRemoveUntil(
+                   '/home',
+                       (route) => false,
+                 );
+               },
+               style: ElevatedButton.styleFrom(
+                 backgroundColor: const Color(0xFF4FC3F7),
+                 foregroundColor: Colors.white,
+                 padding: const EdgeInsets.symmetric(vertical: 14),
+                 shape: RoundedRectangleBorder(
+                   borderRadius: BorderRadius.circular(12),
+                 ),
+               ),
+               child: const Text(
+                 'Go to Home',
+                 style: TextStyle(
+                   fontSize: 16,
+                   fontWeight: FontWeight.w600,
+                 ),
+               ),
+             ),
+           ),
+         ],
+       ),
+     );
+   }
 
   void _showContinueLaterDialog() {
     showDialog(
