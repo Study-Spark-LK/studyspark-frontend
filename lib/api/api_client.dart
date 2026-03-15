@@ -59,5 +59,5 @@ Dio buildDioClient() {
 
   return dio;
 }
-
-final apiClient = RestClient(buildDioClient());
+final rawDio = buildDioClient();
+final apiClient = RestClient(rawDio);
