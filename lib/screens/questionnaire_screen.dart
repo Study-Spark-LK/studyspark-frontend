@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../api/api_client.dart';
 import '../api/models/profiles_request_body.dart';
-import 'package:studyspark/api/models/profiles_request_body.dart';
 import 'package:studyspark/api/models/qna.dart';
 import 'package:clerk_flutter/clerk_flutter.dart';
+import 'dart:convert';
 
 class PersonalityTestQuestionnaireScreen extends StatefulWidget {
   const PersonalityTestQuestionnaireScreen({super.key});
@@ -838,11 +838,14 @@ class _PersonalityTestQuestionnaireScreenState
         qna: qnaPayload, name: 'test',
       );
 
-      await apiClient.profiles.postProfiles(body: requestBody);
+      print("Raw JSON: ${jsonEncode(requestBody)}");
 
-      if (mounted) {
-        Navigator.of(context).pop();
-      }
+      await rawDio.get('/create-user-if-not-exists');
+
+      final res = await apiClient.profiles.postProfiles(body: requestBody);
+
+      print("========== res=======: $res");
+
 
       if (mounted) {
         Navigator.of(context).pop();
