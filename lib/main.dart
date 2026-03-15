@@ -11,6 +11,7 @@ import 'screens/onboarding_screen2.dart';
 //import 'screens/quiz_screen.dart';
 //import 'screens/progress_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/practice_screen.dart';
 
 void main() {
   runApp(const StudySparkApp());
@@ -72,6 +73,7 @@ class StudySparkApp extends StatelessWidget {
         //'/quiz': (context) => const QuizScreen(),
         //'/progress': (context) => const ProgressScreen(),
         '/profile': (context) => const ProfileScreen(),
+        '/practice': (context) => const PracticeScreen(),
       },
     );
   }
