@@ -11,6 +11,7 @@ import 'screens/onboarding_screen2.dart';
 import 'screens/onboarding_screen3.dart';
 import 'screens/upload_screen.dart';
 import 'package:studyspark/env.dart';
+import 'package:studyspark/api/api_client.dart';
 //import 'screens/learning_path_screen.dart';
 //import 'screens/quiz_screen.dart';
 //import 'screens/progress_screen.dart';
@@ -69,13 +70,49 @@ class StudySparkApp extends StatelessWidget {
           home: ClerkErrorListener(
             child: ClerkAuthBuilder(
               signedInBuilder: (context, authState) {
-                final auth = ClerkAuth.of(context);
-                final user = auth.user;
-                print("Email1: ${user?.email}");
-                print("Username: ${user?.username}");
-                print("firstName: ${user?.firstName}");
-                print("lastName: ${user?.lastName}");
-                return const QuestionnaireWelcomeScreen();
+                Future<bool> checkIfUserHasProfiles() async {
+                  try {
+                    final token = ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+                    if (token != null) {
+                      rawDio.options.headers['Authorization'] = 'Bearer $token';
+                    }
+
+                    final res = await rawDio.get('/profiles?status=all');
+                    final profilesList = res.data['data'] as List?;
+
+                    if (profilesList != null && profilesList.isNotEmpty) {
+                      return true;
+                    }
+
+                    return false;
+
+                  } catch (e) {
+                    print("Error fetching profiles for routing: $e");
+                    return false;
+                  }
+                }
+                return FutureBuilder<bool>(
+                  future: checkIfUserHasProfiles(),
+                  builder: (context, snapshot) {
+
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Scaffold(
+                        backgroundColor: Color(0xFF1A1A2E),
+                        body: Center(
+                          child: CircularProgressIndicator(color: Color(0xFF6C63FF)),
+                        ),
+                      );
+                    }
+
+                    final hasProfiles = snapshot.data ?? false;
+
+                    if (hasProfiles) {
+                      return const HomeScreen();
+                    } else {
+                      return const QuestionnaireWelcomeScreen();
+                    }
+                  },
+                );
               },
               signedOutBuilder: (context, authState) => const LoginScreen(),
             ),
