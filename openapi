@@ -1,0 +1,1490 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "StudySpark Internal API",
+        "version": "1.0.0"
+    },
+    "security": [
+        {
+            "Bearer": []
+        }
+    ],
+    "servers": [
+        {
+            "url": "http://localhost:8787",
+            "description": "Local Server (Wrangler)"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "Bearer": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "Enter your Clerk JWT token here"
+            }
+        },
+        "schemas": {
+            "error 4xx schema": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "enum": [
+                            "input_validation_error",
+                            "authentication_required",
+                            "profile-not-found",
+                            "profile-not-ready",
+                            "document-not-found",
+                            "invalid_file",
+                            "file_not_found",
+                            "file_too_large",
+                            "unknown error"
+                        ]
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "additionalProperties": false
+            }
+        },
+        "parameters": {}
+    },
+    "paths": {
+        "/storage/files": {
+            "post": {
+                "tags": [
+                    "Storage"
+                ],
+                "operationId": "uploadFile",
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^\\d+$"
+                        },
+                        "required": true,
+                        "name": "content-length",
+                        "in": "header"
+                    },
+                    {
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "application/pdf"
+                            ]
+                        },
+                        "required": true,
+                        "name": "content-type",
+                        "in": "header"
+                    },
+                    {
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": false,
+                        "name": "x-file-name",
+                        "in": "header"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/pdf": {
+                            "schema": {
+                                "type": "string",
+                                "format": "binary"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "file uploaded successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "id"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "unknown server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/storage/files/{id}": {
+            "get": {
+                "tags": [
+                    "Storage"
+                ],
+                "operationId": "downloadFile",
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "file content",
+                        "content": {
+                            "application/pdf": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            },
+                            "application/octet-stream": {
+                                "description": "when file content type is missing",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "resource not found",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "unknown server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/profiles": {
+            "get": {
+                "tags": [
+                    "Profiles"
+                ],
+                "operationId": "getProfiles",
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "all",
+                                "pending",
+                                "ready"
+                            ],
+                            "default": "all"
+                        },
+                        "required": false,
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "all profiles",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                            "PENDING",
+                                                            "READY"
+                                                        ]
+                                                    },
+                                                    "visualScore": {
+                                                        "type": "number"
+                                                    },
+                                                    "auditoryScore": {
+                                                        "type": "number"
+                                                    },
+                                                    "readingScore": {
+                                                        "type": "number"
+                                                    },
+                                                    "kinestheticScore": {
+                                                        "type": "number"
+                                                    },
+                                                    "createdAt": {
+                                                        "type": "number"
+                                                    },
+                                                    "updatedAt": {
+                                                        "type": "number"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "id",
+                                                    "name",
+                                                    "status",
+                                                    "visualScore",
+                                                    "auditoryScore",
+                                                    "readingScore",
+                                                    "kinestheticScore",
+                                                    "createdAt",
+                                                    "updatedAt"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "unknown server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Profiles"
+                ],
+                "operationId": "createProfile",
+                "requestBody": {
+                    "description": "name info",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "qna": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "question": {
+                                                    "type": "string"
+                                                },
+                                                "answer": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "question",
+                                                "answer"
+                                            ]
+                                        }
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "qna"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "profile created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "PENDING"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "name",
+                                                "status"
+                                            ],
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "unknown server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Profiles"
+                ],
+                "operationId": "getProfiles",
+                "requestBody": {
+                    "description": "name info",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "id"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "deleted profile",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "PENDING",
+                                                        "READY"
+                                                    ]
+                                                },
+                                                "visualScore": {
+                                                    "type": "number"
+                                                },
+                                                "auditoryScore": {
+                                                    "type": "number"
+                                                },
+                                                "readingScore": {
+                                                    "type": "number"
+                                                },
+                                                "kinestheticScore": {
+                                                    "type": "number"
+                                                },
+                                                "createdAt": {
+                                                    "type": "number"
+                                                },
+                                                "updatedAt": {
+                                                    "type": "number"
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "name",
+                                                "status",
+                                                "visualScore",
+                                                "auditoryScore",
+                                                "readingScore",
+                                                "kinestheticScore",
+                                                "createdAt",
+                                                "updatedAt"
+                                            ],
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "resource not found",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "unknown server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/documents": {
+            "get": {
+                "tags": [
+                    "Documents"
+                ],
+                "operationId": "getDocuments",
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": false,
+                        "name": "category",
+                        "in": "query"
+                    },
+                    {
+                        "schema": {
+                            "type": "number",
+                            "nullable": true
+                        },
+                        "required": false,
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "documents",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string"
+                                                    },
+                                                    "profileId": {
+                                                        "type": "string"
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                            "PENDING",
+                                                            "READY"
+                                                        ]
+                                                    },
+                                                    "title": {
+                                                        "type": "string"
+                                                    },
+                                                    "description": {
+                                                        "type": "string"
+                                                    },
+                                                    "category": {
+                                                        "type": "string"
+                                                    },
+                                                    "progressPercentage": {
+                                                        "type": "number"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "id",
+                                                    "profileId",
+                                                    "status",
+                                                    "title",
+                                                    "description",
+                                                    "category",
+                                                    "progressPercentage"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "unknown server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Documents"
+                ],
+                "operationId": "createDocument",
+                "requestBody": {
+                    "description": "document info",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "fileId": {
+                                        "type": "string"
+                                    },
+                                    "profileId": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "fileId",
+                                    "profileId"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "document created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "profileId": {
+                                                    "type": "string"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "PENDING"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "profileId",
+                                                "status"
+                                            ],
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "unknown server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/documents/{documentId}": {
+            "get": {
+                "tags": [
+                    "Documents"
+                ],
+                "operationId": "getDocument",
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "name": "documentId",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "documents",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "profileId": {
+                                                    "type": "string"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "PENDING",
+                                                        "READY"
+                                                    ]
+                                                },
+                                                "title": {
+                                                    "type": "string"
+                                                },
+                                                "description": {
+                                                    "type": "string"
+                                                },
+                                                "category": {
+                                                    "type": "string"
+                                                },
+                                                "progressPercentage": {
+                                                    "type": "number"
+                                                },
+                                                "originalFileId": {
+                                                    "type": "string"
+                                                },
+                                                "generatedFiles": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "fileId": {
+                                                                "type": "string"
+                                                            },
+                                                            "type": {
+                                                                "type": "string",
+                                                                "enum": [
+                                                                    "visual",
+                                                                    "audio",
+                                                                    "analytical",
+                                                                    "story"
+                                                                ]
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "fileId",
+                                                            "type"
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "profileId",
+                                                "status",
+                                                "title",
+                                                "description",
+                                                "category",
+                                                "progressPercentage",
+                                                "originalFileId",
+                                                "generatedFiles"
+                                            ],
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "resource not found",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "unknown server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Documents"
+                ],
+                "operationId": "getDocumentProgress",
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "name": "documentId",
+                        "in": "path"
+                    },
+                    {
+                        "schema": {
+                            "type": "number",
+                            "minimum": 0,
+                            "exclusiveMinimum": true
+                        },
+                        "required": true,
+                        "name": "progress",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "documents",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "profileId": {
+                                                    "type": "string"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "PENDING",
+                                                        "READY"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "profileId",
+                                                "status"
+                                            ],
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "resource not found",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "unknown server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Documents"
+                ],
+                "operationId": "deleteDocument",
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "name": "documentId",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "documents",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "profileId": {
+                                                    "type": "string"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "PENDING",
+                                                        "READY"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "profileId",
+                                                "status"
+                                            ],
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "resource not found",
+                        "headers": {
+                            "content-type": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "application/problem+json"
+                                    ]
+                                },
+                                "required": true
+                            }
+                        },
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error 4xx schema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "unknown server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

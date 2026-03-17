@@ -1,0 +1,27 @@
+// coverage:ignore-file
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, unused_import, invalid_annotation_target, unnecessary_import
+
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+import 'status.dart';
+
+part 'data4.freezed.dart';
+part 'data4.g.dart';
+
+@Freezed()
+abstract class Data4 with _$Data4 {
+  const factory Data4({
+    required String id,
+    required String name,
+    required Status status,
+    required num visualScore,
+    required num auditoryScore,
+    required num readingScore,
+    required num kinestheticScore,
+    required num createdAt,
+    required num updatedAt,
+  }) = _Data4;
+  
+  factory Data4.fromJson(Map<String, Object?> json) => _$Data4FromJson(json);
+}
