@@ -43,14 +43,24 @@ class OnboardingScreen1 extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 40),
+              const Spacer(),
+                Row(
+                   mainAxisAlignment: MainAxisAlignment.center,
+                   children: [
+                      _dot(true),
+                      _dot(false),
+                      _dot(false),
+                      _dot(false),
+                    ],
+            ),
+            const SizedBox(height: 20),
 
               SizedBox(
                 width: double.infinity,
+                height: 54,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF38BDF8),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: const Color(0xFF38BDF8),                 
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
@@ -79,4 +89,15 @@ class OnboardingScreen1 extends StatelessWidget {
       ),
     );
   }
+}
+Widget _dot(bool isActive) {
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 4),
+    width: isActive ? 10 : 8,
+    height: isActive ? 10 : 8,
+    decoration: BoxDecoration(
+      color: isActive ? const Color(0xFF38BDF8) : Colors.white38,
+      shape: BoxShape.circle,
+    ),
+  );
 }
