@@ -57,6 +57,18 @@ class OnboardingScreen2 extends StatelessWidget {
 
                 const Spacer(),
 
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _dot(false),
+                    _dot(true),
+                    _dot(false),
+                    _dot(false),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
                 // Continue Button
                 SizedBox(
                   width: double.infinity,
@@ -95,4 +107,15 @@ class OnboardingScreen2 extends StatelessWidget {
       ),
     );
   }
+}
+Widget _dot(bool isActive) {
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 4),
+    width: isActive ? 10 : 8,
+    height: isActive ? 10 : 8,
+    decoration: BoxDecoration(
+      color: isActive ? const Color(0xFF4CC2F1) : Colors.white38,
+      shape: BoxShape.circle,
+    ),
+  );
 }

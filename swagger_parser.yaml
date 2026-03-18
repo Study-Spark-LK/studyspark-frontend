@@ -1,0 +1,13 @@
+swagger_parser:
+  schema_url: https://studyspark-backend.zxyz.workers.dev/dev/openapi
+  output_directory: lib/api
+  json_serializer: freezed
+  put_clients_in_folder: true
+  use_freezed3: true
+  use_multipart_file: true
+  path_method_name: true
+
+  skipped_parameters:
+    - "Content-Type"
+    - "content-type"
+    - "contentType"
