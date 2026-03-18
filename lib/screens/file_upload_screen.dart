@@ -52,6 +52,7 @@ class _UploadScreenState extends State<UploadScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+
               const Text(
                 'Upload Your PDF',
                 style: TextStyle(
@@ -60,7 +61,9 @@ class _UploadScreenState extends State<UploadScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+
               const SizedBox(height: 8),
+
               const Text(
                 "We'll analyze your documents and create\npersonalized lessons based on your learning style\nand hobbies",
                 style: TextStyle(
@@ -69,75 +72,54 @@ class _UploadScreenState extends State<UploadScreen> {
                   height: 1.5,
                 ),
               ),
+
               const SizedBox(height: 24),
 
-              InkWell(
-                onTap: _pickPDF,
-                borderRadius: BorderRadius.circular(16),
-                child: Container(
-                  width: double.infinity,
-                  height: 180,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: _selectedFile != null
-                          ? const Color(0xFF4FC3F7)
-                          : Colors.white.withValues(alpha: 0.25),
-                      width: 1.2,
+              // Upload Box
+              Container(
+                width: double.infinity,
+                height: 180,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.25),
+                    width: 1.2,
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(28),
+                      ),
+                      child: const Icon(
+                        Icons.upload_outlined,
+                        color: Colors.white,
+                        size: 30,
+                      ),
                     ),
-                    color: _selectedFile != null
-                        ? const Color(0xFF4FC3F7).withValues(alpha: 0.1)
-                        : Colors.transparent,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: _selectedFile != null
-                              ? const Color(0xFF4FC3F7).withValues(alpha: 0.2)
-                              : Colors.white.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(28),
-                        ),
-                        child: Icon(
-                          _selectedFile != null
-                              ? Icons.picture_as_pdf
-                              : Icons.upload_outlined,
-                          color: _selectedFile != null
-                              ? const Color(0xFF4FC3F7)
-                              : Colors.white,
-                          size: 30,
-                        ),
+                    const SizedBox(height: 14),
+                    const Text(
+                      'Drop your PDF here or click\nto browse',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
                       ),
-                      const SizedBox(height: 14),
-
-                      Text(
-                        _selectedFile != null
-                            ? _selectedFile!.name
-                            : 'Drop your PDF here or click\nto browse',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: _selectedFile != null ? const Color(0xFF4FC3F7) : Colors.white,
-                          fontSize: 14,
-                          fontWeight: _selectedFile != null ? FontWeight.bold : FontWeight.normal,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      'Supports PDF files up to 10MB',
+                      style: TextStyle(
+                        color: Colors.white54,
+                        fontSize: 11,
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        _selectedFile != null
-                            ? '${(_selectedFile!.size / (1024 * 1024)).toStringAsFixed(2)} MB'
-                            : 'Supports PDF files up to 10MB',
-                        style: const TextStyle(
-                          color: Colors.white54,
-                          fontSize: 11,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
 
@@ -178,25 +160,19 @@ class _UploadScreenState extends State<UploadScreen> {
                 height: 52,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    // if no file is selected
-                    backgroundColor: _selectedFile != null
-                        ? const Color(0xFF4FC3F7)
-                        : Colors.grey[700],
+                    backgroundColor: const Color(0xFF4FC3F7),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(26),
                     ),
                   ),
-                  onPressed: _selectedFile == null
-                      ? null
-                      : () {
-                    print("Ready to upload: ${_selectedFile!.path}");
+                  onPressed: () {
+                    // TODO: Implement PDF picker + upload logic
                   },
                   child: const Text(
                     'Continue',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white,
                     ),
                   ),
                 ),

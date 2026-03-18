@@ -335,7 +335,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 10),
           Text(label,
               style: TextStyle(
-                  color: textColor.withOpacity(0.65),
+                  color: textColor.withValues(alpha: 0.6),
                   fontSize: 11,
                   height: 1.4)),
           const SizedBox(height: 6),
@@ -632,12 +632,13 @@ class _HomeScreenState extends State<HomeScreen> {
               final isSelected = _selectedIndex == index;
               return GestureDetector(
                 onTap: () {
-                          if (index == 2) {
-                            Navigator.pushNamed(context, '/upload');
-                          } else {
-                            setState(() => _selectedIndex = index);
-                          }
-                        },
+                  setState(() => _selectedIndex = index);
+                  if (index == 2) {
+                    Navigator.pushNamed(context, '/upload');
+                  } else if (index == 4) {
+                    Navigator.pushNamed(context, '/profile');
+                  }
+                },
                 behavior: HitTestBehavior.opaque,
                 child: SizedBox(
                   width: 64,

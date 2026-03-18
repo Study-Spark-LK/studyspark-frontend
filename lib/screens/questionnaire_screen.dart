@@ -506,8 +506,8 @@ class _PersonalityTestQuestionnaireScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
-                    children: [
+                  Row(
+                    children: const [
                       Icon(
                         Icons.check_circle,
                         color: Color(0xFF4FC3F7),
@@ -586,8 +586,8 @@ class _PersonalityTestQuestionnaireScreenState
                   horizontal: 32,
                   vertical: 12,
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
                 ),
               ),
               child: Row(
