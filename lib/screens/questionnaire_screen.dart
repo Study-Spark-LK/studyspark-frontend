@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import '../api/api_client.dart';
+import '../api/models/profiles_request_body.dart';
+import 'package:studyspark/api/models/qna.dart';
+import 'package:clerk_flutter/clerk_flutter.dart';
+import 'dart:convert';
 
 class PersonalityTestQuestionnaireScreen extends StatefulWidget {
   const PersonalityTestQuestionnaireScreen({super.key});
@@ -13,6 +18,16 @@ class _PersonalityTestQuestionnaireScreenState
   int currentStep = 0;
   final int totalSteps = 8;
 
+  @override
+  void initState() {
+    super.initState();
+
+    fetchClerkToken = () async {
+      return ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+    };
+  }
+
+  // Store answers for each question
   Map<String, dynamic> answers = {
     'question1': null,
     'question2': null,
@@ -22,6 +37,14 @@ class _PersonalityTestQuestionnaireScreenState
     'question6': null,
     'question7': null,
     'interests': <String>[],
+  };
+
+  final Map<String, String> _questionTexts = {
+    'learningPreference': 'When learning something new, I prefer to:',
+    'informationRetention': 'I remember information best when:',
+    'interestCreation': 'A topic becomes interesting to me when:',
+    'interests': 'Mark your interests to create personalized learning content',
+    'contentConsumption': 'Content consumption preferences',
   };
 
   final TextEditingController _customInterestController =
@@ -388,7 +411,10 @@ class _PersonalityTestQuestionnaireScreenState
         children: [
           Text(
             'Question $questionNumber',
-            style: const TextStyle(color: Colors.white60, fontSize: 14),
+            style: const TextStyle(
+              color: Colors.white60,
+              fontSize: 14,
+            ),
           ),
           const SizedBox(height: 12),
           Text(
@@ -411,7 +437,7 @@ class _PersonalityTestQuestionnaireScreenState
                 onTap: () => onSelect(option['value']!),
               ),
             );
-          }),
+          }).toList(),
         ],
       ),
     );
@@ -544,9 +570,7 @@ class _PersonalityTestQuestionnaireScreenState
                     backgroundColor: const Color(0xFF2A2A3E),
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 14,
-                    ),
+                        horizontal: 24, vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -571,12 +595,15 @@ class _PersonalityTestQuestionnaireScreenState
                   borderRadius: BorderRadius.all(Radius.circular(12)),
                 ),
               ),
-              child: Row(
+              child: const Row(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Icon(Icons.bookmark_outline, size: 18),
                   SizedBox(width: 8),
-                  Text('Continue Later', style: TextStyle(fontSize: 14)),
+                  Text(
+                    'Continue Later',
+                    style: TextStyle(fontSize: 14),
+                  ),
                 ],
               ),
             ),
@@ -621,7 +648,11 @@ class _PersonalityTestQuestionnaireScreenState
               ),
             ),
             if (isSelected)
-              const Icon(Icons.check_circle, color: Colors.white, size: 24),
+              const Icon(
+                Icons.check_circle,
+                color: Colors.white,
+                size: 24,
+              ),
           ],
         ),
       ),
@@ -695,10 +726,8 @@ class _PersonalityTestQuestionnaireScreenState
                     SizedBox(width: 8),
                     Text(
                       'Previous',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
@@ -725,9 +754,7 @@ class _PersonalityTestQuestionnaireScreenState
                   Text(
                     currentStep == totalSteps - 1 ? 'Complete' : 'Next',
                     style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                        fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(width: 8),
                   const Icon(Icons.arrow_forward, size: 20),
@@ -770,6 +797,57 @@ class _PersonalityTestQuestionnaireScreenState
       _completeTest();
     }
   }
+  List<Qna> _generateQnaPayload() {
+
+    List<Qna> qnaList = [];
+
+    answers.forEach((key, value) {
+      if (value != null) {
+        String answerString = '';
+
+        if (value is List) {
+          if (value.isNotEmpty) {
+            answerString = value.join(', ');
+          }
+        } else {
+          answerString = value.toString();
+        }
+
+        if (answerString.isNotEmpty) {
+          qnaList.add(
+            Qna(
+              question: _questionTexts[key] ?? key,
+              answer: answerString,
+            ),
+          );
+        }
+      }
+    });
+
+    return qnaList;
+  }
+
+
+  void _completeTest() async {
+
+    final qnaPayload = _generateQnaPayload();
+
+    print("Payload: $qnaPayload");
+
+
+    try {
+
+      final requestBody = ProfilesRequestBody(
+        qna: qnaPayload, name: 'test',
+      );
+
+      print("Raw JSON: ${jsonEncode(requestBody)}");
+
+      await rawDio.get('/create-user-if-not-exists');
+
+      final res = await apiClient.profiles.postProfiles(body: requestBody);
+
+      print("========== res=======: $res");
 
   void _completeTest() {
     showDialog(
@@ -780,8 +858,8 @@ class _PersonalityTestQuestionnaireScreenState
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
-        title: Row(
-          children: const [
+        title: const Row(
+          children: [
             Icon(Icons.check_circle, color: Color(0xFF4FC3F7), size: 32),
             SizedBox(width: 12),
             Text(
@@ -794,10 +872,10 @@ class _PersonalityTestQuestionnaireScreenState
             ),
           ],
         ),
-        content: Column(
+        content: const Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Text(
               'Your personality test is complete!',
               style: TextStyle(color: Colors.white, fontSize: 16),
@@ -845,8 +923,8 @@ class _PersonalityTestQuestionnaireScreenState
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF2A2A3E),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
         ),
         title: const Text(
           'Continue Later?',
