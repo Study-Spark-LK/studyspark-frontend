@@ -106,8 +106,7 @@ class _PersonalityTestQuestionnaireScreenState
           LinearProgressIndicator(
             value: (currentStep + 1) / totalSteps,
             backgroundColor: const Color(0xFF2A2A3E),
-            valueColor:
-                const AlwaysStoppedAnimation<Color>(Color(0xFF4FC3F7)),
+            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF4FC3F7)),
             minHeight: 8,
           ),
         ],
@@ -153,14 +152,8 @@ class _PersonalityTestQuestionnaireScreenState
           'text': 'Demonstrations, models, or practical sessions',
           'value': 'kinesthetic',
         },
-        {
-          'text': 'Diagrams, charts, maps, or graphs',
-          'value': 'visual',
-        },
-        {
-          'text': 'Handouts, books, or readings',
-          'value': 'reading',
-        },
+        {'text': 'Diagrams, charts, maps, or graphs', 'value': 'visual'},
+        {'text': 'Handouts, books, or readings', 'value': 'reading'},
       ],
       selectedValue: answers['question1'],
       onSelect: (value) => setState(() => answers['question1'] = value),
@@ -174,10 +167,7 @@ class _PersonalityTestQuestionnaireScreenState
       questionText:
           'I am assembling a piece of furniture that came in parts. I would:',
       options: [
-        {
-          'text': 'Follow the step-by-step diagrams',
-          'value': 'visual',
-        },
+        {'text': 'Follow the step-by-step diagrams', 'value': 'visual'},
         {
           'text': 'Follow the step-by-step written instructions',
           'value': 'reading',
@@ -186,10 +176,7 @@ class _PersonalityTestQuestionnaireScreenState
           'text': 'Lay the parts out to see how they fit together',
           'value': 'kinesthetic',
         },
-        {
-          'text': 'Ask for advice from someone else',
-          'value': 'auditory',
-        },
+        {'text': 'Ask for advice from someone else', 'value': 'auditory'},
       ],
       selectedValue: answers['question2'],
       onSelect: (value) => setState(() => answers['question2'] = value),
@@ -202,22 +189,10 @@ class _PersonalityTestQuestionnaireScreenState
       questionNumber: '3 of 7',
       questionText: 'When I am learning, I:',
       options: [
-        {
-          'text': 'Use examples and applications',
-          'value': 'kinesthetic',
-        },
-        {
-          'text': 'Read books, articles, and handouts',
-          'value': 'reading',
-        },
-        {
-          'text': 'Like to talk things through',
-          'value': 'auditory',
-        },
-        {
-          'text': 'See patterns in things',
-          'value': 'visual',
-        },
+        {'text': 'Use examples and applications', 'value': 'kinesthetic'},
+        {'text': 'Read books, articles, and handouts', 'value': 'reading'},
+        {'text': 'Like to talk things through', 'value': 'auditory'},
+        {'text': 'See patterns in things', 'value': 'visual'},
       ],
       selectedValue: answers['question3'],
       onSelect: (value) => setState(() => answers['question3'] = value),
@@ -231,22 +206,10 @@ class _PersonalityTestQuestionnaireScreenState
       questionText:
           'A website has a video showing how to make a special graph or chart. I would learn most from:',
       options: [
-        {
-          'text': 'Reading the words',
-          'value': 'reading',
-        },
-        {
-          'text': 'Seeing the diagrams',
-          'value': 'visual',
-        },
-        {
-          'text': 'Listening',
-          'value': 'auditory',
-        },
-        {
-          'text': 'Watching the actions',
-          'value': 'kinesthetic',
-        },
+        {'text': 'Reading the words', 'value': 'reading'},
+        {'text': 'Seeing the diagrams', 'value': 'visual'},
+        {'text': 'Listening', 'value': 'auditory'},
+        {'text': 'Watching the actions', 'value': 'kinesthetic'},
       ],
       selectedValue: answers['question4'],
       onSelect: (value) => setState(() => answers['question4'] = value),
@@ -264,10 +227,7 @@ class _PersonalityTestQuestionnaireScreenState
           'text': 'Watch others play the game before joining in',
           'value': 'visual',
         },
-        {
-          'text': 'Read the instructions',
-          'value': 'reading',
-        },
+        {'text': 'Read the instructions', 'value': 'reading'},
         {
           'text': 'Listen to somebody explaining it and ask questions',
           'value': 'auditory',
@@ -327,10 +287,7 @@ class _PersonalityTestQuestionnaireScreenState
           'text': 'Read the written instructions that came with the program',
           'value': 'reading',
         },
-        {
-          'text': 'Follow the diagrams in a book',
-          'value': 'visual',
-        },
+        {'text': 'Follow the diagrams in a book', 'value': 'visual'},
         {
           'text': 'Start using it and learn by trial and error',
           'value': 'kinesthetic',
@@ -411,10 +368,7 @@ class _PersonalityTestQuestionnaireScreenState
         children: [
           Text(
             'Question $questionNumber',
-            style: const TextStyle(
-              color: Colors.white60,
-              fontSize: 14,
-            ),
+            style: const TextStyle(color: Colors.white60, fontSize: 14),
           ),
           const SizedBox(height: 12),
           Text(
@@ -570,7 +524,9 @@ class _PersonalityTestQuestionnaireScreenState
                     backgroundColor: const Color(0xFF2A2A3E),
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 14),
+                      horizontal: 24,
+                      vertical: 14,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -600,10 +556,7 @@ class _PersonalityTestQuestionnaireScreenState
                 children: [
                   Icon(Icons.bookmark_outline, size: 18),
                   SizedBox(width: 8),
-                  Text(
-                    'Continue Later',
-                    style: TextStyle(fontSize: 14),
-                  ),
+                  Text('Continue Later', style: TextStyle(fontSize: 14)),
                 ],
               ),
             ),
@@ -625,14 +578,10 @@ class _PersonalityTestQuestionnaireScreenState
         width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected
-              ? const Color(0xFF4FC3F7)
-              : const Color(0xFF2A2A3E),
+          color: isSelected ? const Color(0xFF4FC3F7) : const Color(0xFF2A2A3E),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected
-                ? const Color(0xFF4FC3F7)
-                : Colors.transparent,
+            color: isSelected ? const Color(0xFF4FC3F7) : Colors.transparent,
             width: 2,
           ),
         ),
@@ -648,11 +597,7 @@ class _PersonalityTestQuestionnaireScreenState
               ),
             ),
             if (isSelected)
-              const Icon(
-                Icons.check_circle,
-                color: Colors.white,
-                size: 24,
-              ),
+              const Icon(Icons.check_circle, color: Colors.white, size: 24),
           ],
         ),
       ),
@@ -668,17 +613,12 @@ class _PersonalityTestQuestionnaireScreenState
       onTap: onTap,
       borderRadius: BorderRadius.circular(24),
       child: Container(
-        padding:
-            const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected
-              ? const Color(0xFF4FC3F7)
-              : const Color(0xFF2A2A3E),
+          color: isSelected ? const Color(0xFF4FC3F7) : const Color(0xFF2A2A3E),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: isSelected
-                ? const Color(0xFF4FC3F7)
-                : Colors.transparent,
+            color: isSelected ? const Color(0xFF4FC3F7) : Colors.transparent,
             width: 2,
           ),
         ),
@@ -687,8 +627,7 @@ class _PersonalityTestQuestionnaireScreenState
           style: TextStyle(
             color: isSelected ? Colors.white : Colors.white70,
             fontSize: 14,
-            fontWeight:
-                isSelected ? FontWeight.w600 : FontWeight.normal,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
           ),
         ),
       ),
@@ -702,8 +641,7 @@ class _PersonalityTestQuestionnaireScreenState
       padding: const EdgeInsets.all(24),
       decoration: const BoxDecoration(
         color: Color(0xFF1A1A2E),
-        border:
-            Border(top: BorderSide(color: Color(0xFF2A2A3E), width: 1)),
+        border: Border(top: BorderSide(color: Color(0xFF2A2A3E), width: 1)),
       ),
       child: Row(
         children: [
@@ -726,8 +664,10 @@ class _PersonalityTestQuestionnaireScreenState
                     SizedBox(width: 8),
                     Text(
                       'Previous',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),
@@ -754,7 +694,9 @@ class _PersonalityTestQuestionnaireScreenState
                   Text(
                     currentStep == totalSteps - 1 ? 'Complete' : 'Next',
                     style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w600),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const SizedBox(width: 8),
                   const Icon(Icons.arrow_forward, size: 20),
@@ -797,8 +739,8 @@ class _PersonalityTestQuestionnaireScreenState
       _completeTest();
     }
   }
-  List<Qna> _generateQnaPayload() {
 
+  List<Qna> _generateQnaPayload() {
     List<Qna> qnaList = [];
 
     answers.forEach((key, value) {
@@ -815,10 +757,7 @@ class _PersonalityTestQuestionnaireScreenState
 
         if (answerString.isNotEmpty) {
           qnaList.add(
-            Qna(
-              question: _questionTexts[key] ?? key,
-              answer: answerString,
-            ),
+            Qna(question: _questionTexts[key] ?? key, answer: answerString),
           );
         }
       }
@@ -826,28 +765,6 @@ class _PersonalityTestQuestionnaireScreenState
 
     return qnaList;
   }
-
-
-  void _completeTest() async {
-
-    final qnaPayload = _generateQnaPayload();
-
-    print("Payload: $qnaPayload");
-
-
-    try {
-
-      final requestBody = ProfilesRequestBody(
-        qna: qnaPayload, name: 'test',
-      );
-
-      print("Raw JSON: ${jsonEncode(requestBody)}");
-
-      await rawDio.get('/create-user-if-not-exists');
-
-      final res = await apiClient.profiles.postProfiles(body: requestBody);
-
-      print("========== res=======: $res");
 
   void _completeTest() {
     showDialog(
@@ -893,8 +810,9 @@ class _PersonalityTestQuestionnaireScreenState
             child: ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/home', (route) => false);
+                Navigator.of(
+                  context,
+                ).pushNamedAndRemoveUntil('/home', (route) => false);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF4FC3F7),
@@ -906,10 +824,7 @@ class _PersonalityTestQuestionnaireScreenState
               ),
               child: const Text(
                 'Go to Home',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -923,8 +838,8 @@ class _PersonalityTestQuestionnaireScreenState
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF2A2A3E),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
         title: const Text(
           'Continue Later?',
