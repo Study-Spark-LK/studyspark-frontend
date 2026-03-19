@@ -1,7 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 
-class FileUploadScreen extends StatelessWidget {
-  const FileUploadScreen({super.key});
+class UploadScreen extends StatefulWidget {
+  const UploadScreen({super.key});
+
+  @override
+  State<UploadScreen> createState() => _UploadScreenState();
+}
+
+class _UploadScreenState extends State<UploadScreen> {
+  PlatformFile? _selectedFile;
+
+  Future<void> _pickPDF() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+        allowMultiple: false,
+      );
+
+      if (result != null) {
+        setState(() {
+          _selectedFile = result.files.first;
+        });
+      }
+    } catch (e) {
+      print("Error picking file: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
