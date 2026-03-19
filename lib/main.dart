@@ -8,19 +8,9 @@ import 'screens/onboarding_screen1.dart';
 import 'screens/onboarding_screen4.dart';
 import 'screens/onboarding_screen2.dart';
 import 'screens/onboarding_screen3.dart';
-import 'screens/upload_screen1.dart';
 import 'screens/library_screen.dart';
-
-<<<<<<< HEAD
-import 'screens/upload_screen1.dart';
 import 'package:studyspark/env.dart';
 import 'package:studyspark/api/api_client.dart';
-=======
-
-import 'screens/file_upload_screen.dart' ;
-
-
->>>>>>> origin/dev-eshini
 //import 'screens/learning_path_screen.dart';
 //import 'screens/quiz_screen.dart';
 //import 'screens/progress_screen.dart';
@@ -68,7 +58,6 @@ class StudySparkApp extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-<<<<<<< HEAD
           // initialRoute: '/home',
           home: ClerkErrorListener(
             child: ClerkAuthBuilder(
@@ -144,30 +133,6 @@ class StudySparkApp extends StatelessWidget {
           },
         ),
 
-=======
-        ),
-      ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const SplashScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/personality-test-welcome': (context) =>
-            const QuestionnaireWelcomeScreen(),
-        '/home': (context) => const HomeScreen(),
-        '/onboard1': (context) => const OnboardingScreen1(),
-        '/onboard2': (context) => const OnboardingScreen2(),
-        '/onboard3': (context) => const OnboardingScreen3(),
-        '/onboard4': (context) => const OnboardingScreen4(),
-        '/questionnaire': (context) =>
-            const PersonalityTestQuestionnaireScreen(),
-        '/upload': (context) => const FileUploadScreen(),
-
-        //'/learning-path': (context) => const LearningPathScreen(),
-        //'/quiz': (context) => const QuizScreen(),
-        //'/progress': (context) => const ProgressScreen(),
-        '/profile': (context) => const ProfileScreen(),
-      },
->>>>>>> origin/dev-eshini
     );
   }
 }
