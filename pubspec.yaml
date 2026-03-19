@@ -14,12 +14,25 @@ dependencies:
   cupertino_icons: ^1.0.2
   fl_chart: ^0.66.0
   http: ^1.1.0    
+  clerk_flutter: ^0.0.14-beta
+  dio: ^5.9.0
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.9.0
+  retrofit: ^4.9.1
+  clerk_auth: ^0.0.14-beta
+  file_picker: ^10.3.10
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
   flutter_lints: ^3.0.0
+  build_runner: ^2.10.4
+  carapacik_lints: ^3.10.2
+  freezed: ^3.2.3
+  json_serializable: ^6.11.2
+  retrofit_generator: ^10.2.0
+  swagger_parser: ^1.43.0
 
 flutter:
   uses-material-design: true
