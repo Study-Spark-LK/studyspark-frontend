@@ -48,7 +48,7 @@ class OnboardingScreen4 extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 18),
+                const SizedBox(height: 30),
 
                 // ✅ Subtitle
                 const Text(
@@ -61,7 +61,19 @@ class OnboardingScreen4 extends StatelessWidget {
                   ),
                 ),
 
+
                 const Spacer(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _dot(false),
+                                _dot(false),
+                                _dot(false),
+                                _dot(true),
+                              ],
+                            ),
+
+                const SizedBox(height: 18),
 
                 // ✅ Sign In Button (Blue)
                 SizedBox(
@@ -88,7 +100,7 @@ class OnboardingScreen4 extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 14),
+                const SizedBox(height: 12),
 
                 // ✅ Sign Up Button (Dark)
                 SizedBox(
@@ -116,7 +128,7 @@ class OnboardingScreen4 extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 30),
+                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -125,4 +137,14 @@ class OnboardingScreen4 extends StatelessWidget {
     );
   }
 }
-
+Widget _dot(bool isActive) {
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 4),
+    width: isActive ? 10 : 8,
+    height: isActive ? 10 : 8,
+    decoration: BoxDecoration(
+      color: isActive ? const Color(0xFF4CC2F1) : Colors.white38,
+      shape: BoxShape.circle,
+    ),
+  );
+}
