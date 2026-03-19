@@ -4,14 +4,14 @@ import 'audio_screen.dart';
 import 'analytical_screen.dart';
 import 'story_screen.dart';
 
-class UploadScreen1 extends StatefulWidget {
-  const UploadScreen1({super.key});
+class OutputResultScreen extends StatefulWidget {
+  const OutputResultScreen({super.key});
 
   @override
-  State<UploadScreen1> createState() => _UploadScreen1State();
+  State<OutputResultScreen> createState() => _OutputResultScreenState();
 }
 
-class _UploadScreen1State extends State<UploadScreen1> {
+class _OutputResultScreenState extends State<OutputResultScreen> {
 
   final PageController _controller = PageController();
   int index = 0;
@@ -30,7 +30,7 @@ class _UploadScreen1State extends State<UploadScreen1> {
       backgroundColor: const Color(0xFF0D1117),
 
       appBar: AppBar(
-        title: const Text("Upload Learning Material"),
+        title: const Text("Learning Results"),
         backgroundColor: const Color(0xFF1A2332),
       ),
 
@@ -43,20 +43,22 @@ class _UploadScreen1State extends State<UploadScreen1> {
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: tabs.length,
-              itemBuilder: (context,i){
+              itemBuilder: (context, i){
 
-                bool selected = index==i;
+                bool selected = index == i;
 
                 return GestureDetector(
                   onTap: (){
-                    _controller.animateToPage(i,
-                        duration: const Duration(milliseconds:300),
-                        curve: Curves.ease);
+                    _controller.animateToPage(
+                      i,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.ease,
+                    );
                   },
 
                   child: Container(
                     margin: const EdgeInsets.all(8),
-                    padding: const EdgeInsets.symmetric(horizontal:20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     decoration: BoxDecoration(
                       color: selected
                           ? Colors.cyan
@@ -70,6 +72,7 @@ class _UploadScreen1State extends State<UploadScreen1> {
                         color: selected
                             ? Colors.black
                             : Colors.white,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -83,15 +86,17 @@ class _UploadScreen1State extends State<UploadScreen1> {
             child: PageView(
               controller: _controller,
               onPageChanged: (i){
-                setState(()=> index=i);
+                setState(() {
+                  index = i;
+                });
               },
-              children: const [
 
+              /// ❗ const remove කරන්න (important)
+              children: [
                 VisualScreen(),
                 AudioScreen(),
                 AnalyticalScreen(),
                 StoryScreen(),
-
               ],
             ),
           )
