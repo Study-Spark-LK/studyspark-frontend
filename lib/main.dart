@@ -16,6 +16,7 @@ import 'package:studyspark/api/api_client.dart';
 //import 'screens/quiz_screen.dart';
 //import 'screens/progress_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/practice_screen.dart';
 
 void main() {
   runApp(const StudySparkApp());
