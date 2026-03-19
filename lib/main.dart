@@ -9,6 +9,7 @@ import 'screens/onboarding_screen4.dart';
 import 'screens/onboarding_screen2.dart';
 import 'screens/onboarding_screen3.dart';
 import 'screens/upload_screen1.dart';
+import 'screens/library_screen.dart';
 
 <<<<<<< HEAD
 import 'screens/upload_screen1.dart';
