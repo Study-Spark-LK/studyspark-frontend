@@ -64,7 +64,17 @@ class _PersonalityTestQuestionnaireScreenState
         child: Column(
           children: [
             _buildHeader(),
+<<<<<<< HEAD
             Expanded(child: _buildCurrentStep()),
+=======
+
+            // Content area
+            Expanded(
+              child: _buildCurrentStep(),
+            ),
+
+            // Navigation buttons
+>>>>>>> origin/dev-eshini
             _buildNavigationButtons(),
           ],
         ),
@@ -103,11 +113,24 @@ class _PersonalityTestQuestionnaireScreenState
             ],
           ),
           const SizedBox(height: 16),
+<<<<<<< HEAD
           LinearProgressIndicator(
             value: (currentStep + 1) / totalSteps,
             backgroundColor: const Color(0xFF2A2A3E),
             valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF4FC3F7)),
             minHeight: 8,
+=======
+          // Progress bar
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: LinearProgressIndicator(
+              value: (currentStep + 1) / totalSteps,
+              backgroundColor: const Color(0xFF2A2A3E),
+              valueColor:
+                  const AlwaysStoppedAnimation<Color>(Color(0xFF4FC3F7)),
+              minHeight: 8,
+            ),
+>>>>>>> origin/dev-eshini
           ),
         ],
       ),
@@ -139,6 +162,25 @@ class _PersonalityTestQuestionnaireScreenState
 
   // Question 1
   Widget _buildQuestion1() {
+<<<<<<< HEAD
+=======
+    final options = [
+      {
+        'text': 'Watch diagrams, videos, or demonstrations',
+        'value': 'visual'
+      },
+      {
+        'text': 'Listen to explanations and discussions',
+        'value': 'auditory'
+      },
+      {'text': 'Read detailed documentation and analyze it', 'value': 'reading'},
+      {
+        'text': 'Hear real-world examples and stories',
+        'value': 'kinesthetic'
+      },
+    ];
+
+>>>>>>> origin/dev-eshini
     return _buildSingleSelectQuestion(
       questionNumber: '1 of 7',
       questionText: 'I prefer a presenter or teacher who uses:',
@@ -162,6 +204,19 @@ class _PersonalityTestQuestionnaireScreenState
 
   // Question 2
   Widget _buildQuestion2() {
+<<<<<<< HEAD
+=======
+    final options = [
+      {'text': 'I can visualize it as an image or chart', 'value': 'visual'},
+      {'text': 'I hear it repeated or discussed', 'value': 'auditory'},
+      {'text': 'I organize it into logical categories', 'value': 'logical'},
+      {
+        'text': 'It\'s connected to a personal experience',
+        'value': 'experiential'
+      },
+    ];
+
+>>>>>>> origin/dev-eshini
     return _buildSingleSelectQuestion(
       questionNumber: '2 of 7',
       questionText:
@@ -185,6 +240,22 @@ class _PersonalityTestQuestionnaireScreenState
 
   // Question 3
   Widget _buildQuestion3() {
+<<<<<<< HEAD
+=======
+    final options = [
+      {
+        'text': 'Visually appealing or unique presentation',
+        'value': 'visual'
+      },
+      {'text': 'Engaging narration or storytelling', 'value': 'narrative'},
+      {
+        'text': 'Real-life uses, relevant to career, etc',
+        'value': 'practical'
+      },
+      {'text': 'Relatable examples or case studies', 'value': 'relatable'},
+    ];
+
+>>>>>>> origin/dev-eshini
     return _buildSingleSelectQuestion(
       questionNumber: '3 of 7',
       questionText: 'When I am learning, I:',
@@ -321,16 +392,29 @@ class _PersonalityTestQuestionnaireScreenState
     ];
 
     return _buildMultiSelectQuestion(
+<<<<<<< HEAD
       stepLabel: 'Step 3 of 3',
       questionText:
           "We'll use your interests to create personalized\nlearning content",
+=======
+      questionNumber: '3 of 5',
+      questionText: 'Mark your interests to create personalized\nlearning content',
+      subtitle: 'OR',
+>>>>>>> origin/dev-eshini
       options: interests,
       selectedValues: answers['interests'] as List<String>,
       onToggle: (value) {
         setState(() {
+<<<<<<< HEAD
           List<String> current = List<String>.from(answers['interests']);
           if (current.contains(value)) {
             current.remove(value);
+=======
+          List<String> currentInterests =
+              List<String>.from(answers['interests']);
+          if (currentInterests.contains(value)) {
+            currentInterests.remove(value);
+>>>>>>> origin/dev-eshini
           } else {
             current.add(value);
           }
@@ -342,10 +426,18 @@ class _PersonalityTestQuestionnaireScreenState
       onAddCustom: (customValue) {
         if (customValue.isNotEmpty) {
           setState(() {
+<<<<<<< HEAD
             List<String> current = List<String>.from(answers['interests']);
             if (!current.contains(customValue)) {
               current.add(customValue);
               answers['interests'] = current;
+=======
+            List<String> currentInterests =
+                List<String>.from(answers['interests']);
+            if (!currentInterests.contains(customValue)) {
+              currentInterests.add(customValue);
+              answers['interests'] = currentInterests;
+>>>>>>> origin/dev-eshini
             }
             _customInterestController.clear();
           });
@@ -354,6 +446,67 @@ class _PersonalityTestQuestionnaireScreenState
     );
   }
 
+<<<<<<< HEAD
+=======
+  // Question 5: Content consumption preferences (multi-select)
+  Widget _buildQuestion5() {
+    final methods = [
+      'Photography',
+      'Gaming',
+      'Cooking',
+      'Music',
+      'Fitness',
+      'Art & Drawing',
+      'Reading',
+      'Sports',
+      'Gardening',
+      'Technology',
+      'Travel',
+      'Movies & TV',
+      'Writing',
+      'Finance',
+      'Crafts',
+      'Science',
+    ];
+
+    return _buildMultiSelectQuestion(
+      questionNumber: '3 of 5',
+      questionText: 'Mark your interests to create personalized\nlearning content',
+      subtitle: 'OR',
+      options: methods,
+      selectedValues: answers['contentConsumption'] as List<String>,
+      onToggle: (value) {
+        setState(() {
+          List<String> currentMethods =
+              List<String>.from(answers['contentConsumption']);
+          if (currentMethods.contains(value)) {
+            currentMethods.remove(value);
+          } else {
+            currentMethods.add(value);
+          }
+          answers['contentConsumption'] = currentMethods;
+        });
+      },
+      showCustomInput: true,
+      customInputHint: 'Other(specify)',
+      onAddCustom: (customValue) {
+        if (customValue.isNotEmpty) {
+          setState(() {
+            List<String> currentMethods =
+                List<String>.from(answers['contentConsumption']);
+            if (!currentMethods.contains(customValue)) {
+              currentMethods.add(customValue);
+              answers['contentConsumption'] = currentMethods;
+            }
+            _customInterestController.clear();
+          });
+        }
+      },
+    );
+  }
+
+  // Reusable single-select question widget
+>>>>>>> origin/dev-eshini
   Widget _buildSingleSelectQuestion({
     required String questionNumber,
     required String questionText,
@@ -368,7 +521,10 @@ class _PersonalityTestQuestionnaireScreenState
         children: [
           Text(
             'Question $questionNumber',
-            style: const TextStyle(color: Colors.white60, fontSize: 14),
+            style: const TextStyle(
+              color: Colors.white60,
+              fontSize: 14,
+            ),
           ),
           const SizedBox(height: 12),
           Text(
@@ -413,8 +569,16 @@ class _PersonalityTestQuestionnaireScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
+<<<<<<< HEAD
             stepLabel,
             style: const TextStyle(color: Colors.white60, fontSize: 14),
+=======
+            'Step $questionNumber',
+            style: const TextStyle(
+              color: Colors.white60,
+              fontSize: 14,
+            ),
+>>>>>>> origin/dev-eshini
           ),
           const SizedBox(height: 12),
           Text(
@@ -429,6 +593,7 @@ class _PersonalityTestQuestionnaireScreenState
           if (selectedValues.isNotEmpty) ...[
             const SizedBox(height: 8),
             Text(
+<<<<<<< HEAD
               'Selected: ${selectedValues.length}',
               style: const TextStyle(
                 color: Color(0xFF4FC3F7),
@@ -474,6 +639,13 @@ class _PersonalityTestQuestionnaireScreenState
                   ),
                 );
               }).toList(),
+=======
+              subtitle,
+              style: const TextStyle(
+                color: Colors.white60,
+                fontSize: 14,
+              ),
+>>>>>>> origin/dev-eshini
             ),
           ],
           const SizedBox(height: 20),
@@ -524,9 +696,7 @@ class _PersonalityTestQuestionnaireScreenState
                     backgroundColor: const Color(0xFF2A2A3E),
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 14,
-                    ),
+                        horizontal: 24, vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -536,7 +706,93 @@ class _PersonalityTestQuestionnaireScreenState
               ],
             ),
           ],
+<<<<<<< HEAD
           const SizedBox(height: 24),
+=======
+          // Display selected hobbies
+          if (selectedValues.isNotEmpty) ...[
+            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF2A2A3E),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFF4FC3F7).withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Row(
+                    children: [
+                      Icon(
+                        Icons.check_circle,
+                        color: Color(0xFF4FC3F7),
+                        size: 20,
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        'Selected Hobbies',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: selectedValues.map((hobby) {
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF4FC3F7).withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: const Color(0xFF4FC3F7),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              hobby,
+                              style: const TextStyle(
+                                color: Color(0xFF4FC3F7),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            GestureDetector(
+                              onTap: () => onToggle(hobby),
+                              child: const Icon(
+                                Icons.close,
+                                size: 16,
+                                color: Color(0xFF4FC3F7),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          const SizedBox(height: 16),
+          // Continue later button
+>>>>>>> origin/dev-eshini
           Center(
             child: TextButton(
               onPressed: _showContinueLaterDialog,
@@ -547,8 +803,8 @@ class _PersonalityTestQuestionnaireScreenState
                   horizontal: 32,
                   vertical: 12,
                 ),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
               child: const Row(
@@ -556,7 +812,10 @@ class _PersonalityTestQuestionnaireScreenState
                 children: [
                   Icon(Icons.bookmark_outline, size: 18),
                   SizedBox(width: 8),
-                  Text('Continue Later', style: TextStyle(fontSize: 14)),
+                  Text(
+                    'Continue Later',
+                    style: TextStyle(fontSize: 14),
+                  ),
                 ],
               ),
             ),
@@ -578,10 +837,13 @@ class _PersonalityTestQuestionnaireScreenState
         width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF4FC3F7) : const Color(0xFF2A2A3E),
+          color: isSelected
+              ? const Color(0xFF4FC3F7)
+              : const Color(0xFF2A2A3E),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? const Color(0xFF4FC3F7) : Colors.transparent,
+            color:
+                isSelected ? const Color(0xFF4FC3F7) : Colors.transparent,
             width: 2,
           ),
         ),
@@ -597,7 +859,11 @@ class _PersonalityTestQuestionnaireScreenState
               ),
             ),
             if (isSelected)
-              const Icon(Icons.check_circle, color: Colors.white, size: 24),
+              const Icon(
+                Icons.check_circle,
+                color: Colors.white,
+                size: 24,
+              ),
           ],
         ),
       ),
@@ -615,10 +881,13 @@ class _PersonalityTestQuestionnaireScreenState
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF4FC3F7) : const Color(0xFF2A2A3E),
+          color: isSelected
+              ? const Color(0xFF4FC3F7)
+              : const Color(0xFF2A2A3E),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: isSelected ? const Color(0xFF4FC3F7) : Colors.transparent,
+            color:
+                isSelected ? const Color(0xFF4FC3F7) : Colors.transparent,
             width: 2,
           ),
         ),
@@ -641,7 +910,12 @@ class _PersonalityTestQuestionnaireScreenState
       padding: const EdgeInsets.all(24),
       decoration: const BoxDecoration(
         color: Color(0xFF1A1A2E),
-        border: Border(top: BorderSide(color: Color(0xFF2A2A3E), width: 1)),
+        border: Border(
+          top: BorderSide(
+            color: Color(0xFF2A2A3E),
+            width: 1,
+          ),
+        ),
       ),
       child: Row(
         children: [
@@ -664,10 +938,8 @@ class _PersonalityTestQuestionnaireScreenState
                     SizedBox(width: 8),
                     Text(
                       'Previous',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
@@ -694,9 +966,7 @@ class _PersonalityTestQuestionnaireScreenState
                   Text(
                     currentStep == totalSteps - 1 ? 'Complete' : 'Next',
                     style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                        fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(width: 8),
                   const Icon(Icons.arrow_forward, size: 20),
@@ -740,7 +1010,10 @@ class _PersonalityTestQuestionnaireScreenState
     }
   }
 
+<<<<<<< HEAD
   List<Qna> _generateQnaPayload() {
+=======
+>>>>>>> origin/dev-eshini
     List<Qna> qnaList = [];
 
     answers.forEach((key, value) {
@@ -764,6 +1037,7 @@ class _PersonalityTestQuestionnaireScreenState
     });
 
     return qnaList;
+<<<<<<< HEAD
   }
 
   void _completeTest() {
@@ -831,6 +1105,8 @@ class _PersonalityTestQuestionnaireScreenState
         ],
       ),
     );
+=======
+>>>>>>> origin/dev-eshini
   }
 
   void _showContinueLaterDialog() {
@@ -838,8 +1114,8 @@ class _PersonalityTestQuestionnaireScreenState
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF2A2A3E),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
         ),
         title: const Text(
           'Continue Later?',

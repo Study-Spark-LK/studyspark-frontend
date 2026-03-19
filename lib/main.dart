@@ -1,6 +1,5 @@
-import 'package:clerk_flutter/clerk_flutter.dart';
 import 'package:flutter/material.dart';
-// import 'screens/splash_screen.dart';
+import 'screens/splash_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/questionnaire_welcome_screen.dart';
 import 'screens/questionnaire_screen.dart';
@@ -9,9 +8,18 @@ import 'screens/onboarding_screen1.dart';
 import 'screens/onboarding_screen4.dart';
 import 'screens/onboarding_screen2.dart';
 import 'screens/onboarding_screen3.dart';
-import 'screens/upload_screen.dart';
+import 'screens/upload_screen1.dart';
+
+<<<<<<< HEAD
+import 'screens/upload_screen1.dart';
 import 'package:studyspark/env.dart';
 import 'package:studyspark/api/api_client.dart';
+=======
+
+import 'screens/file_upload_screen.dart' ;
+
+
+>>>>>>> origin/dev-eshini
 //import 'screens/learning_path_screen.dart';
 //import 'screens/quiz_screen.dart';
 //import 'screens/progress_screen.dart';
@@ -26,46 +34,40 @@ class StudySparkApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    return ClerkAuth (
-        config: ClerkAuthConfig(
-          publishableKey: Env.clerkKey,
+    return MaterialApp(
+      title: 'StudySpark',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.purple,
+        primaryColor: const Color(0xFF6C63FF),
+        scaffoldBackgroundColor: const Color(0xFFF8F9FA),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6C63FF),
+          brightness: Brightness.light,
         ),
-        child: MaterialApp(
-          title: 'StudySpark',
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            primarySwatch: Colors.purple,
-            primaryColor: const Color(0xFF6C63FF),
-            scaffoldBackgroundColor: const Color(0xFFF8F9FA),
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color(0xFF6C63FF),
-              brightness: Brightness.light,
-            ),
-            useMaterial3: true,
-            appBarTheme: const AppBarTheme(
-              elevation: 0,
-              centerTitle: true,
-              backgroundColor: Color(0xFF6C63FF),
-              foregroundColor: Colors.white,
-            ),
-            cardTheme: const CardThemeData(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(16)),
-              ),
-            ),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6C63FF),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+        useMaterial3: true,
+        appBarTheme: const AppBarTheme(
+          elevation: 0,
+          centerTitle: true,
+          backgroundColor: Color(0xFF6C63FF),
+          foregroundColor: Colors.white,
+        ),
+        cardTheme: const CardThemeData(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(16)),
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF6C63FF),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
+<<<<<<< HEAD
           // initialRoute: '/home',
           home: ClerkErrorListener(
             child: ClerkAuthBuilder(
@@ -141,6 +143,30 @@ class StudySparkApp extends StatelessWidget {
           },
         ),
 
+=======
+        ),
+      ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const SplashScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/personality-test-welcome': (context) =>
+            const QuestionnaireWelcomeScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/onboard1': (context) => const OnboardingScreen1(),
+        '/onboard2': (context) => const OnboardingScreen2(),
+        '/onboard3': (context) => const OnboardingScreen3(),
+        '/onboard4': (context) => const OnboardingScreen4(),
+        '/questionnaire': (context) =>
+            const PersonalityTestQuestionnaireScreen(),
+        '/upload': (context) => const FileUploadScreen(),
+
+        //'/learning-path': (context) => const LearningPathScreen(),
+        //'/quiz': (context) => const QuizScreen(),
+        //'/progress': (context) => const ProgressScreen(),
+        '/profile': (context) => const ProfileScreen(),
+      },
+>>>>>>> origin/dev-eshini
     );
   }
 }
