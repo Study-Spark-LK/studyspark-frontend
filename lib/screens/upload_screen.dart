@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'loading_screen.dart';
+
 
 class UploadScreen extends StatefulWidget {
   const UploadScreen({super.key});
@@ -190,9 +192,15 @@ class _UploadScreenState extends State<UploadScreen> {
                       ? null
                       : () {
                     print("Ready to upload: ${_selectedFile!.path}");
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => LoadingScreen(),
+                      ),
+                    );
                   },
                   child: const Text(
-                    'Continue',
+                    'Create Personalized Lesson',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
