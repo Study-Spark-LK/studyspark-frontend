@@ -1040,18 +1040,61 @@ class _PersonalityTestQuestionnaireScreenState
 <<<<<<< HEAD
   }
 
-  void _completeTest() {
+  void _completeTest() async {
+
+    final qnaPayload = _generateQnaPayload();
+
+    print("Payload: $qnaPayload");
+
+
+    try {
+
+      final requestBody = ProfilesRequestBody(
+        qna: qnaPayload, name: 'test',
+      );
+
+      print("Raw JSON: ${jsonEncode(requestBody)}");
+
+      await rawDio.get('/create-user-if-not-exists');
+
+      final res = await apiClient.profiles.postProfiles(body: requestBody);
+
+      print("========== res=======: $res");
+
+
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+
+      _showSuccessDialog();
+
+    } catch (e) {
+      if (mounted) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save profile: $e')),
+        );
+      }
+    }
+  }
+
+  void _showSuccessDialog() {
+    // Show completion dialog or navigate directly to home
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF2A2A3E),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
         ),
         title: const Row(
           children: [
-            Icon(Icons.check_circle, color: Color(0xFF4FC3F7), size: 32),
+            Icon(
+              Icons.check_circle,
+              color: Color(0xFF4FC3F7),
+              size: 32,
+            ),
             SizedBox(width: 12),
             Text(
               'Test Completed!',
@@ -1069,12 +1112,18 @@ class _PersonalityTestQuestionnaireScreenState
           children: [
             Text(
               'Your personality test is complete!',
-              style: TextStyle(color: Colors.white, fontSize: 16),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+              ),
             ),
             SizedBox(height: 8),
             Text(
-              "Your learning preferences have been saved and we'll personalize your experience accordingly.",
-              style: TextStyle(color: Colors.white70, fontSize: 14),
+              'Your learning preferences have been saved and we\'ll personalize your experience accordingly.',
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 14,
+              ),
             ),
           ],
         ),
@@ -1083,10 +1132,12 @@ class _PersonalityTestQuestionnaireScreenState
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(
-                  context,
-                ).pushNamedAndRemoveUntil('/home', (route) => false);
+                Navigator.of(context).pop(); // Close dialog
+                // Navigate to home and clear all previous routes
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/home',
+                      (route) => false,
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF4FC3F7),
@@ -1098,7 +1149,10 @@ class _PersonalityTestQuestionnaireScreenState
               ),
               child: const Text(
                 'Go to Home',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
