@@ -20,6 +20,7 @@ dependencies:
   json_annotation: ^4.9.0
   retrofit: ^4.9.1
   clerk_auth: ^0.0.14-beta
+  file_picker: ^10.3.10
 
 dev_dependencies:
   flutter_test:
