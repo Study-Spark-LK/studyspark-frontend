@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:studyspark/screens/file_upload_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/questionnaire_welcome_screen.dart';
@@ -15,6 +16,7 @@ import 'package:studyspark/api/api_client.dart';
 //import 'screens/quiz_screen.dart';
 //import 'screens/progress_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/outputresult_screen.dart';
 
 void main() {
   runApp(const StudySparkApp());
@@ -126,6 +128,7 @@ class StudySparkApp extends StatelessWidget {
             '/onboard4': (context) => const OnboardingScreen4(),
             '/questionnaire': (context) => const PersonalityTestQuestionnaireScreen(),
             '/upload': (context) => const UploadScreen(),
+            '/output-results': (context) => const OutputResultScreen(),
             //'/learning-path': (context) => const LearningPathScreen(),
             //'/quiz': (context) => const QuizScreen(),
             //'/progress': (context) => const ProgressScreen(),
