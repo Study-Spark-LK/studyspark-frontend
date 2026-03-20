@@ -10,6 +10,7 @@ import 'screens/onboarding_screen4.dart';
 import 'screens/onboarding_screen2.dart';
 import 'screens/onboarding_screen3.dart';
 import 'screens/library_screen.dart';
+import 'screens/practice_screen.dart';
 import 'screens/outputresult_screen.dart';
 import 'package:studyspark/env.dart';
 import 'package:studyspark/api/api_client.dart';
