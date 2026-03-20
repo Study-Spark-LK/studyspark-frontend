@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'payment_method.dart';
 import '../models/subscription_plan.dart';
 import '../widgets/premium_plan_card.dart';
 import '../widgets/premium_features_list.dart';
@@ -40,9 +41,18 @@ class _PremiumUpgradeScreenState extends State<PremiumUpgradeScreen> {
     });
 
     if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const PaymentMethodScreen(),
+        ),
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Upgrading to ${selectedPlan.name}...'),
+          content: Text('Proceeding to payment for ${selectedPlan.name}...'),
           duration: const Duration(seconds: 2),
         ),
       );
