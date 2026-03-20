@@ -140,7 +140,7 @@ class StudySparkApp extends StatelessWidget {
             '/onboard3': (context) => const OnboardingScreen3(),
             '/onboard4': (context) => const OnboardingScreen4(),
             '/questionnaire': (context) => const PersonalityTestQuestionnaireScreen(),
-            '/output-result': (context) => const OutputResultScreen(),
+            '/output-result': (context) => OutputresultScreen(),
             '/practice': (context) => const PracticeScreen(),
             '/profile': (context) => const ProfileScreen(),
             "/premium":(context) => const PremiumUpgradeScreen(),
