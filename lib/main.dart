@@ -20,6 +20,7 @@ import 'package:studyspark/api/api_client.dart';
 //import 'screens/progress_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/practice_screen.dart';
+import "screens/premium_upgrade_screen.dart";
 
 void main() {
   runApp(const StudySparkApp());
@@ -142,6 +143,7 @@ class StudySparkApp extends StatelessWidget {
             '/output-result': (context) => const OutputResultScreen(),
             '/practice': (context) => const PracticeScreen(),
             '/profile': (context) => const ProfileScreen(),
+            "/premium":(context) => const PremiumUpgradeScreen(),
             //'/learning-path': (context) => const LearningPathScreen(),
             //'/quiz': (context) => const QuizScreen(),
             //'/progress': (context) => const ProgressScreen(),

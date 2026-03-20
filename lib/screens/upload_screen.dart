@@ -209,7 +209,9 @@ class _UploadScreenState extends State<UploadScreen> {
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.pushNamed(context, "/premium");
+                                },
                                 child: const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
