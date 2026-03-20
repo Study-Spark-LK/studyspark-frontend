@@ -39,8 +39,12 @@ class LessonCreatedScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 40),
               child: ElevatedButton(
                 onPressed: () {
-                  // Navigate to your learning page
-                  print("Start Learning pressed");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const OutputResultScreen(),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
