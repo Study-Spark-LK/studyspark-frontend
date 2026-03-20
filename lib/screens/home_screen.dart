@@ -654,7 +654,9 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: EdgeInsets.only(right: i < actions.length - 1 ? 12 : 0),
             child: GestureDetector(
               onTap: () {
-                if (a['index'] == 2) {
+                if (a['index'] == 1) {
+                  Navigator.pushNamed(context, '/library');
+                }else if (a['index'] == 2) {
                   Navigator.pushNamed(context, '/upload');
                 } else if (a['index'] == 3) {
                   Navigator.pushNamed(context, '/practice');
@@ -727,7 +729,11 @@ class _HomeScreenState extends State<HomeScreen> {
               return GestureDetector(
                 onTap: () {
                   setState(() => _selectedIndex = index);
-                  if (index == 2) {
+                  if (index == 0) {
+                    Navigator.pushNamed(context, '/home');
+                  } else if (index == 1) {
+                    Navigator.pushNamed(context, '/library');
+                  }else if (index == 2) {
                     Navigator.pushNamed(context, '/upload');
                   } else if (index == 3) {
                     Navigator.pushNamed(context, '/practice');
