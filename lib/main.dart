@@ -1,5 +1,6 @@
 import 'package:clerk_flutter/clerk_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:studyspark/screens/upload_screen.dart';
 // import 'screens/splash_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/questionnaire_welcome_screen.dart';
@@ -132,12 +133,15 @@ class StudySparkApp extends StatelessWidget {
             '/personality-test-welcome': (context) => const QuestionnaireWelcomeScreen(),
             '/home': (context) => const HomeScreen(),
             '/library': (context) => const LibraryScreen(),
-            '/upload': (context) => const OutputResultScreen(),
+            '/upload': (context) => const UploadScreen(),
             '/onboard1': (context) => const OnboardingScreen1(),
             '/onboard2': (context) => const OnboardingScreen2(),
             '/onboard3': (context) => const OnboardingScreen3(),
             '/onboard4': (context) => const OnboardingScreen4(),
             '/questionnaire': (context) => const PersonalityTestQuestionnaireScreen(),
+            '/output-result': (context) => const OutputResultScreen(),
+            '/practice': (context) => const PracticeScreen(),
+            '/profile': (context) => const ProfileScreen(),
             //'/learning-path': (context) => const LearningPathScreen(),
             //'/quiz': (context) => const QuizScreen(),
             //'/progress': (context) => const ProgressScreen(),
