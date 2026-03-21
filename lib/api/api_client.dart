@@ -49,13 +49,16 @@ Dio buildDioClient() {
               options.headers['Authorization'] = 'Bearer $token';
             }
           }
-        } catch (_) {
-          // Token fetch failed — request continues without auth header
+        } catch (e) {
+          print('Error fetching Clerk token: $e');
         }
 
         return handler.next(options);
       },
         onError: (DioException error, handler) {
+          if (error.response?.statusCode == 401) {
+            print("User is unauthorized. Token might be invalid or expired.");
+          }
           final req = error.requestOptions;
           // ignore: avoid_print
           print('[API ERROR] ${req.method} ${req.baseUrl}${req.path} → '
@@ -65,6 +68,8 @@ Dio buildDioClient() {
         }
     ),
   );
+
+  dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
 
   return dio;
 }

@@ -24,7 +24,13 @@ class _UploadScreenState extends State<UploadScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       fetchClerkToken = () async {
-        return ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+        final auth = ClerkAuth.of(context);
+        try {
+          final sessionToken = await auth.sessionToken();
+          return sessionToken.jwt;
+        } catch (_) {
+          return auth.session?.lastActiveToken?.jwt;
+        }
       };
     });
   }
@@ -51,8 +57,17 @@ class _UploadScreenState extends State<UploadScreen> {
 
     try {
       // Fetch token directly here so it's always fresh and explicitly set
-      final token =
-          ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+      final auth = ClerkAuth.of(context);
+      String? token;
+      try {
+        final sessionToken = await auth.sessionToken();
+        token = sessionToken.jwt;
+      } catch (_) {
+        token = auth.session?.lastActiveToken?.jwt;
+      }
+      if (token != null) {
+        rawDio.options.headers['Authorization'] = 'Bearer $token';
+      }
 
       // Step 1: Upload file to storage
       final file = File(_selectedFile!.path!);
