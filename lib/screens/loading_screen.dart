@@ -1,47 +1,104 @@
 import 'package:flutter/material.dart';
-import 'lesson_created_screen.dart';
+import 'package:clerk_flutter/clerk_flutter.dart';
+import 'package:studyspark/api/api_client.dart';
+import 'package:studyspark/api/export.dart';
 
 class LoadingScreen extends StatefulWidget {
-  final String lessonName;
-  final String hobby;
+  final String documentId;
+  final String title;
+  final String category;
 
-  LoadingScreen({this.lessonName = "Biology", this.hobby = "Photography"});
+  const LoadingScreen({
+    super.key,
+    required this.documentId,
+    required this.title,
+    required this.category,
+  });
 
   @override
-  _LoadingScreenState createState() => _LoadingScreenState();
+  State<LoadingScreen> createState() => _LoadingScreenState();
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  double progress = 0.0;
+  double _progress = 0.05;
+  int _pollCount = 0;
+  static const int _maxPolls = 20; // 60 seconds max (3s interval)
+  bool _polling = false;
 
   @override
   void initState() {
     super.initState();
-    _simulateLoading();
-  }
-
-  void _simulateLoading() {
-    // Simulate loading progress
-    Future.delayed(Duration(milliseconds: 500), () {
-      setState(() {
-        progress += 0.2;
-        if (progress < 1.0) {
-          _simulateLoading();
-        } else {
-          // Navigate to Lesson Created screen
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (_) => LessonCreatedScreen(
-                lessonName: widget.lessonName,
-                hobby: widget.hobby,
-              ),
-            ),
-          );
-        }
-      });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchClerkToken = () async {
+        return ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+      };
+      _startPolling();
     });
   }
+
+  Future<void> _startPolling() async {
+    if (_polling) return;
+    _polling = true;
+    // Give the backend a moment to register the document
+    await Future.delayed(const Duration(seconds: 3));
+    _poll();
+  }
+
+  Future<void> _poll() async {
+    if (!mounted) return;
+
+    if (_pollCount >= _maxPolls) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'This is taking longer than expected. Check back in your Library.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        Navigator.pop(context);
+      }
+      return;
+    }
+
+    try {
+      final response = await apiClient.documents
+          .getDocumentsDocumentId(documentId: widget.documentId);
+      final doc = response.data;
+
+      if (doc.status == Status.ready) {
+        if (!mounted) return;
+        setState(() => _progress = 1.0);
+        await Future.delayed(const Duration(milliseconds: 600));
+        if (!mounted) return;
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/output-result',
+          (route) => route.isFirst,
+          arguments: {
+            'documentId': widget.documentId,
+            'title': doc.title,
+            'category': doc.category,
+          },
+        );
+        return;
+      }
+    } catch (_) {
+      // Continue polling on transient errors
+    }
+
+    _pollCount++;
+    // Animate progress bar slowly toward 0.9
+    if (mounted) {
+      setState(() {
+        _progress = (_progress + 0.04).clamp(0.0, 0.9);
+      });
+    }
+
+    await Future.delayed(const Duration(seconds: 3));
+    _poll();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +111,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          "Upload Learning Material",
+          'Creating Your Lesson',
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
@@ -66,9 +123,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
           children: [
             const Spacer(),
 
-            // Title
             const Text(
-              "Creating your lesson",
+              'Creating your lesson',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,
@@ -78,22 +134,32 @@ class _LoadingScreenState extends State<LoadingScreen> {
               ),
             ),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
 
-            // Subtitle
             Text(
-              "Analyzing content and converting it...",
+              widget.title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Color(0xFF6C63FF),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            Text(
+              'Analyzing content and personalizing for your learning style...',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
-                fontSize: 14,
+                color: Colors.white.withValues(alpha: 0.6),
+                fontSize: 13,
                 height: 1.5,
               ),
             ),
 
             const SizedBox(height: 40),
 
-            // Circular Progress
             SizedBox(
               width: 130,
               height: 130,
@@ -101,42 +167,30 @@ class _LoadingScreenState extends State<LoadingScreen> {
                 alignment: Alignment.center,
                 children: [
                   CircularProgressIndicator(
-                    value: progress,
+                    value: _progress,
                     strokeWidth: 8,
-                    backgroundColor: Colors.white.withOpacity(0.1),
-                    valueColor: const AlwaysStoppedAnimation(
-                      Color(0xFF7C4DFF),
+                    backgroundColor: const Color(0xFF1E2A3A),
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                      Color(0xFF6C63FF),
                     ),
                   ),
                   Text(
-                    "${(progress * 100).toInt()}%",
+                    '${(_progress * 100).toInt()}%',
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
+                      fontSize: 18,
                     ),
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 32),
 
-            const Text(
-              "Loading...",
-              style: TextStyle(color: Colors.white54, fontSize: 13),
-            ),
-
-            const SizedBox(height: 40),
-
-            // Steps
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildStep("Extracting content from PDF"),
-                _buildStep("Analyzing learning concepts"),
-                _buildStep("Creating smart lesson"),
-              ],
-            ),
+            _buildStep('Extracting content from PDF'),
+            _buildStep('Analyzing learning concepts'),
+            _buildStep('Personalizing to your VARK style'),
 
             const Spacer(),
           ],
@@ -144,23 +198,24 @@ class _LoadingScreenState extends State<LoadingScreen> {
       ),
     );
   }
-}
-Widget _buildStep(String text) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 6),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Icon(Icons.check_circle, color: Colors.greenAccent, size: 18),
-        const SizedBox(width: 10),
-        Text(
-          text,
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.85),
-            fontSize: 13,
+
+  Widget _buildStep(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.check_circle, color: Color(0xFF43C59E), size: 18),
+          const SizedBox(width: 10),
+          Text(
+            text,
+            style: const TextStyle(
+              color: Color(0xFF6B7A99),
+              fontSize: 13,
+            ),
           ),
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
+  }
 }

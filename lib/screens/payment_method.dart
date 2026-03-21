@@ -298,10 +298,10 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
           const SizedBox(height: 16),
 
           // Annual Subscription
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Annual Subscription',
                 style: TextStyle(
                   color: Color(0x99FFFFFF),
@@ -322,10 +322,10 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
           const SizedBox(height: 8),
 
           // Annual Savings
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Annual Savings',
                 style: TextStyle(
                   color: Color(0xFF4ECB71),
@@ -338,16 +338,16 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                   Text(
                     '.99',
                     style: TextStyle(
-                      color: const Color(0xFF4ECB71),
+                      color: Color(0xFF4ECB71),
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Text(
                     '\$19.80',
                     style: TextStyle(
-                      color: const Color(0xFF6B7280),
+                      color: Color(0xFF6B7280),
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
                       decoration: TextDecoration.lineThrough,
@@ -365,10 +365,10 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
           const SizedBox(height: 16),
 
           // Total Due Today
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Total Due Today',
                 style: TextStyle(
                   color: Colors.white,
@@ -399,11 +399,11 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: const Color(0xFF4ECB71), width: 1),
       ),
-      child: Row(
+      child: const Row(
         children: [
-          const Icon(Icons.lock, color: Color(0xFF4ECB71), size: 20),
-          const SizedBox(width: 8),
-          const Expanded(
+          Icon(Icons.lock, color: Color(0xFF4ECB71), size: 20),
+          SizedBox(width: 8),
+          Expanded(
             child: Text(
               'Your payment information is encrypted and secure',
               style: TextStyle(
@@ -560,8 +560,8 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                 _agreeToTerms = value ?? false;
               });
             },
-            fillColor: MaterialStateProperty.resolveWith((states) {
-              if (states.contains(MaterialState.selected)) {
+            fillColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.selected)) {
                 return const Color(0xFFFFA500);
               }
               return const Color(0xFFE5E7EB);

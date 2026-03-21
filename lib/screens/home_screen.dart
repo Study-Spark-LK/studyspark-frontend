@@ -431,7 +431,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontSize: 16,
                     fontWeight: FontWeight.w700)),
             TextButton(
-              onPressed: () {},
+              onPressed: () => Navigator.pushNamed(context, '/library'),
               child: const Text('See all',
                   style: TextStyle(color: Color(0xFF6C63FF), fontSize: 13)),
             ),
@@ -478,8 +478,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return GestureDetector(
       onTap: () {
         if (isReady) {
-          Navigator.pushNamed(context, '/analytical',
-              arguments: {'documentId': doc.id});
+          Navigator.pushNamed(context, '/output-result', arguments: {
+            'documentId': doc.id,
+            'title': doc.title,
+            'category': doc.category,
+          });
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Still processing, please wait')),

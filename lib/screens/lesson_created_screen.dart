@@ -1,65 +1,107 @@
 import 'package:flutter/material.dart';
-import 'outputresult_screen.dart';
 
 class LessonCreatedScreen extends StatelessWidget {
-  final String lessonName;
-  final String hobby;
+  final String documentId;
+  final String title;
+  final String category;
 
-  LessonCreatedScreen({this.lessonName = "Biology", this.hobby = "Photography"});
+  const LessonCreatedScreen({
+    super.key,
+    required this.documentId,
+    required this.title,
+    this.category = 'General',
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF0D1117),
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Text("Upload Learning Material"),
+        backgroundColor: const Color(0xFF0D1117),
+        elevation: 0,
+        title: const Text('Lesson Ready',
+            style: TextStyle(color: Colors.white)),
+        centerTitle: true,
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.check_circle, color: Colors.green, size: 80),
-            SizedBox(height: 20),
-            Text(
-              "Lesson Created!",
-              style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40.0),
-              child: Text(
-                "Your personalized lesson is ready, tailored to your hobby: $hobby",
-                style: TextStyle(color: Colors.grey[400]),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            SizedBox(height: 30),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 40),
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => OutputresultScreen(),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF43C59E).withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
                 ),
-                child: Center(
-                  child: Text(
-                    "Start Learning",
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                child: const Icon(Icons.check_circle,
+                    color: Color(0xFF43C59E), size: 56),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Lesson Created!',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Color(0xFF6C63FF),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Your personalized lesson is ready,\ntailored to your learning style.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Color(0xFF6B7A99),
+                  fontSize: 14,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 40),
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      '/output-result',
+                      (route) => route.isFirst,
+                      arguments: {
+                        'documentId': documentId,
+                        'title': title,
+                        'category': category,
+                      },
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6C63FF),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: const Text(
+                    'Start Learning',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
