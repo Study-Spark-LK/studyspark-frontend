@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../api/api_client.dart';
 import '../api/models/profiles_request_body.dart';
+import '../api/models/status.dart';
+import '../api/models/status2.dart';
+import '../state/app_state.dart';
 import 'package:studyspark/api/models/qna.dart';
 import 'package:clerk_flutter/clerk_flutter.dart';
 import 'dart:convert';
@@ -17,6 +20,7 @@ class _PersonalityTestQuestionnaireScreenState
     extends State<PersonalityTestQuestionnaireScreen> {
   int currentStep = 0;
   final int totalSteps = 8;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -40,11 +44,14 @@ class _PersonalityTestQuestionnaireScreenState
   };
 
   final Map<String, String> _questionTexts = {
-    'learningPreference': 'When learning something new, I prefer to:',
-    'informationRetention': 'I remember information best when:',
-    'interestCreation': 'A topic becomes interesting to me when:',
+    'question1': 'I prefer a presenter or teacher who uses:',
+    'question2': 'I am assembling a piece of furniture that came in parts. I would:',
+    'question3': 'When I am learning, I:',
+    'question4': 'A website has a video showing how to make a special graph or chart. I would learn most from:',
+    'question5': 'I want to learn how to play a new board game or card game. I would:',
+    'question6': 'I want to learn how to take better photos. I would:',
+    'question7': 'I want to learn to do something new on a computer. I would:',
     'interests': 'Mark your interests to create personalized learning content',
-    'contentConsumption': 'Content consumption preferences',
   };
 
   final TextEditingController _customInterestController =
@@ -766,71 +773,93 @@ class _PersonalityTestQuestionnaireScreenState
     return qnaList;
   }
 
-  void _completeTest() {
+  void _completeTest() async {
+    // a. Build qna payload — includes interests/hobbies via answers['interests']
+    final qnaList = _generateQnaPayload();
+
+    // b. Get user's name from Clerk
+    final user = ClerkAuth.of(context).user;
+    final rawName = [user?.firstName, user?.lastName]
+        .whereType<String>()
+        .join(' ')
+        .trim();
+    final profileName = rawName.isEmpty ? 'StudySpark User' : rawName;
+
+    // d. Show loading dialog
+    setState(() => _isLoading = true);
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF2A2A3E),
-        shape: const RoundedRectangleBorder(
+      builder: (_) => const AlertDialog(
+        backgroundColor: Color(0xFF2A2A3E),
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
-        title: const Row(
-          children: [
-            Icon(Icons.check_circle, color: Color(0xFF4FC3F7), size: 32),
-            SizedBox(width: 12),
-            Text(
-              'Test Completed!',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        content: const Column(
+        content: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            CircularProgressIndicator(color: Color(0xFF4FC3F7)),
+            SizedBox(height: 20),
             Text(
-              'Your personality test is complete!',
+              'Setting up your profile...',
               style: TextStyle(color: Colors.white, fontSize: 16),
             ),
-            SizedBox(height: 8),
-            Text(
-              "Your learning preferences have been saved and we'll personalize your experience accordingly.",
-              style: TextStyle(color: Colors.white70, fontSize: 14),
-            ),
           ],
         ),
-        actions: [
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(
-                  context,
-                ).pushNamedAndRemoveUntil('/home', (route) => false);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4FC3F7),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text(
-                'Go to Home',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
-            ),
-          ),
-        ],
       ),
     );
+
+    try {
+      // e. POST profile to backend
+      final postResponse = await apiClient.profiles.postProfiles(
+        body: ProfilesRequestBody(name: profileName, qna: qnaList),
+      );
+      final profileId = postResponse.data.id;
+
+      // f. Poll GET /profiles every 3s until status == READY (max 30s)
+      final deadline = DateTime.now().add(const Duration(seconds: 30));
+      bool isReady = false;
+      while (DateTime.now().isBefore(deadline)) {
+        await Future.delayed(const Duration(seconds: 3));
+        final pollResponse = await apiClient.profiles.getProfiles(
+          status: Status2.all,
+        );
+        final matching = pollResponse.data.where((p) => p.id == profileId);
+        if (matching.isNotEmpty && matching.first.status == Status.ready) {
+          isReady = true;
+          break;
+        }
+      }
+
+      // g. Persist profileId for other screens
+      AppState.profileId = profileId;
+
+      // Close loading dialog
+      if (mounted) Navigator.of(context).pop();
+
+      if (mounted && !isReady) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Profile is still processing — you can continue.'),
+          ),
+        );
+      }
+
+      // h. Navigate to /home, clearing the back stack
+      if (mounted) {
+        setState(() => _isLoading = false);
+        Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+      }
+    } catch (e) {
+      // i. Dismiss dialog, reset loading, show error for retry
+      if (mounted) {
+        Navigator.of(context).pop();
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
+    }
   }
 
   void _showContinueLaterDialog() {
@@ -859,8 +888,7 @@ class _PersonalityTestQuestionnaireScreenState
           ),
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pushReplacementNamed('/home');
+              Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
             },
             child: const Text(
               'Save & Exit',

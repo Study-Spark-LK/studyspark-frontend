@@ -5,7 +5,7 @@ import 'package:studyspark/screens/upload_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/questionnaire_welcome_screen.dart';
 import 'screens/questionnaire_screen.dart';
-import 'screens/home_screen.dart';
+import 'screens/main_shell.dart';
 import 'screens/onboarding_screen1.dart';
 import 'screens/onboarding_screen4.dart';
 import 'screens/onboarding_screen2.dart';
@@ -19,7 +19,6 @@ import 'package:studyspark/api/api_client.dart';
 //import 'screens/quiz_screen.dart';
 //import 'screens/progress_screen.dart';
 import 'screens/profile_screen.dart';
-import 'screens/practice_screen.dart';
 import "screens/premium_upgrade_screen.dart";
 
 void main() {
@@ -112,7 +111,7 @@ class StudySparkApp extends StatelessWidget {
                     final hasProfiles = snapshot.data ?? false;
 
                     if (hasProfiles) {
-                      return const HomeScreen();
+                      return const MainShell();
                     } else {
                       return const QuestionnaireWelcomeScreen();
                     }
@@ -132,7 +131,7 @@ class StudySparkApp extends StatelessWidget {
             // ),
             // '/login': (context) => const LoginScreen(),
             '/personality-test-welcome': (context) => const QuestionnaireWelcomeScreen(),
-            '/home': (context) => const HomeScreen(),
+            '/home': (context) => const MainShell(),
             '/library': (context) => const LibraryScreen(),
             '/upload': (context) => const UploadScreen(),
             '/onboard1': (context) => const OnboardingScreen1(),

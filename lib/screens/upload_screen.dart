@@ -133,7 +133,7 @@ class _UploadScreenState extends State<UploadScreen> {
                       const Text(
                         "We'll analyze your documents and create\npersonalized lessons based on your learning style\nand hobbies",
                         style: TextStyle(
-                          color: Colors.white70,
+                          color: Color(0xFF6B7A99),
                           fontSize: 13,
                           height: 1.5,
                         ),
@@ -150,13 +150,13 @@ class _UploadScreenState extends State<UploadScreen> {
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color: _selectedFile != null
-                                  ? const Color(0xFF4FC3F7)
-                                  : Colors.white.withValues(alpha: 0.25),
-                              width: 1.2,
+                                  ? const Color(0xFF6C63FF)
+                                  : const Color(0xFF1E2A3A),
+                              width: 1.5,
                             ),
                             color: _selectedFile != null
-                                ? const Color(0xFF4FC3F7).withValues(alpha: 0.1)
-                                : Colors.transparent,
+                                ? const Color(0xFF6C63FF).withValues(alpha: 0.08)
+                                : const Color(0xFF161B27),
                           ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -166,10 +166,8 @@ class _UploadScreenState extends State<UploadScreen> {
                                 height: 56,
                                 decoration: BoxDecoration(
                                   color: _selectedFile != null
-                                      ? const Color(
-                                          0xFF4FC3F7,
-                                        ).withValues(alpha: 0.2)
-                                      : Colors.white.withValues(alpha: 0.08),
+                                      ? const Color(0xFF6C63FF).withValues(alpha: 0.2)
+                                      : Colors.white.withValues(alpha: 0.06),
                                   borderRadius: BorderRadius.circular(28),
                                 ),
                                 child: Icon(
@@ -177,8 +175,8 @@ class _UploadScreenState extends State<UploadScreen> {
                                       ? Icons.picture_as_pdf
                                       : Icons.upload_outlined,
                                   color: _selectedFile != null
-                                      ? const Color(0xFF4FC3F7)
-                                      : Colors.white,
+                                      ? const Color(0xFF6C63FF)
+                                      : const Color(0xFF6B7A99),
                                   size: 30,
                                 ),
                               ),
@@ -190,8 +188,9 @@ class _UploadScreenState extends State<UploadScreen> {
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: _selectedFile != null
-                                      ? const Color(0xFF4FC3F7)
+                                      ? const Color(0xFF6C63FF)
                                       : Colors.white,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                               const SizedBox(height: 6),
@@ -200,7 +199,7 @@ class _UploadScreenState extends State<UploadScreen> {
                                     ? '${(_selectedFile!.size / (1024 * 1024)).toStringAsFixed(2)} MB'
                                     : 'Supports PDF files up to 10MB',
                                 style: const TextStyle(
-                                  color: Colors.white54,
+                                  color: Color(0xFF6B7A99),
                                   fontSize: 11,
                                 ),
                               ),
@@ -216,8 +215,9 @@ class _UploadScreenState extends State<UploadScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.08),
+                          color: const Color(0xFF161B27),
                           borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFF1E2A3A)),
                         ),
                         child: Column(
                           children: [
@@ -255,7 +255,7 @@ class _UploadScreenState extends State<UploadScreen> {
                               "Upload handwritten notes & images",
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: Colors.white70,
+                                color: Color(0xFF6B7A99),
                                 fontSize: 13,
                               ),
                             ),
@@ -304,8 +304,9 @@ class _UploadScreenState extends State<UploadScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFFF9C4),
+                          color: const Color(0xFF161B27),
                           borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: const Color(0xFF1E2A3A)),
                         ),
                         child: const Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -313,21 +314,20 @@ class _UploadScreenState extends State<UploadScreen> {
                             Text(
                               'How it works',
                               style: TextStyle(
+                                color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
                               ),
                             ),
                             SizedBox(height: 10),
-                            Text('• Upload your study material (PDF)'),
-                            Text(
-                              '• Choose a hobby to connect with the content',
-                            ),
-                            Text(
-                              '• We\'ll create personalized lessons using your hobby as context',
-                            ),
-                            Text(
-                              '• Content adapts to your learning style automatically',
-                            ),
+                            Text('• Upload your study material (PDF)',
+                                style: TextStyle(color: Color(0xFF6B7A99), fontSize: 13, height: 1.6)),
+                            Text('• Choose a hobby to connect with the content',
+                                style: TextStyle(color: Color(0xFF6B7A99), fontSize: 13, height: 1.6)),
+                            Text('• We\'ll create personalized lessons using your hobby as context',
+                                style: TextStyle(color: Color(0xFF6B7A99), fontSize: 13, height: 1.6)),
+                            Text('• Content adapts to your learning style automatically',
+                                style: TextStyle(color: Color(0xFF6B7A99), fontSize: 13, height: 1.6)),
                           ],
                         ),
                       ),
@@ -340,10 +340,10 @@ class _UploadScreenState extends State<UploadScreen> {
                         height: 52,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            // if no file is selected
                             backgroundColor: _selectedFile != null
-                                ? const Color(0xFF4FC3F7)
-                                : Colors.grey[700],
+                                ? const Color(0xFF6C63FF)
+                                : const Color(0xFF1E2A3A),
+                            foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(26),
                             ),
@@ -370,7 +370,7 @@ class _UploadScreenState extends State<UploadScreen> {
                                   ),
                                 )
                               : const Text(
-                                  'create personalized button',
+                                  'Create Personalized Lessons',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,

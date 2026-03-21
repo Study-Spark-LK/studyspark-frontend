@@ -15,12 +15,12 @@ abstract class Data2 with _$Data2 {
     required String id,
     required String name,
     required Status status,
-    required num visualScore,
-    required num auditoryScore,
-    required num readingScore,
-    required num kinestheticScore,
-    required num createdAt,
-    required num updatedAt,
+    @Default(0) num visualScore,
+    @Default(0) num auditoryScore,
+    @Default(0) num readingScore,
+    @Default(0) num kinestheticScore,
+    Object? createdAt,
+    Object? updatedAt,
   }) = _Data2;
   
   factory Data2.fromJson(Map<String, Object?> json) => _$Data2FromJson(json);

@@ -40,50 +40,35 @@ class _PracticeScreenState extends State<PracticeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF0D1117),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 16,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 4),
-                      const Text(
-                        'Practice & Quizzes',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      _buildStatsRow(),
-                      const SizedBox(height: 18),
-                      _buildCategoryChips(),
-                      const SizedBox(height: 14),
-                      ...modules
-                          .map((module) => _buildModuleCard(module))
-                          .toList(),
-                      const SizedBox(height: 90),
-                    ],
+    return SafeArea(
+      child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 4),
+                const Text(
+                  'Practice & Quizzes',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
+                const SizedBox(height: 16),
+                _buildStatsRow(),
+                const SizedBox(height: 18),
+                _buildCategoryChips(),
+                const SizedBox(height: 14),
+                ...modules.map((module) => _buildModuleCard(module)).toList(),
+                const SizedBox(height: 32),
+              ],
             ),
-            _buildBottomNav(),
-          ],
+          ),
         ),
-      ),
-    );
+      );
   }
 
   Widget _buildStatsRow() {
@@ -302,75 +287,5 @@ class _PracticeScreenState extends State<PracticeScreen> {
     );
   }
 
-  Widget _buildBottomNav() {
-    final items = [
-      {'icon': Icons.home, 'label': 'Home', 'route': '/home'},
-      {'icon': Icons.menu_book_outlined, 'label': 'Library', 'route': '/home'},
-      {'icon': Icons.upload_outlined, 'label': 'Upload', 'route': '/home'},
-      {
-        'icon': Icons.psychology_outlined,
-        'label': 'Practice',
-        'route': '/practice',
-      },
-      {
-        'icon': Icons.person_outline_rounded,
-        'label': 'Profile',
-        'route': '/profile',
-      },
-    ];
-
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF0C121E),
-        border: Border(
-          top: BorderSide(color: Colors.white.withOpacity(0.08), width: 1),
-        ),
-      ),
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
-          height: 70,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: items.map((item) {
-              final selected = item['label'] == 'Practice';
-              return GestureDetector(
-                onTap: () {
-                  final route = item['route'] as String;
-                  if (route == '/home') {
-                    Navigator.pushReplacementNamed(context, '/home');
-                  } else {
-                    Navigator.pushReplacementNamed(context, route);
-                  }
-                },
-                behavior: HitTestBehavior.opaque,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      item['icon'] as IconData,
-                      color: selected
-                          ? const Color(0xFF4FC3F7)
-                          : Colors.white.withOpacity(0.45),
-                      size: 22,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      item['label'] as String,
-                      style: TextStyle(
-                        color: selected
-                            ? const Color(0xFF4FC3F7)
-                            : Colors.white.withOpacity(0.45),
-                        fontSize: 10,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-      ),
-    );
-  }
 }
+
