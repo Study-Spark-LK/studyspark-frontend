@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:clerk_flutter/clerk_flutter.dart';
+import 'package:studyspark/api/api_client.dart';
+import 'package:dio/dio.dart';
+import 'package:http_parser/http_parser.dart';
 import 'loading_screen.dart';
 
 class UploadScreen extends StatefulWidget {
@@ -11,6 +15,7 @@ class UploadScreen extends StatefulWidget {
 
 class _UploadScreenState extends State<UploadScreen> {
   PlatformFile? _selectedFile;
+  bool _isUploading = false;
 
   Future<void> _pickPDF() async {
     try {
@@ -27,6 +32,54 @@ class _UploadScreenState extends State<UploadScreen> {
       }
     } catch (e) {
       print("Error picking file: $e");
+    }
+  }
+
+  Future<void> _uploadFile() async {
+    if (_selectedFile == null || _selectedFile!.path == null) return;
+
+    setState(() {
+      _isUploading = true;
+    });
+
+    try {
+      final token = ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+      if (token != null) {
+        rawDio.options.headers['Authorization'] = 'Bearer $token';
+      }
+
+      final formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(
+          _selectedFile!.path!,
+          filename: _selectedFile!.name,
+          contentType: MediaType('application', 'pdf'),
+        ),
+      });
+
+      print("formData $formData");
+
+      final response = await rawDio.post('/storage/files', data: formData);
+
+      print("Upload Success! Response: ${response.data}");
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('File uploaded successfully!')),
+        );
+      }
+    } catch (e) {
+      print("Upload failed: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Upload failed: $e')));
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isUploading = false;
+        });
+      }
     }
   }
 
@@ -84,6 +137,79 @@ class _UploadScreenState extends State<UploadScreen> {
                         ),
                       ),
 
+              InkWell(
+                onTap: _pickPDF,
+                borderRadius: BorderRadius.circular(16),
+                child: Container(
+                  width: double.infinity,
+                  height: 180,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: _selectedFile != null
+                          ? const Color(0xFF4FC3F7)
+                          : Colors.white.withValues(alpha: 0.25),
+                      width: 1.2,
+                    ),
+                    color: _selectedFile != null
+                        ? const Color(0xFF4FC3F7).withValues(alpha: 0.1)
+                        : Colors.transparent,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          color: _selectedFile != null
+                              ? const Color(0xFF4FC3F7).withValues(alpha: 0.2)
+                              : Colors.white.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(28),
+                        ),
+                        child: Icon(
+                          _selectedFile != null
+                              ? Icons.picture_as_pdf
+                              : Icons.upload_outlined,
+                          color: _selectedFile != null
+                              ? const Color(0xFF4FC3F7)
+                              : Colors.white,
+                          size: 30,
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+
+                      Text(
+                        _selectedFile != null
+                            ? _selectedFile!.name
+                            : 'Drop your PDF here or click\nto browse',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: _selectedFile != null
+                              ? const Color(0xFF4FC3F7)
+                              : Colors.white,
+                          fontSize: 14,
+                          fontWeight: _selectedFile != null
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        _selectedFile != null
+                            ? '${(_selectedFile!.size / (1024 * 1024)).toStringAsFixed(2)} MB'
+                            : 'Supports PDF files up to 10MB',
+                        style: const TextStyle(
+                          color: Colors.white54,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
                       SizedBox(height: screenHeight * 0.03),
 
                       /// Upload Box
@@ -236,6 +362,36 @@ class _UploadScreenState extends State<UploadScreen> {
 
                       SizedBox(height: screenHeight * 0.03),
 
+              // How it works
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF9C4),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'How it works',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text('• Upload your study material (PDF)'),
+                    Text('• Choose a hobby to connect with the content'),
+                    Text(
+                      '• We\'ll create personalized lessons using your hobby as context',
+                    ),
+                    Text(
+                      '• Content adapts to your learning style automatically',
+                    ),
+                  ],
+                ),
+              ),
                       /// How it works
                       Container(
                         width: double.infinity,
@@ -267,47 +423,44 @@ class _UploadScreenState extends State<UploadScreen> {
 
                       const Spacer(),
 
-                      /// Button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 52,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: _selectedFile != null
-                                ? const Color(0xFF4FC3F7)
-                                : Colors.grey[700],
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(26),
-                            ),
+              // Continue Button
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    // if no file is selected
+                    backgroundColor: _selectedFile != null
+                        ? const Color(0xFF4FC3F7)
+                        : Colors.grey[700],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(26),
+                    ),
+                  ),
+                  onPressed: (_selectedFile == null || _isUploading)
+                      ? null
+                      : _uploadFile,
+                  child: _isUploading
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
                           ),
-                          onPressed: _selectedFile == null
-                              ? null
-                              : () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => LoadingScreen(),
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            'Create Personalized Lesson',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
+                        )
+                      : const Text(
+                          'Continue',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
                           ),
                         ),
-                      ),
-
-                      SizedBox(height: screenHeight * 0.02),
-                    ],
-                  ),
                 ),
               ),
-            );
-          },
+            ],
+          ),
         ),
       ),
     );
