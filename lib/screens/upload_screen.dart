@@ -5,6 +5,7 @@ import 'package:studyspark/api/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import 'loading_screen.dart';
+import 'dart:io';
 
 class UploadScreen extends StatefulWidget {
   const UploadScreen({super.key});
@@ -48,17 +49,20 @@ class _UploadScreenState extends State<UploadScreen> {
         rawDio.options.headers['Authorization'] = 'Bearer $token';
       }
 
-      final formData = FormData.fromMap({
-        'file': await MultipartFile.fromFile(
-          _selectedFile!.path!,
-          filename: _selectedFile!.name,
-          contentType: MediaType('application', 'pdf'),
+      final file = File(_selectedFile!.path!);
+      final fileBytes = await file.readAsBytes();
+
+      final response = await rawDio.post(
+        '/storage/files',
+        data: fileBytes,
+        options: Options(
+          headers: {
+            'content-type': 'application/pdf',
+            'x-file-name': _selectedFile!.name,
+            'content-length': fileBytes.length.toString(),
+          },
         ),
-      });
-
-      print("formData $formData");
-
-      final response = await rawDio.post('/storage/files', data: formData);
+      );
 
       print("Upload Success! Response: ${response.data}");
 
