@@ -26,9 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF1a1f2e),
-      body: SingleChildScrollView(
+    return SingleChildScrollView(
         child: Column(
           children: [
             // Top Navigation Bar
@@ -398,8 +396,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 32),
           ],
         ),
-      ),
-    );
+      );
   }
 
   List<Widget> _buildLearningModalities() {

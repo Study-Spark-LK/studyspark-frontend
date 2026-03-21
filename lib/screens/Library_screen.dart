@@ -9,7 +9,6 @@ class LibraryScreen extends StatefulWidget {
 
 class _LibraryScreenState extends State<LibraryScreen> {
   String selectedCategory = "All";
-
   final List<Map<String, dynamic>> lessons = [
     {
       "title": "Introduction to Photosynthesis",
@@ -39,147 +38,209 @@ class _LibraryScreenState extends State<LibraryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List filteredLessons = selectedCategory == "All"
+    final filteredLessons = selectedCategory == "All"
         ? lessons
         : lessons.where((l) => l["category"] == selectedCategory).toList();
 
-    return Scaffold(
-      backgroundColor: const Color(0xFF0E1116),
+    return SafeArea(
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              child: Row(
+                children: [
+                  const Text(
+                    'My Library',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text("My Library"),
-      ),
+            const SizedBox(height: 20),
 
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 🔍 Search Bar
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: "Search lessons...",
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: Colors.grey[900],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
+            // Search bar
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: TextField(
+                style: const TextStyle(color: Colors.white, fontSize: 14),
+                decoration: InputDecoration(
+                  hintText: 'Search lessons...',
+                  hintStyle: const TextStyle(color: Color(0xFF6B7A99), fontSize: 14),
+                  prefixIcon: const Icon(Icons.search_rounded,
+                      color: Color(0xFF6B7A99), size: 20),
+                  filled: true,
+                  fillColor: const Color(0xFF161B27),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Color(0xFF1E2A3A), width: 1),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Color(0xFF1E2A3A), width: 1),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Color(0xFF6C63FF), width: 1),
+                  ),
                 ),
               ),
             ),
-          ),
 
-          // 🧠 Category Buttons
-          SizedBox(
-            height: 50,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              children: [
-                categoryButton("All"),
-                categoryButton("Biology"),
-                categoryButton("History"),
-                categoryButton("Mathematics"),
-              ],
+            const SizedBox(height: 16),
+
+            // Category chips
+            SizedBox(
+              height: 36,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                children: [
+                  _categoryChip("All"),
+                  _categoryChip("Biology"),
+                  _categoryChip("History"),
+                  _categoryChip("Mathematics"),
+                ],
+              ),
             ),
-          ),
 
-          const SizedBox(height: 10),
+            const SizedBox(height: 16),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              "${filteredLessons.length} lessons",
-              style: const TextStyle(color: Colors.white),
+            // Count label
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                '${filteredLessons.length} lesson${filteredLessons.length == 1 ? '' : 's'}',
+                style: const TextStyle(color: Color(0xFF6B7A99), fontSize: 13),
+              ),
             ),
-          ),
 
-          const SizedBox(height: 10),
+            const SizedBox(height: 12),
 
-          // 📚 Lesson List
-          Expanded(
-            child: ListView.builder(
-              itemCount: filteredLessons.length,
-              itemBuilder: (context, index) {
-                var lesson = filteredLessons[index];
-                return lessonCard(lesson);
-              },
+            // List
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                itemCount: filteredLessons.length,
+                itemBuilder: (context, index) =>
+                    _lessonCard(filteredLessons[index]),
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
   }
 
-  // 🔘 Category Button
-  Widget categoryButton(String category) {
-    bool isSelected = selectedCategory == category;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isSelected ? Colors.cyan : Colors.grey[800],
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+  Widget _categoryChip(String category) {
+    final isSelected = selectedCategory == category;
+    return GestureDetector(
+      onTap: () => setState(() => selectedCategory = category),
+      child: Container(
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? const Color(0xFF6C63FF)
+              : const Color(0xFF161B27),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected
+                ? const Color(0xFF6C63FF)
+                : const Color(0xFF1E2A3A),
+            width: 1,
           ),
         ),
-        onPressed: () {
-          setState(() {
-            selectedCategory = category;
-          });
-        },
         child: Text(
           category,
-          style: TextStyle(color: isSelected ? Colors.black : Colors.white),
+          style: TextStyle(
+            color: isSelected ? Colors.white : const Color(0xFF6B7A99),
+            fontSize: 12,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+          ),
         ),
       ),
     );
   }
 
-  // 📄 Lesson Card
-  Widget lessonCard(Map lesson) {
+  Widget _lessonCard(Map lesson) {
+    final progress = (lesson["progress"] as double);
+    final pct = (progress * 100).toInt();
+    final isComplete = progress >= 1.0;
+
     return Container(
-      margin: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[900],
+        color: const Color(0xFF161B27),
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF1E2A3A), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  lesson["title"],
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: isComplete
+                      ? const Color(0xFF43C59E).withValues(alpha: 0.15)
+                      : const Color(0xFF6C63FF).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  isComplete ? 'Done' : '$pct%',
+                  style: TextStyle(
+                    color: isComplete
+                        ? const Color(0xFF43C59E)
+                        : const Color(0xFF6C63FF),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
           Text(
-            lesson["title"],
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            '${lesson["category"]} • ${lesson["duration"]}',
+            style: const TextStyle(color: Color(0xFF6B7A99), fontSize: 12),
           ),
-          const SizedBox(height: 5),
-          Text(
-            "${lesson["category"]} • ${lesson["duration"]}",
-            style: const TextStyle(color: Colors.grey),
-          ),
-          const SizedBox(height: 10),
-          LinearProgressIndicator(
-            value: lesson["progress"],
-            backgroundColor: Colors.grey[800],
-            color: Colors.white,
-          ),
-          const SizedBox(height: 5),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              "${(lesson["progress"] * 100).toInt()}%",
-              style: const TextStyle(color: Colors.white),
+          const SizedBox(height: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: progress,
+              backgroundColor: const Color(0xFF1E2A3A),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                isComplete ? const Color(0xFF43C59E) : const Color(0xFF6C63FF),
+              ),
+              minHeight: 5,
             ),
           ),
         ],
       ),
     );
   }
+
 }
+

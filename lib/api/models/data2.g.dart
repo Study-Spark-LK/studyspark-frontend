@@ -10,12 +10,12 @@ _Data2 _$Data2FromJson(Map<String, dynamic> json) => _Data2(
   id: json['id'] as String,
   name: json['name'] as String,
   status: Status.fromJson(json['status'] as String),
-  visualScore: json['visualScore'] as num,
-  auditoryScore: json['auditoryScore'] as num,
-  readingScore: json['readingScore'] as num,
-  kinestheticScore: json['kinestheticScore'] as num,
-  createdAt: json['createdAt'] as num,
-  updatedAt: json['updatedAt'] as num,
+  visualScore: json['visualScore'] as num? ?? 0,
+  auditoryScore: json['auditoryScore'] as num? ?? 0,
+  readingScore: json['readingScore'] as num? ?? 0,
+  kinestheticScore: json['kinestheticScore'] as num? ?? 0,
+  createdAt: json['createdAt'],
+  updatedAt: json['updatedAt'],
 );
 
 Map<String, dynamic> _$Data2ToJson(_Data2 instance) => <String, dynamic>{
