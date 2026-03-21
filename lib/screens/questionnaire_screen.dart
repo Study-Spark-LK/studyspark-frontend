@@ -25,7 +25,13 @@ class _PersonalityTestQuestionnaireScreenState
     super.initState();
 
     fetchClerkToken = () async {
-      return ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+      final auth = ClerkAuth.of(context);
+      try {
+        final sessionToken = await auth.sessionToken();
+        return sessionToken.jwt;
+      } catch (_) {
+        return auth.session?.lastActiveToken?.jwt;
+      }
     };
   }
 
@@ -775,15 +781,29 @@ class _PersonalityTestQuestionnaireScreenState
     // a. Build qna payload — includes interests/hobbies via answers['interests']
     final qnaList = _generateQnaPayload();
 
-    // b. Get user's name from Clerk
-    final user = ClerkAuth.of(context).user;
+    // b. Get user's name and pin the fresh token on rawDio so every
+    // apiClient call in this method gets the Authorization header.
+    final auth = ClerkAuth.of(context);
+    final user = auth.user;
     final rawName = [user?.firstName, user?.lastName]
         .whereType<String>()
         .join(' ')
         .trim();
     final profileName = rawName.isEmpty ? 'StudySpark User' : rawName;
 
+    String? token;
+    try {
+      final sessionToken = await auth.sessionToken();
+      token = sessionToken.jwt;
+    } catch (_) {
+      token = auth.session?.lastActiveToken?.jwt;
+    }
+    if (token != null) {
+      rawDio.options.headers['Authorization'] = 'Bearer $token';
+    }
+
     // d. Show loading dialog
+    if (!mounted) return;
     showDialog(
       context: context,
       barrierDismissible: false,
