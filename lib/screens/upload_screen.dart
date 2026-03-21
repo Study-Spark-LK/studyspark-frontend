@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:clerk_flutter/clerk_flutter.dart';
 import 'package:studyspark/api/api_client.dart';
+import 'package:studyspark/api/export.dart';
+import 'package:studyspark/state/app_state.dart';
 import 'package:dio/dio.dart';
-import 'package:http_parser/http_parser.dart';
 import 'loading_screen.dart';
 import 'dart:io';
 
@@ -25,34 +26,32 @@ class _UploadScreenState extends State<UploadScreen> {
         allowedExtensions: ['pdf'],
         allowMultiple: false,
       );
-
       if (result != null) {
         setState(() {
           _selectedFile = result.files.first;
         });
       }
-    } catch (e) {
-      print("Error picking file: $e");
-    }
+    } catch (_) {}
   }
 
-  Future<void> _uploadFile() async {
+  Future<void> _uploadAndCreate() async {
     if (_selectedFile == null || _selectedFile!.path == null) return;
 
-    setState(() {
-      _isUploading = true;
-    });
+    setState(() => _isUploading = true);
 
     try {
-      final token = ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+      // Set auth token
+      final token =
+          ClerkAuth.of(context).session?.lastActiveToken?.jwt;
       if (token != null) {
         rawDio.options.headers['Authorization'] = 'Bearer $token';
       }
 
+      // Step 1: Upload file to storage
       final file = File(_selectedFile!.path!);
       final fileBytes = await file.readAsBytes();
 
-      final response = await rawDio.post(
+      final uploadRes = await rawDio.post(
         '/storage/files',
         data: fileBytes,
         options: Options(
@@ -64,26 +63,64 @@ class _UploadScreenState extends State<UploadScreen> {
         ),
       );
 
-      print("Upload Success! Response: ${response.data}");
+      final fileId =
+          uploadRes.data?['data']?['id'] as String? ?? '';
+      if (fileId.isEmpty) {
+        throw Exception('Upload succeeded but no file ID returned');
+      }
 
+      // Step 2: Resolve profileId
+      String profileId = AppState.profileId ?? '';
+      if (profileId.isEmpty) {
+        final profilesRes =
+            await apiClient.profiles.getProfiles(status: Status2.all);
+        final profiles = profilesRes.data;
+        for (final p in profiles) {
+            if (p.status == Status.ready) {
+              AppState.profileId = p.id;
+              profileId = p.id;
+              break;
+            }
+          }
+      }
+
+      if (profileId.isEmpty) {
+        throw Exception(
+            'No learning profile found. Please complete the learning style quiz first.');
+      }
+
+      // Step 3: Create document record
+      final docRes = await apiClient.documents.postDocuments(
+        body: DocumentsRequestBody(fileId: fileId, profileId: profileId),
+      );
+
+      final documentId = docRes.data.id;
+      if (!mounted) return;
+
+      // Step 4: Navigate to loading/polling screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => LoadingScreen(
+            documentId: documentId,
+            title: _selectedFile!.name
+                .replaceAll('.pdf', '')
+                .replaceAll('_', ' '),
+            category: 'General',
+          ),
+        ),
+      );
+    } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('File uploaded successfully!')),
+          SnackBar(
+            content: Text('Upload failed: $e'),
+            behavior: SnackBarBehavior.floating,
+          ),
         );
       }
-    } catch (e) {
-      print("Upload failed: $e");
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Upload failed: $e')));
-      }
     } finally {
-      if (mounted) {
-        setState(() {
-          _isUploading = false;
-        });
-      }
+      if (mounted) setState(() => _isUploading = false);
     }
   }
 
@@ -108,7 +145,6 @@ class _UploadScreenState extends State<UploadScreen> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             final screenHeight = constraints.maxHeight;
-
             return SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: ConstrainedBox(
@@ -131,7 +167,7 @@ class _UploadScreenState extends State<UploadScreen> {
                       SizedBox(height: screenHeight * 0.01),
 
                       const Text(
-                        "We'll analyze your documents and create\npersonalized lessons based on your learning style\nand hobbies",
+                        "We'll analyze your document and create\npersonalized lessons based on your learning style.",
                         style: TextStyle(
                           color: Color(0xFF6B7A99),
                           fontSize: 13,
@@ -139,13 +175,15 @@ class _UploadScreenState extends State<UploadScreen> {
                         ),
                       ),
 
-                      /// Upload Box
+                      SizedBox(height: screenHeight * 0.025),
+
+                      // Upload drop zone
                       InkWell(
-                        onTap: _pickPDF,
+                        onTap: _isUploading ? null : _pickPDF,
                         borderRadius: BorderRadius.circular(16),
                         child: Container(
                           width: double.infinity,
-                          height: screenHeight * 0.22, // responsive height
+                          height: screenHeight * 0.22,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
@@ -155,7 +193,8 @@ class _UploadScreenState extends State<UploadScreen> {
                               width: 1.5,
                             ),
                             color: _selectedFile != null
-                                ? const Color(0xFF6C63FF).withValues(alpha: 0.08)
+                                ? const Color(0xFF6C63FF)
+                                    .withValues(alpha: 0.08)
                                 : const Color(0xFF161B27),
                           ),
                           child: Column(
@@ -166,7 +205,8 @@ class _UploadScreenState extends State<UploadScreen> {
                                 height: 56,
                                 decoration: BoxDecoration(
                                   color: _selectedFile != null
-                                      ? const Color(0xFF6C63FF).withValues(alpha: 0.2)
+                                      ? const Color(0xFF6C63FF)
+                                          .withValues(alpha: 0.2)
                                       : Colors.white.withValues(alpha: 0.06),
                                   borderRadius: BorderRadius.circular(28),
                                 ),
@@ -208,24 +248,23 @@ class _UploadScreenState extends State<UploadScreen> {
                         ),
                       ),
 
-                      SizedBox(height: screenHeight * 0.03),
+                      SizedBox(height: screenHeight * 0.025),
 
-                      /// Premium Section
+                      // Premium section
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: const Color(0xFF161B27),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: const Color(0xFF1E2A3A)),
+                          border:
+                              Border.all(color: const Color(0xFF1E2A3A)),
                         ),
                         child: Column(
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
+                                  horizontal: 12, vertical: 6),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFFFC107),
                                 borderRadius: BorderRadius.circular(20),
@@ -233,14 +272,11 @@ class _UploadScreenState extends State<UploadScreen> {
                               child: const Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(
-                                    Icons.workspace_premium,
-                                    size: 14,
-                                    color: Colors.black,
-                                  ),
+                                  Icon(Icons.workspace_premium,
+                                      size: 14, color: Colors.black),
                                   SizedBox(width: 6),
                                   Text(
-                                    "Premium Feature",
+                                    'Premium Feature',
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 11,
@@ -252,12 +288,10 @@ class _UploadScreenState extends State<UploadScreen> {
                             ),
                             const SizedBox(height: 12),
                             const Text(
-                              "Upload handwritten notes & images",
+                              'Upload handwritten notes & images',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: Color(0xFF6B7A99),
-                                fontSize: 13,
-                              ),
+                                  color: Color(0xFF6B7A99), fontSize: 13),
                             ),
                             const SizedBox(height: 12),
                             SizedBox(
@@ -269,20 +303,16 @@ class _UploadScreenState extends State<UploadScreen> {
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                 ),
-                                onPressed: () {
-                                  Navigator.pushNamed(context, "/premium");
-                                },
+                                onPressed: () =>
+                                    Navigator.pushNamed(context, '/premium'),
                                 child: const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(
-                                      Icons.lock_open,
-                                      size: 16,
-                                      color: Colors.white,
-                                    ),
+                                    Icon(Icons.lock_open,
+                                        size: 16, color: Colors.white),
                                     SizedBox(width: 8),
                                     Text(
-                                      "Unlock Now",
+                                      'Unlock Now',
                                       style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w600,
@@ -297,16 +327,17 @@ class _UploadScreenState extends State<UploadScreen> {
                         ),
                       ),
 
-                      SizedBox(height: screenHeight * 0.03),
+                      SizedBox(height: screenHeight * 0.025),
 
-                      /// How it works
+                      // How it works
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: const Color(0xFF161B27),
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: const Color(0xFF1E2A3A)),
+                          border:
+                              Border.all(color: const Color(0xFF1E2A3A)),
                         ),
                         child: const Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -320,21 +351,41 @@ class _UploadScreenState extends State<UploadScreen> {
                               ),
                             ),
                             SizedBox(height: 10),
-                            Text('• Upload your study material (PDF)',
-                                style: TextStyle(color: Color(0xFF6B7A99), fontSize: 13, height: 1.6)),
-                            Text('• Choose a hobby to connect with the content',
-                                style: TextStyle(color: Color(0xFF6B7A99), fontSize: 13, height: 1.6)),
-                            Text('• We\'ll create personalized lessons using your hobby as context',
-                                style: TextStyle(color: Color(0xFF6B7A99), fontSize: 13, height: 1.6)),
-                            Text('• Content adapts to your learning style automatically',
-                                style: TextStyle(color: Color(0xFF6B7A99), fontSize: 13, height: 1.6)),
+                            Text(
+                              '• Upload your study material (PDF)',
+                              style: TextStyle(
+                                  color: Color(0xFF6B7A99),
+                                  fontSize: 13,
+                                  height: 1.6),
+                            ),
+                            Text(
+                              '• We analyze and personalize the content',
+                              style: TextStyle(
+                                  color: Color(0xFF6B7A99),
+                                  fontSize: 13,
+                                  height: 1.6),
+                            ),
+                            Text(
+                              '• Lessons adapt to your VARK learning style',
+                              style: TextStyle(
+                                  color: Color(0xFF6B7A99),
+                                  fontSize: 13,
+                                  height: 1.6),
+                            ),
+                            Text(
+                              '• Access Visual, Audio, Analytical & Story modes',
+                              style: TextStyle(
+                                  color: Color(0xFF6B7A99),
+                                  fontSize: 13,
+                                  height: 1.6),
+                            ),
                           ],
                         ),
                       ),
 
                       const Spacer(),
 
-                      // Continue Button
+                      // Create button
                       SizedBox(
                         width: double.infinity,
                         height: 52,
@@ -350,16 +401,7 @@ class _UploadScreenState extends State<UploadScreen> {
                           ),
                           onPressed: (_selectedFile == null || _isUploading)
                               ? null
-                              : () async {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => LoadingScreen(),
-                                    ),
-                                  );
-
-                                  await _uploadFile();
-                                },
+                              : _uploadAndCreate,
                           child: _isUploading
                               ? const SizedBox(
                                   height: 24,
@@ -379,6 +421,8 @@ class _UploadScreenState extends State<UploadScreen> {
                                 ),
                         ),
                       ),
+
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),

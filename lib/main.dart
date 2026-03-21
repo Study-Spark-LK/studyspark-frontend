@@ -10,7 +10,7 @@ import 'screens/onboarding_screen1.dart';
 import 'screens/onboarding_screen4.dart';
 import 'screens/onboarding_screen2.dart';
 import 'screens/onboarding_screen3.dart';
-import 'screens/Library_screen.dart';
+import 'screens/library_screen.dart';
 import 'screens/practice_screen.dart';
 import 'screens/outputresult_screen.dart';
 import 'package:studyspark/env.dart';
@@ -20,6 +20,7 @@ import 'package:studyspark/api/api_client.dart';
 //import 'screens/progress_screen.dart';
 import 'screens/profile_screen.dart';
 import "screens/premium_upgrade_screen.dart";
+import 'screens/quiz_screen.dart';
 
 void main() {
   runApp(const StudySparkApp());
@@ -90,8 +91,7 @@ class StudySparkApp extends StatelessWidget {
 
                     return false;
 
-                  } catch (e) {
-                    print("Error fetching profiles for routing: $e");
+                  } catch (_) {
                     return false;
                   }
                 }
@@ -139,10 +139,12 @@ class StudySparkApp extends StatelessWidget {
             '/onboard3': (context) => const OnboardingScreen3(),
             '/onboard4': (context) => const OnboardingScreen4(),
             '/questionnaire': (context) => const PersonalityTestQuestionnaireScreen(),
-            '/output-result': (context) => OutputresultScreen(),
+            '/output-result': (context) => const OutputresultScreen(),
             '/practice': (context) => const PracticeScreen(),
             '/profile': (context) => const ProfileScreen(),
             "/premium":(context) => const PremiumUpgradeScreen(),
+            '/signup': (context) => const LoginScreen(),
+            '/quiz': (context) => const QuizScreen(),
             //'/learning-path': (context) => const LearningPathScreen(),
             //'/quiz': (context) => const QuizScreen(),
             //'/progress': (context) => const ProgressScreen(),

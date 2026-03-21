@@ -1,5 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import "ai_chat_bot.dart";
+import 'package:clerk_flutter/clerk_flutter.dart';
+import 'package:studyspark/api/api_client.dart';
+import 'package:studyspark/api/export.dart';
+import 'ai_chat_bot.dart';
+
 class OutputresultScreen extends StatefulWidget {
   const OutputresultScreen({super.key});
 
@@ -8,13 +13,128 @@ class OutputresultScreen extends StatefulWidget {
 }
 
 class _OutputresultScreenState extends State<OutputresultScreen> {
-  int selectedType = 0;
+  int _selectedType = 0;
+  bool _isLoading = true;
+  bool _hasError = false;
+  bool _initialized = false;
 
-  // Position for draggable chatbot icon
-  double top = 500;
-  double left = 300;
+  // Route args
+  String? _documentId;
+  String _title = 'Lesson';
+  String _category = '';
 
-  final types = ["Visual", "Audio", "Analytical", "Story"];
+  // Parsed AI content
+  String _explanation = '';
+  String _tldrSummary = '';
+  List<String> _keyPoints = [];
+  String _storyMode = '';
+  List<Map<String, dynamic>> _flashcards = [];
+
+  // Draggable chat icon position
+  double _chatTop = 500;
+  double _chatLeft = 300;
+
+  final _types = ['Visual', 'Audio', 'Analytical', 'Story'];
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _initialized = true;
+      final args =
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      _documentId = args?['documentId'] as String?;
+      _title = args?['title'] as String? ?? 'Lesson';
+      _category = args?['category'] as String? ?? '';
+
+      fetchClerkToken = () async {
+        return ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+      };
+
+      if (_documentId != null) {
+        _loadContent();
+      } else {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _loadContent() async {
+    setState(() {
+      _isLoading = true;
+      _hasError = false;
+    });
+    try {
+      // 1. Fetch document with generated files list
+      final docRes = await apiClient.documents
+          .getDocumentsDocumentId(documentId: _documentId!);
+      final doc = docRes.data;
+
+      // 2. Find the analytical generated file (has the richest JSON content)
+      final generatedFiles = doc.generatedFiles;
+      GeneratedFiles? targetFile;
+
+      if (generatedFiles.isNotEmpty) {
+        try {
+          targetFile = generatedFiles
+              .firstWhere((f) => f.type == Type.analytical);
+        } catch (_) {
+          targetFile = generatedFiles.first;
+        }
+      }
+
+      if (targetFile == null) {
+        // Document is ready but content files not generated yet
+        setState(() {
+          _explanation =
+              'Content is being finalized. Please check back shortly.';
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // 3. Download the content JSON from storage
+      final fileRes =
+          await rawDio.get('/storage/files/${targetFile.fileId}');
+      final responseData = fileRes.data;
+
+      Map<String, dynamic> content = {};
+      if (responseData is Map<String, dynamic>) {
+        content = responseData;
+      } else if (responseData is String) {
+        content = jsonDecode(responseData) as Map<String, dynamic>;
+      }
+
+      // 4. Parse fields
+      final explanation =
+          content['personalised_explanation'] as String? ?? '';
+      final tldr = content['tldr_summary'] as String? ?? '';
+      final keyPointsRaw = content['key_points'] as List? ?? [];
+      final keyPoints =
+          keyPointsRaw.map((e) => e.toString()).toList();
+      final story =
+          content['story_mode_explanation'] as String? ?? '';
+      final flashcardsRaw = content['flashcards'] as List? ?? [];
+      final flashcards = flashcardsRaw
+          .whereType<Map>()
+          .map((f) => Map<String, dynamic>.from(f))
+          .toList();
+
+      setState(() {
+        _explanation = explanation;
+        _tldrSummary = tldr;
+        _keyPoints = keyPoints;
+        _storyMode = story;
+        _flashcards = flashcards;
+        _isLoading = false;
+      });
+    } catch (_) {
+      setState(() {
+        _isLoading = false;
+        _hasError = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,149 +142,179 @@ class _OutputresultScreenState extends State<OutputresultScreen> {
       backgroundColor: const Color(0xFF0D1117),
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A2332),
-        title: const Text("Upload Learning Material"),
-        leading: const BackButton(),
+        elevation: 0,
+        leading: const BackButton(color: Colors.white),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              _title,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            if (_category.isNotEmpty)
+              Text(
+                _category,
+                style: const TextStyle(
+                    color: Color(0xFF6B7A99), fontSize: 11),
+              ),
+          ],
+        ),
       ),
-      body: Stack(
-        children: [
-          // ================= Scrollable Content =================
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// SUBJECT
-                const Text(
-                  "Biology",
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-
-                const SizedBox(height: 12),
-
-                /// TYPE SELECTOR
-                Row(
-                  children: List.generate(types.length, (index) {
-                    return Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() => selectedType = index);
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          decoration: BoxDecoration(
-                            color: selectedType == index
-                                ? const Color(0xFF4FC3F7)
-                                : const Color(0xFF1A2332),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Center(
-                            child: Text(
-                              types[index],
-                              style: TextStyle(
-                                color: selectedType == index
-                                    ? Colors.black
-                                    : Colors.white70,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
-                ),
-
-                const SizedBox(height: 20),
-
-                /// HOBBY CONNECTION CARD
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1A2332),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+      body: _isLoading
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(color: Color(0xFF6C63FF)),
+                  SizedBox(height: 16),
+                  Text('Loading your lesson...',
+                      style: TextStyle(color: Color(0xFF6B7A99))),
+                ],
+              ),
+            )
+          : _hasError
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        "Connected to your hobby: Photography",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 6),
-                      Text(
-                        "This lesson includes examples related to Photography to help you learn better!",
-                        style: TextStyle(color: Colors.white70),
+                      const Icon(Icons.error_outline,
+                          color: Color(0xFF6B7A99), size: 48),
+                      const SizedBox(height: 12),
+                      const Text('Failed to load lesson content',
+                          style: TextStyle(color: Colors.white)),
+                      const SizedBox(height: 16),
+                      TextButton(
+                        onPressed: _loadContent,
+                        child: const Text('Retry',
+                            style: TextStyle(color: Color(0xFF6C63FF))),
                       ),
                     ],
                   ),
-                ),
+                )
+              : Stack(
+                  children: [
+                    SingleChildScrollView(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Type selector
+                          Row(
+                            children: List.generate(_types.length, (i) {
+                              return Expanded(
+                                child: GestureDetector(
+                                  onTap: () =>
+                                      setState(() => _selectedType = i),
+                                  child: Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 3),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    decoration: BoxDecoration(
+                                      color: _selectedType == i
+                                          ? const Color(0xFF6C63FF)
+                                          : const Color(0xFF1A2332),
+                                      borderRadius:
+                                          BorderRadius.circular(12),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        _types[i],
+                                        style: TextStyle(
+                                          color: _selectedType == i
+                                              ? Colors.white
+                                              : const Color(0xFF6B7A99),
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }),
+                          ),
 
-                const SizedBox(height: 20),
+                          const SizedBox(height: 20),
 
-                /// CONTENT PREVIEW
-                _buildContent(),
+                          // Content for selected tab
+                          _buildContent(),
 
-                const SizedBox(height: 20),
+                          const SizedBox(height: 20),
 
-                /// Take Quiz button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Take Quiz")),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF4FC3F7),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    child: const Text(
-                      "Take Quiz",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                          // Take Quiz button
+                          if (_flashcards.isNotEmpty)
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    '/quiz',
+                                    arguments: {
+                                      'flashcards': _flashcards,
+                                      'title': _title,
+                                    },
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      const Color(0xFF6C63FF),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Take Quiz',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                          const SizedBox(height: 100),
+                        ],
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 100), // Extra space for scrolling
-              ],
-            ),
-          ),
 
-          // ================= Draggable Chatbot Icon =================
-          Positioned(
-            top: top,
-            left: left,
-            child: Draggable(
-              feedback: _chatIcon(),
-              childWhenDragging: Container(), // Hide original while dragging
-              onDragEnd: (details) {
-                setState(() {
-                  top = details.offset.dy;
-                  left = details.offset.dx;
-                });
-              },
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AIChatScreen(),
+                    // Draggable chat icon
+                    Positioned(
+                      top: _chatTop,
+                      left: _chatLeft,
+                      child: Draggable(
+                        feedback: _chatIcon(),
+                        childWhenDragging: Container(),
+                        onDragEnd: (details) {
+                          setState(() {
+                            _chatTop = details.offset.dy;
+                            _chatLeft = details.offset.dx;
+                          });
+                        },
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const AIChatScreen(),
+                              ),
+                            );
+                          },
+                          child: _chatIcon(),
+                        ),
+                      ),
                     ),
-                  );
-                },
-                child: _chatIcon(),
-              ),
-            ),
-          ),
-        ],
-      ),
+                  ],
+                ),
     );
   }
 
@@ -172,96 +322,219 @@ class _OutputresultScreenState extends State<OutputresultScreen> {
     return Material(
       color: Colors.transparent,
       child: Container(
-        width: 60,
-        height: 60,
+        width: 56,
+        height: 56,
         decoration: BoxDecoration(
-          color: const Color(0xFF4FC3F7),
+          color: const Color(0xFF6C63FF),
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              blurRadius: 6,
-              offset: const Offset(2, 2),
+              color: const Color(0xFF6C63FF).withValues(alpha: 0.4),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: const Icon(Icons.chat, color: Colors.black, size: 30),
+        child: const Icon(Icons.chat, color: Colors.white, size: 26),
       ),
     );
   }
 
-  // ================= CONTENT BUILDERS =================
-
   Widget _buildContent() {
-    switch (selectedType) {
+    switch (_selectedType) {
       case 0:
-        return _visual();
+        return _visualTab();
       case 1:
-        return _audio();
+        return _audioTab();
       case 2:
-        return _analytical();
+        return _analyticalTab();
       case 3:
-        return _story();
+        return _storyTab();
       default:
         return Container();
     }
   }
 
-  Widget _visual() {
-    return _infoCard("Visual Infographic", [
-      _step("Location", "Chloroplasts in plant cells", 1),
-      _step("Inputs", "CO₂ + H₂O + Light Energy", 2),
-      _step("Outputs", "Glucose (C₆H₁₂O₆) + O₂", 3),
-      _step("Formula", "6CO₂ + 6H₂O + Light → C₆H₁₂O₆", 4),
-    ]);
-  }
-
-  Widget _audio() {
-    return _infoCard("Audio Material", [
-      const Row(
-        children: [
-          Icon(Icons.play_circle_fill, color: Color(0xFF4FC3F7), size: 40),
-          SizedBox(width: 10),
-          Text("Audio Preview", style: TextStyle(color: Colors.white)),
+  Widget _visualTab() {
+    if (_keyPoints.isEmpty && _tldrSummary.isEmpty) {
+      return _emptyContent('No visual content available');
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (_tldrSummary.isNotEmpty)
+          _infoCard(
+            'TL;DR Summary',
+            Icons.bolt,
+            const Color(0xFF6C63FF),
+            [
+              Text(
+                _tldrSummary,
+                style: const TextStyle(
+                    color: Colors.white70, fontSize: 14, height: 1.6),
+              ),
+            ],
+          ),
+        if (_keyPoints.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          _infoCard(
+            'Key Points',
+            Icons.list_alt,
+            const Color(0xFF4FC3F7),
+            _keyPoints.asMap().entries.map((entry) {
+              return Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0D1117),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      radius: 12,
+                      backgroundColor: const Color(0xFF6C63FF),
+                      child: Text(
+                        '${entry.key + 1}',
+                        style: const TextStyle(
+                            color: Colors.white, fontSize: 11),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        entry.value,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            height: 1.5),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
         ],
-      ),
-    ]);
+      ],
+    );
   }
 
-  Widget _analytical() {
-    return _infoCard("Analytical Content", const [
-      Text(
-        "Photosynthesis converts light energy into chemical energy.",
-        style: TextStyle(color: Colors.white70),
-      ),
-    ]);
+  Widget _audioTab() {
+    return _infoCard(
+      'Audio Learning',
+      Icons.headphones,
+      const Color(0xFFffd60a),
+      [
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: const Color(0xFF0D1117),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Column(
+            children: [
+              Icon(Icons.mic_off, color: Color(0xFF6B7A99), size: 48),
+              SizedBox(height: 12),
+              Text(
+                'Audio generation coming soon',
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 8),
+              Text(
+                'In the meantime, try the Analytical or Story tabs for text-based learning.',
+                style: TextStyle(color: Color(0xFF6B7A99), fontSize: 13, height: 1.5),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
-  Widget _story() {
-    return _infoCard("Story Based Learning", const [
-      Text(
-        "Imagine leaves as solar panels converting sunlight into food...",
-        style: TextStyle(color: Colors.white70),
-      ),
-    ]);
+  Widget _analyticalTab() {
+    if (_explanation.isEmpty) {
+      return _emptyContent('No analytical content available');
+    }
+    return Column(
+      children: [
+        _infoCard(
+          'Detailed Explanation',
+          Icons.analytics,
+          const Color(0xFF8466ff),
+          [
+            Text(
+              _explanation,
+              style: const TextStyle(
+                  color: Colors.white70, fontSize: 14, height: 1.7),
+            ),
+          ],
+        ),
+        if (_tldrSummary.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          _infoCard(
+            'Quick Summary',
+            Icons.summarize,
+            const Color(0xFF43C59E),
+            [
+              Text(
+                _tldrSummary,
+                style: const TextStyle(
+                    color: Colors.white70, fontSize: 14, height: 1.6),
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
   }
 
-  Widget _infoCard(String title, List<Widget> children) {
+  Widget _storyTab() {
+    if (_storyMode.isEmpty) {
+      return _emptyContent('No story content available');
+    }
+    return _infoCard(
+      'Story Mode',
+      Icons.menu_book,
+      const Color(0xFFff6b6b),
+      [
+        Text(
+          _storyMode,
+          style: const TextStyle(
+              color: Colors.white70, fontSize: 14, height: 1.8),
+        ),
+      ],
+    );
+  }
+
+  Widget _infoCard(
+      String title, IconData icon, Color color, List<Widget> children) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: const Color(0xFF1A2332),
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: const TextStyle(
-              color: Color(0xFF4FC3F7),
-              fontWeight: FontWeight.bold,
-            ),
+          Row(
+            children: [
+              Icon(icon, color: color, size: 18),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: TextStyle(
+                  color: color,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 12),
           ...children,
@@ -270,29 +543,19 @@ class _OutputresultScreenState extends State<OutputresultScreen> {
     );
   }
 
-  Widget _step(String title, String value, int number) {
+  Widget _emptyContent(String message) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: const Color(0xFF0D1117),
-        borderRadius: BorderRadius.circular(12),
+        color: const Color(0xFF1A2332),
+        borderRadius: BorderRadius.circular(16),
       ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            backgroundColor: const Color(0xFF4FC3F7),
-            child: Text("$number"),
-          ),
-          const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: const TextStyle(color: Colors.white54)),
-              Text(value, style: const TextStyle(color: Colors.white)),
-            ],
-          ),
-        ],
+      child: Center(
+        child: Text(
+          message,
+          style: const TextStyle(color: Color(0xFF6B7A99), fontSize: 14),
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }

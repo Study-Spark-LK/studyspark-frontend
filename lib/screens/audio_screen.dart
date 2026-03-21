@@ -8,62 +8,44 @@ class AudioScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       color: const Color(0xFF0D1117),
-
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-
-          const Text(
-            "Audio Explanation",
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.cyan,
-              fontWeight: FontWeight.bold,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: const Color(0xFFffd60a).withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.headphones,
+                color: Color(0xFFffd60a),
+                size: 40,
+              ),
             ),
-          ),
-
-          const SizedBox(height: 20),
-
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1A2332),
-              borderRadius: BorderRadius.circular(12),
+            const SizedBox(height: 20),
+            const Text(
+              'Audio Mode',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-
-            child: const Row(
-              children: [
-
-                Icon(
-                  Icons.play_circle_fill,
-                  color: Colors.cyan,
-                  size: 40,
-                ),
-
-                SizedBox(width: 12),
-
-                Text(
-                  "Play Audio Lesson",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
-
-              ],
+            const SizedBox(height: 10),
+            const Text(
+              'Audio generation is coming soon.\nSwitch to Analytical or Story mode\nfor full text-based explanations.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Color(0xFF6B7A99),
+                fontSize: 14,
+                height: 1.6,
+              ),
             ),
-          ),
-
-          const SizedBox(height: 20),
-
-          const Text(
-            "Listen to the explanation of photosynthesis and how plants create energy using sunlight.",
-            style: TextStyle(
-              color: Colors.white70,
-              height: 1.5,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

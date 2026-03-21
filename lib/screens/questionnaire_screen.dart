@@ -6,7 +6,6 @@ import '../api/models/status2.dart';
 import '../state/app_state.dart';
 import 'package:studyspark/api/models/qna.dart';
 import 'package:clerk_flutter/clerk_flutter.dart';
-import 'dart:convert';
 
 class PersonalityTestQuestionnaireScreen extends StatefulWidget {
   const PersonalityTestQuestionnaireScreen({super.key});
@@ -20,7 +19,6 @@ class _PersonalityTestQuestionnaireScreenState
     extends State<PersonalityTestQuestionnaireScreen> {
   int currentStep = 0;
   final int totalSteps = 8;
-  bool _isLoading = false;
 
   @override
   void initState() {
@@ -398,7 +396,7 @@ class _PersonalityTestQuestionnaireScreenState
                 onTap: () => onSelect(option['value']!),
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -664,9 +662,9 @@ class _PersonalityTestQuestionnaireScreenState
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Icon(Icons.arrow_back, size: 20),
                     SizedBox(width: 8),
                     Text(
@@ -786,7 +784,6 @@ class _PersonalityTestQuestionnaireScreenState
     final profileName = rawName.isEmpty ? 'StudySpark User' : rawName;
 
     // d. Show loading dialog
-    setState(() => _isLoading = true);
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -847,14 +844,12 @@ class _PersonalityTestQuestionnaireScreenState
 
       // h. Navigate to /home, clearing the back stack
       if (mounted) {
-        setState(() => _isLoading = false);
         Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
       }
     } catch (e) {
       // i. Dismiss dialog, reset loading, show error for retry
       if (mounted) {
         Navigator.of(context).pop();
-        setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: ${e.toString()}')),
         );

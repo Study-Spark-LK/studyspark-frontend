@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'payment_method.dart';
 import '../models/subscription_plan.dart';
-import '../widgets/premium_plan_card.dart';
 import '../widgets/premium_features_list.dart';
 import '../widgets/plan_selection_section.dart';
 
@@ -221,12 +220,12 @@ class _PremiumUpgradeScreenState extends State<PremiumUpgradeScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
                     child: Text(
                       'By continuing, you agree to our Terms of Service and Privacy Policy',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
                         color: Color(0xFF8b92a0),
@@ -296,10 +295,10 @@ class CurrentPlanSection extends StatelessWidget {
           width: 1,
         ),
       ),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Current: Free Plan',
             style: TextStyle(
               fontSize: 14,
@@ -307,8 +306,8 @@ class CurrentPlanSection extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          const SizedBox(height: 8),
-          const Text(
+          SizedBox(height: 8),
+          Text(
             '• Limited PDF uploads per day\n• Limited chatbot messages\n• PDF summaries only',
             style: TextStyle(
               fontSize: 12,

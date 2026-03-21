@@ -255,7 +255,7 @@ class _SplashScreenState extends State<SplashScreen>
                             Container(
                               width: 100,
                               height: 1,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
                                     Colors.transparent,
