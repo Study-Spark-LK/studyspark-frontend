@@ -48,7 +48,13 @@ class _OutputresultScreenState extends State<OutputresultScreen> {
       _category = args?['category'] as String? ?? '';
 
       fetchClerkToken = () async {
-        return ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+        final auth = ClerkAuth.of(context);
+        try {
+          final sessionToken = await auth.sessionToken();
+          return sessionToken.jwt;
+        } catch (_) {
+          return auth.session?.lastActiveToken?.jwt;
+        }
       };
 
       if (_documentId != null) {
@@ -65,6 +71,14 @@ class _OutputresultScreenState extends State<OutputresultScreen> {
       _hasError = false;
     });
     try {
+      final auth = ClerkAuth.of(context);
+      try {
+        final sessionToken = await auth.sessionToken();
+        rawDio.options.headers['Authorization'] = 'Bearer ${sessionToken.jwt}';
+      } catch (_) {
+        final jwt = auth.session?.lastActiveToken?.jwt;
+        if (jwt != null) rawDio.options.headers['Authorization'] = 'Bearer $jwt';
+      }
       // 1. Fetch document with generated files list
       final docRes = await apiClient.documents
           .getDocumentsDocumentId(documentId: _documentId!);

@@ -16,7 +16,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
   String _selectedCategory = 'All';
 
   List<String> get _categories {
-    final cats = _documents.map((d) => d.category).toSet().toList()..sort();
+    final cats = _documents.map((d) => d.category ?? 'General').toSet().toList()..sort();
     return ['All', ...cats];
   }
 
@@ -32,7 +32,13 @@ class _PracticeScreenState extends State<PracticeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       fetchClerkToken = () async {
-        return ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+        final auth = ClerkAuth.of(context);
+        try {
+          final sessionToken = await auth.sessionToken();
+          return sessionToken.jwt;
+        } catch (_) {
+          return auth.session?.lastActiveToken?.jwt;
+        }
       };
       _loadDocuments();
     });
@@ -40,6 +46,14 @@ class _PracticeScreenState extends State<PracticeScreen> {
 
   Future<void> _loadDocuments() async {
     try {
+      final auth = ClerkAuth.of(context);
+      try {
+        final sessionToken = await auth.sessionToken();
+        rawDio.options.headers['Authorization'] = 'Bearer ${sessionToken.jwt}';
+      } catch (_) {
+        final jwt = auth.session?.lastActiveToken?.jwt;
+        if (jwt != null) rawDio.options.headers['Authorization'] = 'Bearer $jwt';
+      }
       final res = await apiClient.documents.getDocuments();
       setState(() {
         _documents = res.data
@@ -58,8 +72,12 @@ class _PracticeScreenState extends State<PracticeScreen> {
       child: _isLoading
           ? const Center(
               child: CircularProgressIndicator(color: Color(0xFF6C63FF)))
-          : SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
+          : RefreshIndicator(
+              onRefresh: _loadDocuments,
+              color: const Color(0xFF6C63FF),
+              backgroundColor: const Color(0xFF161B27),
+              child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 16.0, vertical: 16),
@@ -92,6 +110,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
                 ),
               ),
             ),
+          ),
     );
   }
 
@@ -275,7 +294,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    doc.title,
+                    doc.title ?? 'Processing...',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 15,
@@ -288,8 +307,8 @@ class _PracticeScreenState extends State<PracticeScreen> {
                     Navigator.pushNamed(context, '/output-result',
                         arguments: {
                           'documentId': doc.id,
-                          'title': doc.title,
-                          'category': doc.category,
+                          'title': doc.title ?? '',
+                          'category': doc.category ?? '',
                         });
                   },
                   child: Container(
@@ -308,7 +327,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              doc.category,
+              doc.category ?? '',
               style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.6),
                 fontSize: 12,

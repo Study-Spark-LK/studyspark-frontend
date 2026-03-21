@@ -5,7 +5,6 @@ import 'package:studyspark/api/api_client.dart';
 import 'package:studyspark/api/export.dart';
 import 'package:studyspark/state/app_state.dart';
 import 'package:dio/dio.dart';
-import 'loading_screen.dart';
 import 'dart:io';
 
 class UploadScreen extends StatefulWidget {
@@ -110,26 +109,14 @@ class _UploadScreenState extends State<UploadScreen> {
       }
 
       // Step 3: Create document record
-      final docRes = await apiClient.documents.postDocuments(
+      await apiClient.documents.postDocuments(
         body: DocumentsRequestBody(fileId: fileId, profileId: profileId),
       );
 
-      final documentId = docRes.data.id;
       if (!mounted) return;
 
-      // Step 4: Navigate to loading/polling screen
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => LoadingScreen(
-            documentId: documentId,
-            title: _selectedFile!.name
-                .replaceAll('.pdf', '')
-                .replaceAll('_', ' '),
-            category: 'General',
-          ),
-        ),
-      );
+      // Step 4: Return to Library
+      Navigator.pop(context, true);
     } catch (e, st) {
       // ignore: avoid_print
       print('[Upload error] $e\n$st');
