@@ -15,9 +15,9 @@ abstract class Data5 with _$Data5 {
     required String id,
     required String profileId,
     required Status status,
-    required String title,
-    required String description,
-    required String category,
+    String? title,
+    String? description,
+    String? category,
     required num progressPercentage,
   }) = _Data5;
   

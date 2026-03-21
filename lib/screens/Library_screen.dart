@@ -19,7 +19,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   List<String> get _categories {
-    final cats = _documents.map((d) => d.category).toSet().toList()..sort();
+    final cats = _documents.map((d) => d.category ?? 'General').toSet().toList()..sort();
     return ['All', ...cats];
   }
 
@@ -29,7 +29,13 @@ class _LibraryScreenState extends State<LibraryScreen> {
     _searchController.addListener(_applyFilter);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       fetchClerkToken = () async {
-        return ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+        final auth = ClerkAuth.of(context);
+        try {
+          final sessionToken = await auth.sessionToken();
+          return sessionToken.jwt;
+        } catch (_) {
+          return auth.session?.lastActiveToken?.jwt;
+        }
       };
       _loadDocuments();
     });
@@ -47,6 +53,14 @@ class _LibraryScreenState extends State<LibraryScreen> {
         _isLoading = true;
         _error = '';
       });
+      final auth = ClerkAuth.of(context);
+      try {
+        final sessionToken = await auth.sessionToken();
+        rawDio.options.headers['Authorization'] = 'Bearer ${sessionToken.jwt}';
+      } catch (_) {
+        final jwt = auth.session?.lastActiveToken?.jwt;
+        if (jwt != null) rawDio.options.headers['Authorization'] = 'Bearer $jwt';
+      }
       final res = await apiClient.documents.getDocuments();
       final docs = res.data;
       setState(() {
@@ -69,7 +83,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
         final matchCat =
             _selectedCategory == 'All' || d.category == _selectedCategory;
         final matchSearch =
-            query.isEmpty || d.title.toLowerCase().contains(query);
+            query.isEmpty || (d.title ?? '').toLowerCase().contains(query);
         return matchCat && matchSearch;
       }).toList();
     });
@@ -164,7 +178,12 @@ class _LibraryScreenState extends State<LibraryScreen> {
 
           // Body
           Expanded(
-            child: _buildBody(),
+            child: RefreshIndicator(
+              onRefresh: _loadDocuments,
+              color: const Color(0xFF6C63FF),
+              backgroundColor: const Color(0xFF161B27),
+              child: _buildBody(),
+            ),
           ),
         ],
       ),
@@ -179,58 +198,72 @@ class _LibraryScreenState extends State<LibraryScreen> {
     }
 
     if (_error.isNotEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline, color: Color(0xFF6B7A99), size: 48),
-            const SizedBox(height: 12),
-            Text(_error,
-                style: const TextStyle(color: Color(0xFF6B7A99), fontSize: 14)),
-            const SizedBox(height: 16),
-            TextButton(
-              onPressed: _loadDocuments,
-              child: const Text('Retry',
-                  style: TextStyle(color: Color(0xFF6C63FF))),
+      return ListView(
+        children: [
+          const SizedBox(height: 80),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, color: Color(0xFF6B7A99), size: 48),
+                const SizedBox(height: 12),
+                Text(_error,
+                    style: const TextStyle(color: Color(0xFF6B7A99), fontSize: 14)),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: _loadDocuments,
+                  child: const Text('Retry',
+                      style: TextStyle(color: Color(0xFF6C63FF))),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       );
     }
 
     if (_documents.isEmpty) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.all(32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.library_books_outlined,
-                  color: Color(0xFF6B7A99), size: 64),
-              SizedBox(height: 16),
-              Text(
-                'No documents yet',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Upload your first study material\nto get started.',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Color(0xFF6B7A99), fontSize: 14, height: 1.5),
-              ),
-            ],
+      return ListView(
+        children: const [
+          Padding(
+            padding: EdgeInsets.all(32),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 48),
+                Icon(Icons.library_books_outlined,
+                    color: Color(0xFF6B7A99), size: 64),
+                SizedBox(height: 16),
+                Text(
+                  'No documents yet',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Upload your first study material\nto get started.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Color(0xFF6B7A99), fontSize: 14, height: 1.5),
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       );
     }
 
     if (_filtered.isEmpty) {
-      return const Center(
-        child: Text('No results found',
-            style: TextStyle(color: Color(0xFF6B7A99), fontSize: 14)),
+      return ListView(
+        children: const [
+          SizedBox(height: 80),
+          Center(
+            child: Text('No results found',
+                style: TextStyle(color: Color(0xFF6B7A99), fontSize: 14)),
+          ),
+        ],
       );
     }
 
@@ -331,7 +364,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    doc.title,
+                    doc.title ?? 'Processing...',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 14,

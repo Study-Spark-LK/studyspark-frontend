@@ -30,7 +30,13 @@ class _LoadingScreenState extends State<LoadingScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       fetchClerkToken = () async {
-        return ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+        final auth = ClerkAuth.of(context);
+        try {
+          final sessionToken = await auth.sessionToken();
+          return sessionToken.jwt;
+        } catch (_) {
+          return auth.session?.lastActiveToken?.jwt;
+        }
       };
       _startPolling();
     });
@@ -46,6 +52,16 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   Future<void> _poll() async {
     if (!mounted) return;
+
+    // Refresh token before each poll so it never expires mid-session
+    final auth = ClerkAuth.of(context);
+    try {
+      final sessionToken = await auth.sessionToken();
+      rawDio.options.headers['Authorization'] = 'Bearer ${sessionToken.jwt}';
+    } catch (_) {
+      final jwt = auth.session?.lastActiveToken?.jwt;
+      if (jwt != null) rawDio.options.headers['Authorization'] = 'Bearer $jwt';
+    }
 
     if (_pollCount >= _maxPolls) {
       if (mounted) {

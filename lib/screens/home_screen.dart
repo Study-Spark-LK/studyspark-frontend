@@ -65,8 +65,15 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    fetchClerkToken = () async =>
-    ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+    fetchClerkToken = () async {
+      final auth = ClerkAuth.of(context);
+      try {
+        final sessionToken = await auth.sessionToken();
+        return sessionToken.jwt;
+      } catch (_) {
+        return auth.session?.lastActiveToken?.jwt;
+      }
+    };
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _loadData();
     });
@@ -76,7 +83,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _loadData() async {
     try {
-      final user = ClerkAuth.of(context).user;
+      final auth = ClerkAuth.of(context);
+      String? token;
+      try {
+        final sessionToken = await auth.sessionToken();
+        token = sessionToken.jwt;
+      } catch (_) {
+        token = auth.session?.lastActiveToken?.jwt;
+      }
+      if (token != null) {
+        rawDio.options.headers['Authorization'] = 'Bearer $token';
+      }
+
+      final user = auth.user;
       final userName = user?.firstName ?? 'there';
 
       final profilesResponse =
@@ -161,8 +180,12 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return SafeArea(
-      child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
+      child: RefreshIndicator(
+        onRefresh: _loadData,
+        color: const Color(0xFF6C63FF),
+        backgroundColor: const Color(0xFF161B27),
+        child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,6 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 32),
           ],
         ),
+      ),
       ),
     );
   }
@@ -505,7 +529,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    isReady ? doc.title : 'Processing...',
+                    isReady ? (doc.title ?? 'Untitled') : 'Processing...',
                     style: const TextStyle(
                         color: Colors.white,
                         fontSize: 13,
@@ -536,7 +560,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             const SizedBox(height: 4),
-            Text(doc.category,
+            Text(doc.category ?? '',
                 style:
                     const TextStyle(color: Color(0xFF6B7A99), fontSize: 11)),
             const SizedBox(height: 12),

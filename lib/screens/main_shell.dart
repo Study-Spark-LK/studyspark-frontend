@@ -25,9 +25,12 @@ class _MainShellState extends State<MainShell> {
     return 0;
   }
 
-  void _onTabTap(int index) {
+  void _onTabTap(int index) async {
     if (index == 2) {
-      Navigator.pushNamed(context, '/upload');
+      final uploaded = await Navigator.pushNamed(context, '/upload');
+      if (uploaded == true && mounted) {
+        setState(() => _selectedIndex = 1); // switch to Library tab
+      }
       return;
     }
     setState(() => _selectedIndex = index);

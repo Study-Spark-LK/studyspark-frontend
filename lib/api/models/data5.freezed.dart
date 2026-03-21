@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Data5 {
 
- String get id; String get profileId; Status get status; String get title; String get description; String get category; num get progressPercentage;
+ String get id; String get profileId; Status get status; String? get title; String? get description; String? get category; num get progressPercentage;
 /// Create a copy of Data5
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $Data5CopyWith<$Res>  {
   factory $Data5CopyWith(Data5 value, $Res Function(Data5) _then) = _$Data5CopyWithImpl;
 @useResult
 $Res call({
- String id, String profileId, Status status, String title, String description, String category, num progressPercentage
+ String id, String profileId, Status status, String? title, String? description, String? category, num progressPercentage
 });
 
 
@@ -65,15 +65,15 @@ class _$Data5CopyWithImpl<$Res>
 
 /// Create a copy of Data5
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? profileId = null,Object? status = null,Object? title = null,Object? description = null,Object? category = null,Object? progressPercentage = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? profileId = null,Object? status = null,Object? title = freezed,Object? description = freezed,Object? category = freezed,Object? progressPercentage = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,profileId: null == profileId ? _self.profileId : profileId // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as Status,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
-as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
-as String,progressPercentage: null == progressPercentage ? _self.progressPercentage : progressPercentage // ignore: cast_nullable_to_non_nullable
+as Status,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as String?,progressPercentage: null == progressPercentage ? _self.progressPercentage : progressPercentage // ignore: cast_nullable_to_non_nullable
 as num,
   ));
 }
@@ -159,7 +159,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String profileId,  Status status,  String title,  String description,  String category,  num progressPercentage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String profileId,  Status status,  String? title,  String? description,  String? category,  num progressPercentage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Data5() when $default != null:
 return $default(_that.id,_that.profileId,_that.status,_that.title,_that.description,_that.category,_that.progressPercentage);case _:
@@ -180,7 +180,7 @@ return $default(_that.id,_that.profileId,_that.status,_that.title,_that.descript
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String profileId,  Status status,  String title,  String description,  String category,  num progressPercentage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String profileId,  Status status,  String? title,  String? description,  String? category,  num progressPercentage)  $default,) {final _that = this;
 switch (_that) {
 case _Data5():
 return $default(_that.id,_that.profileId,_that.status,_that.title,_that.description,_that.category,_that.progressPercentage);case _:
@@ -200,7 +200,7 @@ return $default(_that.id,_that.profileId,_that.status,_that.title,_that.descript
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String profileId,  Status status,  String title,  String description,  String category,  num progressPercentage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String profileId,  Status status,  String? title,  String? description,  String? category,  num progressPercentage)?  $default,) {final _that = this;
 switch (_that) {
 case _Data5() when $default != null:
 return $default(_that.id,_that.profileId,_that.status,_that.title,_that.description,_that.category,_that.progressPercentage);case _:
@@ -215,15 +215,15 @@ return $default(_that.id,_that.profileId,_that.status,_that.title,_that.descript
 @JsonSerializable()
 
 class _Data5 implements Data5 {
-  const _Data5({required this.id, required this.profileId, required this.status, required this.title, required this.description, required this.category, required this.progressPercentage});
+  const _Data5({required this.id, required this.profileId, required this.status, this.title, this.description, this.category, required this.progressPercentage});
   factory _Data5.fromJson(Map<String, dynamic> json) => _$Data5FromJson(json);
 
 @override final  String id;
 @override final  String profileId;
 @override final  Status status;
-@override final  String title;
-@override final  String description;
-@override final  String category;
+@override final  String? title;
+@override final  String? description;
+@override final  String? category;
 @override final  num progressPercentage;
 
 /// Create a copy of Data5
@@ -259,7 +259,7 @@ abstract mixin class _$Data5CopyWith<$Res> implements $Data5CopyWith<$Res> {
   factory _$Data5CopyWith(_Data5 value, $Res Function(_Data5) _then) = __$Data5CopyWithImpl;
 @override @useResult
 $Res call({
- String id, String profileId, Status status, String title, String description, String category, num progressPercentage
+ String id, String profileId, Status status, String? title, String? description, String? category, num progressPercentage
 });
 
 
@@ -276,15 +276,15 @@ class __$Data5CopyWithImpl<$Res>
 
 /// Create a copy of Data5
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? profileId = null,Object? status = null,Object? title = null,Object? description = null,Object? category = null,Object? progressPercentage = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? profileId = null,Object? status = null,Object? title = freezed,Object? description = freezed,Object? category = freezed,Object? progressPercentage = null,}) {
   return _then(_Data5(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,profileId: null == profileId ? _self.profileId : profileId // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as Status,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
-as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
-as String,progressPercentage: null == progressPercentage ? _self.progressPercentage : progressPercentage // ignore: cast_nullable_to_non_nullable
+as Status,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as String?,progressPercentage: null == progressPercentage ? _self.progressPercentage : progressPercentage // ignore: cast_nullable_to_non_nullable
 as num,
   ));
 }

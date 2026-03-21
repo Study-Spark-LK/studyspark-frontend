@@ -10,9 +10,9 @@ _Data5 _$Data5FromJson(Map<String, dynamic> json) => _Data5(
   id: json['id'] as String,
   profileId: json['profileId'] as String,
   status: Status.fromJson(json['status'] as String),
-  title: json['title'] as String,
-  description: json['description'] as String,
-  category: json['category'] as String,
+  title: json['title'] as String?,
+  description: json['description'] as String?,
+  category: json['category'] as String?,
   progressPercentage: json['progressPercentage'] as num,
 );
 
