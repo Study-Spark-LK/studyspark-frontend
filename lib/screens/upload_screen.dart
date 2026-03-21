@@ -108,9 +108,7 @@ class _UploadScreenState extends State<UploadScreen> {
             return SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: screenHeight,
-                ),
+                constraints: BoxConstraints(minHeight: screenHeight),
                 child: IntrinsicHeight(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,81 +134,6 @@ class _UploadScreenState extends State<UploadScreen> {
                           height: 1.5,
                         ),
                       ),
-
-              InkWell(
-                onTap: _pickPDF,
-                borderRadius: BorderRadius.circular(16),
-                child: Container(
-                  width: double.infinity,
-                  height: 180,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: _selectedFile != null
-                          ? const Color(0xFF4FC3F7)
-                          : Colors.white.withValues(alpha: 0.25),
-                      width: 1.2,
-                    ),
-                    color: _selectedFile != null
-                        ? const Color(0xFF4FC3F7).withValues(alpha: 0.1)
-                        : Colors.transparent,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: _selectedFile != null
-                              ? const Color(0xFF4FC3F7).withValues(alpha: 0.2)
-                              : Colors.white.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(28),
-                        ),
-                        child: Icon(
-                          _selectedFile != null
-                              ? Icons.picture_as_pdf
-                              : Icons.upload_outlined,
-                          color: _selectedFile != null
-                              ? const Color(0xFF4FC3F7)
-                              : Colors.white,
-                          size: 30,
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-
-                      Text(
-                        _selectedFile != null
-                            ? _selectedFile!.name
-                            : 'Drop your PDF here or click\nto browse',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: _selectedFile != null
-                              ? const Color(0xFF4FC3F7)
-                              : Colors.white,
-                          fontSize: 14,
-                          fontWeight: _selectedFile != null
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        _selectedFile != null
-                            ? '${(_selectedFile!.size / (1024 * 1024)).toStringAsFixed(2)} MB'
-                            : 'Supports PDF files up to 10MB',
-                        style: const TextStyle(
-                          color: Colors.white54,
-                          fontSize: 11,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-                      SizedBox(height: screenHeight * 0.03),
 
                       /// Upload Box
                       InkWell(
@@ -239,7 +162,9 @@ class _UploadScreenState extends State<UploadScreen> {
                                 height: 56,
                                 decoration: BoxDecoration(
                                   color: _selectedFile != null
-                                      ? const Color(0xFF4FC3F7).withValues(alpha: 0.2)
+                                      ? const Color(
+                                          0xFF4FC3F7,
+                                        ).withValues(alpha: 0.2)
                                       : Colors.white.withValues(alpha: 0.08),
                                   borderRadius: BorderRadius.circular(28),
                                 ),
@@ -304,8 +229,11 @@ class _UploadScreenState extends State<UploadScreen> {
                               child: const Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(Icons.workspace_premium,
-                                      size: 14, color: Colors.black),
+                                  Icon(
+                                    Icons.workspace_premium,
+                                    size: 14,
+                                    color: Colors.black,
+                                  ),
                                   SizedBox(width: 6),
                                   Text(
                                     "Premium Feature",
@@ -322,8 +250,10 @@ class _UploadScreenState extends State<UploadScreen> {
                             const Text(
                               "Upload handwritten notes & images",
                               textAlign: TextAlign.center,
-                              style:
-                              TextStyle(color: Colors.white70, fontSize: 13),
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 13,
+                              ),
                             ),
                             const SizedBox(height: 12),
                             SizedBox(
@@ -341,8 +271,11 @@ class _UploadScreenState extends State<UploadScreen> {
                                 child: const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.lock_open,
-                                        size: 16, color: Colors.white),
+                                    Icon(
+                                      Icons.lock_open,
+                                      size: 16,
+                                      color: Colors.white,
+                                    ),
                                     SizedBox(width: 8),
                                     Text(
                                       "Unlock Now",
@@ -362,36 +295,6 @@ class _UploadScreenState extends State<UploadScreen> {
 
                       SizedBox(height: screenHeight * 0.03),
 
-              // How it works
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFF9C4),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'How it works',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text('• Upload your study material (PDF)'),
-                    Text('• Choose a hobby to connect with the content'),
-                    Text(
-                      '• We\'ll create personalized lessons using your hobby as context',
-                    ),
-                    Text(
-                      '• Content adapts to your learning style automatically',
-                    ),
-                  ],
-                ),
-              ),
                       /// How it works
                       Container(
                         width: double.infinity,
@@ -412,61 +315,74 @@ class _UploadScreenState extends State<UploadScreen> {
                             ),
                             SizedBox(height: 10),
                             Text('• Upload your study material (PDF)'),
-                            Text('• Choose a hobby to connect with the content'),
                             Text(
-                                '• We\'ll create personalized lessons using your hobby as context'),
+                              '• Choose a hobby to connect with the content',
+                            ),
                             Text(
-                                '• Content adapts to your learning style automatically'),
+                              '• We\'ll create personalized lessons using your hobby as context',
+                            ),
+                            Text(
+                              '• Content adapts to your learning style automatically',
+                            ),
                           ],
                         ),
                       ),
 
                       const Spacer(),
 
-              // Continue Button
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    // if no file is selected
-                    backgroundColor: _selectedFile != null
-                        ? const Color(0xFF4FC3F7)
-                        : Colors.grey[700],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(26),
-                    ),
-                  ),
-                  onPressed: (_selectedFile == null || _isUploading)
-                      ? null
-                      : _uploadFile,
-                  child: _isUploading
-                      ? const SizedBox(
-                          height: 24,
-                          width: 24,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
+                      // Continue Button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            // if no file is selected
+                            backgroundColor: _selectedFile != null
+                                ? const Color(0xFF4FC3F7)
+                                : Colors.grey[700],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(26),
+                            ),
                           ),
-                        )
-                      : const Text(
-                          'Continue',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
+                          onPressed: (_selectedFile == null || _isUploading)
+                              ? null
+                              : () async {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => LoadingScreen(),
+                                    ),
+                                  );
+
+                                  await _uploadFile();
+                                },
+                          child: _isUploading
+                              ? const SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text(
+                                  'create personalized button',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
                         ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
-    );
-          }
-        )
-      )
     );
   }
 }
