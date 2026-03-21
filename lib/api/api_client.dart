@@ -29,6 +29,15 @@ Dio buildDioClient() {
     ),
   );
 
+  dio.interceptors.add(LogInterceptor(
+    requestHeader: true,
+    requestBody: true,
+    responseHeader: false,
+    responseBody: true,
+    error: true,
+    logPrint: (o) => debugPrint(o.toString()),
+  ));
+
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (options, handler) async {
@@ -47,6 +56,11 @@ Dio buildDioClient() {
         return handler.next(options);
       },
         onError: (DioException error, handler) {
+          final req = error.requestOptions;
+          // ignore: avoid_print
+          print('[API ERROR] ${req.method} ${req.baseUrl}${req.path} → '
+              '${error.response?.statusCode ?? error.type.name}: '
+              '${error.response?.data ?? error.message}');
           return handler.next(error);
         }
     ),

@@ -19,6 +19,16 @@ class _UploadScreenState extends State<UploadScreen> {
   PlatformFile? _selectedFile;
   bool _isUploading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchClerkToken = () async {
+        return ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+      };
+    });
+  }
+
   Future<void> _pickPDF() async {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -40,12 +50,9 @@ class _UploadScreenState extends State<UploadScreen> {
     setState(() => _isUploading = true);
 
     try {
-      // Set auth token
+      // Fetch token directly here so it's always fresh and explicitly set
       final token =
           ClerkAuth.of(context).session?.lastActiveToken?.jwt;
-      if (token != null) {
-        rawDio.options.headers['Authorization'] = 'Bearer $token';
-      }
 
       // Step 1: Upload file to storage
       final file = File(_selectedFile!.path!);
@@ -56,6 +63,7 @@ class _UploadScreenState extends State<UploadScreen> {
         data: fileBytes,
         options: Options(
           headers: {
+            if (token != null) 'Authorization': 'Bearer $token',
             'content-type': 'application/pdf',
             'x-file-name': _selectedFile!.name,
             'content-length': fileBytes.length.toString(),
@@ -64,10 +72,7 @@ class _UploadScreenState extends State<UploadScreen> {
       );
 
       final fileId =
-          uploadRes.data?['data']?['id'] as String? ?? '';
-      if (fileId.isEmpty) {
-        throw Exception('Upload succeeded but no file ID returned');
-      }
+          (uploadRes.data?['data']?['id'] as String?) ?? '';
 
       // Step 2: Resolve profileId
       String profileId = AppState.profileId ?? '';
@@ -110,7 +115,9 @@ class _UploadScreenState extends State<UploadScreen> {
           ),
         ),
       );
-    } catch (e) {
+    } catch (e, st) {
+      // ignore: avoid_print
+      print('[Upload error] $e\n$st');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
