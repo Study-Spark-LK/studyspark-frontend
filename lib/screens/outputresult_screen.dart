@@ -70,7 +70,7 @@ class _OutputresultScreenState extends State<OutputresultScreen>
     if (!_initialized) {
       _initialized = true;
       final args =
-          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
       _documentId = args?['documentId'] as String?;
       _title = args?['title'] as String? ?? 'Lesson';
       _category = args?['category'] as String? ?? '';
@@ -128,7 +128,7 @@ class _OutputresultScreenState extends State<OutputresultScreen>
 
       // 2. Fetch analytical content — keys: explanation, tldrSummary, keyPoints
       final analyticalRes =
-          await rawDio.get('/storage/files/${analyticalFile.fileId}');
+      await rawDio.get('/storage/files/${analyticalFile.fileId}');
       final analyticalData = analyticalRes.data;
       final Map<String, dynamic> analytical = analyticalData is Map<String, dynamic>
           ? analyticalData
@@ -144,7 +144,7 @@ class _OutputresultScreenState extends State<OutputresultScreen>
       if (storyFile != null) {
         try {
           final storyRes =
-              await rawDio.get('/storage/files/${storyFile.fileId}');
+          await rawDio.get('/storage/files/${storyFile.fileId}');
           final storyData = storyRes.data;
           final Map<String, dynamic> storyJson = storyData is Map<String, dynamic>
               ? storyData
@@ -159,13 +159,13 @@ class _OutputresultScreenState extends State<OutputresultScreen>
       List<Map<String, dynamic>> flashcards = [];
       try {
         final fcRes =
-            await rawDio.get('/documents/$_documentId/flashcards');
+        await rawDio.get('/documents/$_documentId/flashcards');
         final fcData = fcRes.data;
         final List<dynamic> fcList = fcData is List
             ? fcData
             : fcData is Map
-                ? (fcData['data'] as List? ?? fcData['flashcards'] as List? ?? [])
-                : (jsonDecode(fcData as String) as Map)['data'] as List? ?? [];
+            ? (fcData['data'] as List? ?? fcData['flashcards'] as List? ?? [])
+            : (jsonDecode(fcData as String) as Map)['data'] as List? ?? [];
         flashcards = fcList
             .whereType<Map>()
             .map((f) => Map<String, dynamic>.from(f))
@@ -222,115 +222,115 @@ class _OutputresultScreenState extends State<OutputresultScreen>
       ),
       body: _isLoading
           ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(color: Color(0xFF6C63FF)),
-                  SizedBox(height: 16),
-                  Text('Loading your lesson...',
-                      style: TextStyle(color: Color(0xFF6B7A99))),
-                ],
-              ),
-            )
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(color: Color(0xFF6C63FF)),
+            SizedBox(height: 16),
+            Text('Loading your lesson...',
+                style: TextStyle(color: Color(0xFF6B7A99))),
+          ],
+        ),
+      )
           : _hasError
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.error_outline,
-                          color: Color(0xFF6B7A99), size: 48),
-                      const SizedBox(height: 12),
-                      const Text('Failed to load lesson content',
-                          style: TextStyle(color: Colors.white)),
-                      const SizedBox(height: 16),
-                      TextButton(
-                        onPressed: _loadContent,
-                        child: const Text('Retry',
-                            style: TextStyle(color: Color(0xFF6C63FF))),
-                      ),
-                    ],
-                  ),
-                )
-              : Stack(
-                  children: [
-                    SingleChildScrollView(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Type selector
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: List.generate(_types.length, (i) {
-                                return GestureDetector(
-                                  onTap: () =>
-                                      setState(() => _selectedType = i),
-                                  child: Container(
-                                    margin: const EdgeInsets.only(right: 8),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 10),
-                                    decoration: BoxDecoration(
-                                      color: _selectedType == i
-                                          ? const Color(0xFF6C63FF)
-                                          : const Color(0xFF1A2332),
-                                      borderRadius:
-                                          BorderRadius.circular(12),
-                                    ),
-                                    child: Text(
-                                      _types[i],
-                                      style: TextStyle(
-                                        color: _selectedType == i
-                                            ? Colors.white
-                                            : const Color(0xFF6B7A99),
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }),
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline,
+                color: Color(0xFF6B7A99), size: 48),
+            const SizedBox(height: 12),
+            const Text('Failed to load lesson content',
+                style: TextStyle(color: Colors.white)),
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: _loadContent,
+              child: const Text('Retry',
+                  style: TextStyle(color: Color(0xFF6C63FF))),
+            ),
+          ],
+        ),
+      )
+          : Stack(
+        children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Type selector
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: List.generate(_types.length, (i) {
+                      return GestureDetector(
+                        onTap: () =>
+                            setState(() => _selectedType = i),
+                        child: Container(
+                          margin: const EdgeInsets.only(right: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: _selectedType == i
+                                ? const Color(0xFF6C63FF)
+                                : const Color(0xFF1A2332),
+                            borderRadius:
+                            BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            _types[i],
+                            style: TextStyle(
+                              color: _selectedType == i
+                                  ? Colors.white
+                                  : const Color(0xFF6B7A99),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
                             ),
                           ),
-
-                          const SizedBox(height: 20),
-
-                          // Content for selected tab
-                          _buildContent(),
-
-                          const SizedBox(height: 100),
-                        ],
-                      ),
-                    ),
-
-                    // Draggable chat icon
-                    Positioned(
-                      top: _chatTop,
-                      left: _chatLeft,
-                      child: Draggable(
-                        feedback: _chatIcon(),
-                        childWhenDragging: Container(),
-                        onDragEnd: (details) {
-                          setState(() {
-                            _chatTop = details.offset.dy;
-                            _chatLeft = details.offset.dx;
-                          });
-                        },
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const AIChatScreen(),
-                              ),
-                            );
-                          },
-                          child: _chatIcon(),
                         ),
-                      ),
-                    ),
-                  ],
+                      );
+                    }),
+                  ),
                 ),
+
+                const SizedBox(height: 20),
+
+                // Content for selected tab
+                _buildContent(),
+
+                const SizedBox(height: 100),
+              ],
+            ),
+          ),
+
+          // Draggable chat icon
+          Positioned(
+            top: _chatTop,
+            left: _chatLeft,
+            child: Draggable(
+              feedback: _chatIcon(),
+              childWhenDragging: Container(),
+              onDragEnd: (details) {
+                setState(() {
+                  _chatTop = details.offset.dy;
+                  _chatLeft = details.offset.dx;
+                });
+              },
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AIChatScreen(),
+                    ),
+                  );
+                },
+                child: _chatIcon(),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -555,10 +555,10 @@ class _OutputresultScreenState extends State<OutputresultScreen>
                 child: isFront
                     ? _flashcardFront(question, hint)
                     : Transform(
-                        alignment: Alignment.center,
-                        transform: Matrix4.identity()..rotateY(pi),
-                        child: _flashcardBack(answer),
-                      ),
+                  alignment: Alignment.center,
+                  transform: Matrix4.identity()..rotateY(pi),
+                  child: _flashcardBack(answer),
+                ),
               );
             },
           ),
