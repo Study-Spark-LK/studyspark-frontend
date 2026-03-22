@@ -34,27 +34,27 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Initialize all controllers
     _logoController = AnimationController(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 400),
       vsync: this,
     );
 
     _line1Controller = AnimationController(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 300),
       vsync: this,
     );
 
     _line2Controller = AnimationController(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 300),
       vsync: this,
     );
 
     _line3Controller = AnimationController(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 300),
       vsync: this,
     );
 
     _brandController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 500),
       vsync: this,
     );
 
@@ -87,8 +87,8 @@ class _SplashScreenState extends State<SplashScreen>
     _startAnimationSequence();
 
     // Navigate to login after all animations complete (increased to ~16 seconds)
-    Timer(const Duration(milliseconds: 16000), () {
-      Navigator.of(context).pushReplacementNamed('/onboard1');
+    Timer(const Duration(milliseconds: 3000), () {
+      Navigator.of(context).pushReplacementNamed('/signup');
     });
   }
 
@@ -97,13 +97,13 @@ class _SplashScreenState extends State<SplashScreen>
     await _logoController.forward();
 
     // Hold logo (increased)
-    await Future.delayed(const Duration(milliseconds: 2000));
+    await Future.delayed(const Duration(milliseconds: 400));
 
     //  Fade out logo
     await _logoController.reverse();
 
     // Pause before tagline
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 200));
 
     setState(() {
       _showLogo = false;
@@ -112,7 +112,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Show "Your Path." (increased delay)
     await _line1Controller.forward();
-    await Future.delayed(const Duration(milliseconds: 1200));
+    await Future.delayed(const Duration(milliseconds: 200));
 
     setState(() {
       _showLine2 = true;
@@ -120,7 +120,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     //Show "Your pace." (increased delay)
     await _line2Controller.forward();
-    await Future.delayed(const Duration(milliseconds: 1200));
+    await Future.delayed(const Duration(milliseconds: 200));
 
     setState(() {
       _showLine3 = true;
@@ -128,7 +128,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     //Show "Your Spark..." (increased delay)
     await _line3Controller.forward();
-    await Future.delayed(const Duration(milliseconds: 1500));
+    await Future.delayed(const Duration(milliseconds: 300));
 
     setState(() {
       _showBrand = true;
@@ -138,7 +138,7 @@ class _SplashScreenState extends State<SplashScreen>
     await _brandController.forward();
 
     // Hold final screen (increased)
-    await Future.delayed(const Duration(milliseconds: 2500));
+    await Future.delayed(const Duration(milliseconds: 300));
   }
 
   @override
