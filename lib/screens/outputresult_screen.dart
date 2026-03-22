@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:clerk_flutter/clerk_flutter.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:studyspark/api/api_client.dart';
 import 'package:studyspark/api/export.dart';
 import 'ai_chat_bot.dart';
@@ -79,60 +80,70 @@ class _OutputresultScreenState extends State<OutputresultScreen> {
         final jwt = auth.session?.lastActiveToken?.jwt;
         if (jwt != null) rawDio.options.headers['Authorization'] = 'Bearer $jwt';
       }
+
       // 1. Fetch document with generated files list
       final docRes = await apiClient.documents
           .getDocumentsDocumentId(documentId: _documentId!);
-      final doc = docRes.data;
+      final generatedFiles = docRes.data.generatedFiles;
 
-      // 2. Find the analytical generated file (has the richest JSON content)
-      final generatedFiles = doc.generatedFiles;
-      GeneratedFiles? targetFile;
+      final analyticalFile = generatedFiles.cast<GeneratedFiles?>()
+          .firstWhere((f) => f!.type == Type.analytical, orElse: () => null);
+      final storyFile = generatedFiles.cast<GeneratedFiles?>()
+          .firstWhere((f) => f!.type == Type.story, orElse: () => null);
 
-      if (generatedFiles.isNotEmpty) {
-        try {
-          targetFile = generatedFiles
-              .firstWhere((f) => f.type == Type.analytical);
-        } catch (_) {
-          targetFile = generatedFiles.first;
-        }
-      }
-
-      if (targetFile == null) {
-        // Document is ready but content files not generated yet
+      if (analyticalFile == null) {
         setState(() {
-          _explanation =
-              'Content is being finalized. Please check back shortly.';
+          _explanation = 'Content is being finalized. Please check back shortly.';
           _isLoading = false;
         });
         return;
       }
 
-      // 3. Download the content JSON from storage
-      final fileRes =
-          await rawDio.get('/storage/files/${targetFile.fileId}');
-      final responseData = fileRes.data;
+      // 2. Fetch analytical content — keys: explanation, tldrSummary, keyPoints
+      final analyticalRes =
+          await rawDio.get('/storage/files/${analyticalFile.fileId}');
+      final analyticalData = analyticalRes.data;
+      final Map<String, dynamic> analytical = analyticalData is Map<String, dynamic>
+          ? analyticalData
+          : jsonDecode(analyticalData as String) as Map<String, dynamic>;
 
-      Map<String, dynamic> content = {};
-      if (responseData is Map<String, dynamic>) {
-        content = responseData;
-      } else if (responseData is String) {
-        content = jsonDecode(responseData) as Map<String, dynamic>;
+      final explanation = analytical['explanation'] as String? ?? '';
+      final tldr = analytical['tldrSummary'] as String? ?? '';
+      final keyPointsRaw = analytical['keyPoints'] as List? ?? [];
+      final keyPoints = keyPointsRaw.map((e) => e.toString()).toList();
+
+      // 3. Fetch story content — separate R2 file, key: story
+      String story = '';
+      if (storyFile != null) {
+        try {
+          final storyRes =
+              await rawDio.get('/storage/files/${storyFile.fileId}');
+          final storyData = storyRes.data;
+          final Map<String, dynamic> storyJson = storyData is Map<String, dynamic>
+              ? storyData
+              : jsonDecode(storyData as String) as Map<String, dynamic>;
+          story = storyJson['story'] as String? ?? '';
+        } catch (_) {
+          // story is non-critical — leave empty
+        }
       }
 
-      // 4. Parse fields
-      final explanation =
-          content['personalised_explanation'] as String? ?? '';
-      final tldr = content['tldr_summary'] as String? ?? '';
-      final keyPointsRaw = content['key_points'] as List? ?? [];
-      final keyPoints =
-          keyPointsRaw.map((e) => e.toString()).toList();
-      final story =
-          content['story_mode_explanation'] as String? ?? '';
-      final flashcardsRaw = content['flashcards'] as List? ?? [];
-      final flashcards = flashcardsRaw
-          .whereType<Map>()
-          .map((f) => Map<String, dynamic>.from(f))
-          .toList();
+      // 4. Fetch flashcards from database endpoint
+      List<Map<String, dynamic>> flashcards = [];
+      try {
+        final fcRes =
+            await rawDio.get('/documents/$_documentId/flashcards');
+        final fcData = fcRes.data;
+        final List<dynamic> fcList = fcData is List
+            ? fcData
+            : (jsonDecode(fcData as String) as List);
+        flashcards = fcList
+            .whereType<Map>()
+            .map((f) => Map<String, dynamic>.from(f))
+            .toList();
+      } catch (_) {
+        // flashcards are non-critical — leave empty
+      }
 
       setState(() {
         _explanation = explanation;
@@ -142,7 +153,8 @@ class _OutputresultScreenState extends State<OutputresultScreen> {
         _flashcards = flashcards;
         _isLoading = false;
       });
-    } catch (_) {
+    } catch (e) {
+      print(e);
       setState(() {
         _isLoading = false;
         _hasError = true;
@@ -382,11 +394,7 @@ class _OutputresultScreenState extends State<OutputresultScreen> {
             Icons.bolt,
             const Color(0xFF6C63FF),
             [
-              Text(
-                _tldrSummary,
-                style: const TextStyle(
-                    color: Colors.white70, fontSize: 14, height: 1.6),
-              ),
+              _mdBody(_tldrSummary),
             ],
           ),
         if (_keyPoints.isNotEmpty) ...[
@@ -416,15 +424,7 @@ class _OutputresultScreenState extends State<OutputresultScreen> {
                       ),
                     ),
                     const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        entry.value,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 13,
-                            height: 1.5),
-                      ),
-                    ),
+                    Expanded(child: _mdBody(entry.value, fontSize: 13)),
                   ],
                 ),
               );
@@ -479,13 +479,7 @@ class _OutputresultScreenState extends State<OutputresultScreen> {
           'Detailed Explanation',
           Icons.analytics,
           const Color(0xFF8466ff),
-          [
-            Text(
-              _explanation,
-              style: const TextStyle(
-                  color: Colors.white70, fontSize: 14, height: 1.7),
-            ),
-          ],
+          [_mdBody(_explanation)],
         ),
         if (_tldrSummary.isNotEmpty) ...[
           const SizedBox(height: 16),
@@ -493,13 +487,7 @@ class _OutputresultScreenState extends State<OutputresultScreen> {
             'Quick Summary',
             Icons.summarize,
             const Color(0xFF43C59E),
-            [
-              Text(
-                _tldrSummary,
-                style: const TextStyle(
-                    color: Colors.white70, fontSize: 14, height: 1.6),
-              ),
-            ],
+            [_mdBody(_tldrSummary)],
           ),
         ],
       ],
@@ -515,12 +503,35 @@ class _OutputresultScreenState extends State<OutputresultScreen> {
       Icons.menu_book,
       const Color(0xFFff6b6b),
       [
-        Text(
-          _storyMode,
-          style: const TextStyle(
-              color: Colors.white70, fontSize: 14, height: 1.8),
-        ),
+        _mdBody(_storyMode, lineHeight: 1.8),
       ],
+    );
+  }
+
+  Widget _mdBody(String text, {double fontSize = 14, double lineHeight = 1.6}) {
+    return MarkdownBody(
+      data: text,
+      styleSheet: MarkdownStyleSheet(
+        p: TextStyle(color: Colors.white70, fontSize: fontSize, height: lineHeight),
+        strong: TextStyle(color: Colors.white, fontSize: fontSize, fontWeight: FontWeight.w600),
+        em: TextStyle(color: Colors.white70, fontSize: fontSize, fontStyle: FontStyle.italic),
+        h1: TextStyle(color: Colors.white, fontSize: fontSize + 6, fontWeight: FontWeight.bold),
+        h2: TextStyle(color: Colors.white, fontSize: fontSize + 4, fontWeight: FontWeight.bold),
+        h3: TextStyle(color: Colors.white, fontSize: fontSize + 2, fontWeight: FontWeight.w600),
+        listBullet: TextStyle(color: Colors.white70, fontSize: fontSize),
+        blockquoteDecoration: const BoxDecoration(
+          color: Color(0xFF0D1117),
+          border: Border(left: BorderSide(color: Color(0xFF6C63FF), width: 3)),
+        ),
+        blockquotePadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        code: TextStyle(
+          color: const Color(0xFF4FC3F7),
+          fontSize: fontSize - 1,
+          backgroundColor: const Color(0xFF0D1117),
+        ),
+      ),
+      shrinkWrap: true,
+      softLineBreak: true,
     );
   }
 

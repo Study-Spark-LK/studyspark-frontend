@@ -21,7 +21,7 @@ abstract class Data7 with _$Data7 {
     required String category,
     required num progressPercentage,
     required String originalFileId,
-    required List<GeneratedFiles> generatedFiles,
+    @Default([]) List<GeneratedFiles> generatedFiles,
   }) = _Data7;
   
   factory Data7.fromJson(Map<String, Object?> json) => _$Data7FromJson(json);

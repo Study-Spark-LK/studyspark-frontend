@@ -217,7 +217,7 @@ return $default(_that.id,_that.profileId,_that.status,_that.title,_that.descript
 @JsonSerializable()
 
 class _Data7 implements Data7 {
-  const _Data7({required this.id, required this.profileId, required this.status, required this.title, required this.description, required this.category, required this.progressPercentage, required this.originalFileId, required final  List<GeneratedFiles> generatedFiles}): _generatedFiles = generatedFiles;
+  const _Data7({required this.id, required this.profileId, required this.status, required this.title, required this.description, required this.category, required this.progressPercentage, required this.originalFileId, final  List<GeneratedFiles> generatedFiles = const []}): _generatedFiles = generatedFiles;
   factory _Data7.fromJson(Map<String, dynamic> json) => _$Data7FromJson(json);
 
 @override final  String id;

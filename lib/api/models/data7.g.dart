@@ -15,7 +15,7 @@ _Data7 _$Data7FromJson(Map<String, dynamic> json) => _Data7(
   category: json['category'] as String,
   progressPercentage: json['progressPercentage'] as num,
   originalFileId: json['originalFileId'] as String,
-  generatedFiles: (json['generatedFiles'] as List<dynamic>)
+  generatedFiles: (json['generatedFiles'] as List<dynamic>? ?? [])
       .map((e) => GeneratedFiles.fromJson(e as Map<String, dynamic>))
       .toList(),
 );
