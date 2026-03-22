@@ -52,11 +52,11 @@ class _MainShellState extends State<MainShell> {
       backgroundColor: const Color(0xFF0D1117),
       body: IndexedStack(
         index: _stackIndex,
-        children: const [
-          HomeScreen(),
-          LibraryScreen(),
-          PracticeScreen(),
-          ProfileScreen(),
+        children: [
+          HomeScreen(onSeeAll: () => _onTabTap(1)),
+          const LibraryScreen(),
+          const PracticeScreen(),
+          const ProfileScreen(),
         ],
       ),
       bottomNavigationBar: _buildBottomNav(),
