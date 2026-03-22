@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'questionnaire_screen.dart'; // ← This import
+import 'questionnaire_screen.dart';
 
 class QuestionnaireWelcomeScreen extends StatelessWidget {
   const QuestionnaireWelcomeScreen({super.key});
@@ -8,104 +8,230 @@ class QuestionnaireWelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A2E),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 40.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-              
-              // Title
-              const Text(
-                'Hello!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 42,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  letterSpacing: 1.0,
+      backgroundColor: const Color(0xFF0D1117),
+      resizeToAvoidBottomInset: false,
+      body: Stack(
+        children: [
+          // Layer 1 — decorative background circles
+          Positioned(
+            top: -80,
+            right: -80,
+            child: Container(
+              width: 250,
+              height: 250,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [Color(0x206C63FF), Colors.transparent],
                 ),
               ),
-              const SizedBox(height: 16),
-              
-              // Subtitle
-              const Text(
-                'Welcome To Your First\nPersonality Test!!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  height: 1.5,
-                ),
-              ),
-              
-              const Spacer(),
-              
-              // Illustration/Image
-              Center(
-                child: Container(
-                  width: 250,
-                  height: 250,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF2A2A3E),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: CustomPaint(
-                    size: const Size(220, 220),
-                    painter: LearningIllustrationPainter(),
-                  ),
-                ),
-              ),
-              
-              const Spacer(),
-              
-              // "Let's Start" text
-              const Text(
-                "Let's Start",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  letterSpacing: 0.5,
-                ),
-              ),
-              const SizedBox(height: 24),
-              
-              // Start Now Button
-              ElevatedButton(
-                onPressed: () {
-                  // Navigate to questionnaire screen
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          const PersonalityTestQuestionnaireScreen(),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4FC3F7),
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 56),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 0,
-                ),
-                child: const Text(
-                  'Start Now',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 40),
-            ],
+            ),
           ),
-        ),
+          Positioned(
+            bottom: -60,
+            left: -60,
+            child: Container(
+              width: 200,
+              height: 200,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [Color(0x154FC3F7), Colors.transparent],
+                ),
+              ),
+            ),
+          ),
+
+          // Layer 2 — main content
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // TOP SECTION
+                  Padding(
+                    padding: const EdgeInsets.only(top: 48),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Discover Your',
+                          style: TextStyle(
+                            color: Color(0xFF6B7A99),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Learning Style',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 32,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -1,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          width: 48,
+                          height: 4,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF6C63FF),
+                            borderRadius: BorderRadius.all(Radius.circular(4)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // MIDDLE SECTION
+                  Center(
+                    child: Container(
+                      width: 280,
+                      height: 280,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF161B27),
+                        borderRadius: BorderRadius.circular(32),
+                        border: Border.all(
+                          color: const Color(0xFF1E2A3A),
+                          width: 1,
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CustomPaint(
+                            size: const Size(160, 160),
+                            painter: LearningIllustrationPainter(),
+                          ),
+                          const SizedBox(height: 16),
+                          const Text(
+                            '8 Quick Questions',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          const Text(
+                            'We will personalise your\nlearning experience',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xFF6B7A99),
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // BOTTOM SECTION
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 40),
+                    child: Column(
+                      children: [
+                        // Feature chips row
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _FeatureChip(
+                              icon: Icons.speed,
+                              label: 'Quick',
+                            ),
+                            _FeatureChip(
+                              icon: Icons.psychology,
+                              label: 'Smart',
+                            ),
+                            _FeatureChip(
+                              icon: Icons.star_outline,
+                              label: 'Personal',
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        // Start Assessment button
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const PersonalityTestQuestionnaireScreen(),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF6C63FF), Color(0xFF4FC3F7)],
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Start Assessment',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                SizedBox(width: 8),
+                                Icon(
+                                  Icons.arrow_forward,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FeatureChip extends StatelessWidget {
+  const _FeatureChip({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFF161B27),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFF1E2A3A)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: const Color(0xFF6C63FF), size: 14),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.white, fontSize: 12),
+          ),
+        ],
       ),
     );
   }
@@ -175,7 +301,6 @@ class LearningIllustrationPainter extends CustomPainter {
       );
     }
 
-    // Draw cute character (simple owl on book)
     // Owl body
     paint.color = const Color(0xFFFFD700);
     canvas.drawCircle(
@@ -219,7 +344,7 @@ class LearningIllustrationPainter extends CustomPainter {
       ..close();
     canvas.drawPath(rightEarPath, paint);
 
-    // Draw sparkles around
+    // Sparkles
     paint.color = const Color(0xFF4FC3F7);
     _drawStar(canvas, Offset(center.dx - 70, center.dy - 60), 8, paint);
     _drawStar(canvas, Offset(center.dx + 70, center.dy - 50), 6, paint);
