@@ -1,7 +1,7 @@
 import 'package:clerk_flutter/clerk_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:studyspark/screens/upload_screen.dart';
-// import 'screens/splash_screen.dart';
+import 'screens/splash_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/questionnaire_welcome_screen.dart';
 import 'screens/questionnaire_screen.dart';
@@ -10,7 +10,7 @@ import 'screens/onboarding_screen1.dart';
 import 'screens/onboarding_screen4.dart';
 import 'screens/onboarding_screen2.dart';
 import 'screens/onboarding_screen3.dart';
-import 'screens/library_screen.dart';
+import 'screens/Library_screen.dart';
 import 'screens/practice_screen.dart';
 import 'screens/outputresult_screen.dart';
 import 'package:studyspark/env.dart';
@@ -71,64 +71,112 @@ class StudySparkApp extends StatelessWidget {
               ),
             ),
           ),
-          // initialRoute: '/home',
-          home: ClerkErrorListener(
-            child: ClerkAuthBuilder(
-              signedInBuilder: (context, authState) {
-                Future<bool> checkIfUserHasProfiles() async {
-                  try {
-                    final token = ClerkAuth.of(context).session?.lastActiveToken?.jwt;
-                    if (token != null) {
-                      rawDio.options.headers['Authorization'] = 'Bearer $token';
-                    }
-
-                    final res = await rawDio.get('/profiles?status=all');
-                    final profilesList = res.data['data'] as List?;
-
-                    if (profilesList != null && profilesList.isNotEmpty) {
-                      return true;
-                    }
-
-                    return false;
-
-                  } catch (_) {
-                    return false;
-                  }
-                }
-                return FutureBuilder<bool>(
-                  future: checkIfUserHasProfiles(),
-                  builder: (context, snapshot) {
-
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Scaffold(
-                        backgroundColor: Color(0xFF1A1A2E),
-                        body: Center(
-                          child: CircularProgressIndicator(color: Color(0xFF6C63FF)),
-                        ),
-                      );
-                    }
-
-                    final hasProfiles = snapshot.data ?? false;
-
-                    if (hasProfiles) {
-                      return const MainShell();
-                    } else {
-                      return const QuestionnaireWelcomeScreen();
-                    }
-                  },
-                );
-              },
-              signedOutBuilder: (context, authState) => const LoginScreen(),
-            ),
-          ),
+          initialRoute: '/',
+          // home: ClerkErrorListener(
+          //   child: ClerkAuthBuilder(
+          //     signedInBuilder: (context, authState) {
+          //       Future<bool> checkIfUserHasProfiles() async {
+          //         try {
+          //           final token = ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+          //           if (token != null) {
+          //             rawDio.options.headers['Authorization'] = 'Bearer $token';
+          //           }
+          //
+          //           final res = await rawDio.get('/profiles?status=all');
+          //           final profilesList = res.data['data'] as List?;
+          //
+          //           if (profilesList != null && profilesList.isNotEmpty) {
+          //             return true;
+          //           }
+          //
+          //           return false;
+          //
+          //         } catch (_) {
+          //           return false;
+          //         }
+          //       }
+          //       return FutureBuilder<bool>(
+          //         future: checkIfUserHasProfiles(),
+          //         builder: (context, snapshot) {
+          //
+          //           if (snapshot.connectionState == ConnectionState.waiting) {
+          //             return const Scaffold(
+          //               backgroundColor: Color(0xFF1A1A2E),
+          //               body: Center(
+          //                 child: CircularProgressIndicator(color: Color(0xFF6C63FF)),
+          //               ),
+          //             );
+          //           }
+          //
+          //           final hasProfiles = snapshot.data ?? false;
+          //
+          //           if (hasProfiles) {
+          //             return const MainShell();
+          //           } else {
+          //             return const QuestionnaireWelcomeScreen();
+          //           }
+          //         },
+          //       );
+          //     },
+          //     signedOutBuilder: (context, authState) => const LoginScreen(),
+          //   ),
+          // ),
           routes: {
-            // '/': (context) => const SplashScreen(),
-            // '/auth-check': (context) => ClerkErrorListener(
-            //   child: ClerkAuthBuilder(
-            //     signedInBuilder: (context, authState) => const QuestionnaireWelcomeScreen(),
-            //     signedOutBuilder: (context, authState) => const LoginScreen(),
-            //   ),
-            // ),
+            '/': (context) => const SplashScreen(),
+            '/auth-check': (context) => ClerkErrorListener(
+              child: ClerkAuthBuilder(
+                signedInBuilder: (context, authState) {
+
+                  // Set the token bridge for the whole app
+                  fetchClerkToken = () async {
+                    return ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+                  };
+
+                  Future<bool> checkIfUserHasProfiles() async {
+                    try {
+                      final token = ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+                      if (token != null) {
+                        rawDio.options.headers['Authorization'] = 'Bearer $token';
+                      }
+
+                      final res = await rawDio.get('/profiles?status=all');
+                      final profilesList = res.data['data'] as List?;
+
+                      if (profilesList != null && profilesList.isNotEmpty) {
+                        return true;
+                      }
+
+                      return false;
+                    } catch (_) {
+                      return false;
+                    }
+                  }
+
+                  return FutureBuilder<bool>(
+                    future: checkIfUserHasProfiles(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Scaffold(
+                          backgroundColor: Color(0xFF1A1A2E),
+                          body: Center(
+                            child: CircularProgressIndicator(color: Color(0xFF6C63FF)),
+                          ),
+                        );
+                      }
+
+                      final hasProfiles = snapshot.data ?? false;
+
+                      if (hasProfiles) {
+                        return const MainShell();
+                      } else {
+                        return const QuestionnaireWelcomeScreen();
+                      }
+                    },
+                  );
+                },
+                signedOutBuilder: (context, authState) => const LoginScreen(),
+              ),
+            ),
             // '/login': (context) => const LoginScreen(),
             '/personality-test-welcome': (context) => const QuestionnaireWelcomeScreen(),
             '/home': (context) => const MainShell(),
