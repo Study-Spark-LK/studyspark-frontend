@@ -45,7 +45,9 @@ class LessonRepository {
 }
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, this.onSeeAll});
+
+  final VoidCallback? onSeeAll;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -207,8 +209,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHeader() {
-    final initial =
-        (_userName?.isNotEmpty == true) ? _userName![0].toUpperCase() : 'U';
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -233,37 +233,32 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        Row(
+        Stack(
+          clipBehavior: Clip.none,
           children: [
-            GestureDetector(
-              onTap: () async {
-                await ClerkAuth.of(context).signOut();
-                if (mounted) {
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil('/', (route) => false);
-                }
+            IconButton(
+              icon: const Icon(Icons.notifications_outlined,
+                  color: Colors.white, size: 26),
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Notifications coming soon'),
+                    behavior: SnackBarBehavior.floating,
+                    backgroundColor: Color(0xFF1E2A3A),
+                  ),
+                );
               },
-              child: const Icon(Icons.logout,
-                  color: Color(0xFF4A5568), size: 22),
             ),
-            const SizedBox(width: 12),
-            Container(
-              width: 46,
-              height: 46,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF6C63FF), Color(0xFF4FC3F7)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+            Positioned(
+              top: 8,
+              right: 8,
+              child: Container(
+                width: 8,
+                height: 8,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFE24B4A),
+                  shape: BoxShape.circle,
                 ),
-                borderRadius: BorderRadius.circular(23),
-              ),
-              child: Center(
-                child: Text(initial,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold)),
               ),
             ),
           ],
@@ -455,7 +450,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontSize: 16,
                     fontWeight: FontWeight.w700)),
             TextButton(
-              onPressed: () => Navigator.pushNamed(context, '/library'),
+              onPressed: widget.onSeeAll ?? () => Navigator.pushNamed(context, '/library'),
               child: const Text('See all',
                   style: TextStyle(color: Color(0xFF6C63FF), fontSize: 13)),
             ),

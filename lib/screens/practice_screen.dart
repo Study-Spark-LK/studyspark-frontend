@@ -66,6 +66,10 @@ class _PracticeScreenState extends State<PracticeScreen> {
     }
   }
 
+  void _startQuiz(Data5 doc) {
+    Navigator.pushNamed(context, '/quiz', arguments: {'documentId': doc.id});
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -269,89 +273,95 @@ class _PracticeScreenState extends State<PracticeScreen> {
   }
 
   Widget _buildDocumentCard(Data5 doc) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, '/quiz', arguments: {
-          'flashcards': <Map<String, dynamic>>[],
-          'title': doc.title,
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Open the lesson first to access flashcards'),
-            behavior: SnackBarBehavior.floating,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF131A28),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.09)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  doc.title ?? 'Processing...',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              // View lesson button
+              GestureDetector(
+                onTap: () => Navigator.pushNamed(context, '/output-result',
+                    arguments: {
+                      'documentId': doc.id,
+                      'title': doc.title ?? '',
+                      'category': doc.category ?? '',
+                    }),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1E2A3A),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.all(6),
+                  child: const Icon(Icons.play_arrow,
+                      color: Color(0xFF4FC3F7), size: 20),
+                ),
+              ),
+            ],
           ),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 14),
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: const Color(0xFF131A28),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-              color: Colors.white.withValues(alpha: 0.09)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Text(
-                    doc.title ?? 'Processing...',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/output-result',
-                        arguments: {
-                          'documentId': doc.id,
-                          'title': doc.title ?? '',
-                          'category': doc.category ?? '',
-                        });
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF6C63FF),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Padding(
-                      padding: EdgeInsets.all(6),
-                      child: Icon(Icons.play_arrow,
-                          color: Colors.white, size: 20),
-                    ),
-                  ),
-                ),
-              ],
+          const SizedBox(height: 6),
+          Text(
+            doc.category ?? '',
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.5),
+              fontSize: 12,
             ),
-            const SizedBox(height: 8),
-            Text(
-              doc.category ?? '',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.6),
-                fontSize: 12,
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value:
+                  (doc.progressPercentage.toDouble().clamp(0, 100)) / 100,
+              minHeight: 5,
+              backgroundColor: Colors.white.withValues(alpha: 0.08),
+              valueColor:
+                  const AlwaysStoppedAnimation<Color>(Color(0xFF6C63FF)),
+            ),
+          ),
+          const SizedBox(height: 12),
+          // Start Quiz button
+          SizedBox(
+            width: double.infinity,
+            height: 40,
+            child: ElevatedButton.icon(
+              onPressed: () => _startQuiz(doc),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF6C63FF),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                padding: EdgeInsets.zero,
+              ),
+              icon: const Icon(Icons.quiz_outlined,
+                  color: Colors.white, size: 16),
+              label: const Text(
+                'Start Quiz',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13),
               ),
             ),
-            const SizedBox(height: 8),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: LinearProgressIndicator(
-                value: (doc.progressPercentage.toDouble().clamp(0, 100)) /
-                    100,
-                minHeight: 6,
-                backgroundColor: Colors.white.withValues(alpha: 0.1),
-                valueColor: const AlwaysStoppedAnimation<Color>(
-                    Color(0xFF6C63FF)),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

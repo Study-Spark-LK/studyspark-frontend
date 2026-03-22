@@ -50,26 +50,23 @@ Dio buildDioClient() {
             }
           }
         } catch (e) {
-          print('Error fetching Clerk token: $e');
+          debugPrint('Error fetching Clerk token: $e');
         }
 
         return handler.next(options);
       },
         onError: (DioException error, handler) {
           if (error.response?.statusCode == 401) {
-            print("User is unauthorized. Token might be invalid or expired.");
+            debugPrint("User is unauthorized. Token might be invalid or expired.");
           }
           final req = error.requestOptions;
-          // ignore: avoid_print
-          print('[API ERROR] ${req.method} ${req.baseUrl}${req.path} → '
+          debugPrint('[API ERROR] ${req.method} ${req.baseUrl}${req.path} → '
               '${error.response?.statusCode ?? error.type.name}: '
               '${error.response?.data ?? error.message}');
           return handler.next(error);
         }
     ),
   );
-
-  dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
 
   return dio;
 }

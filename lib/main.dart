@@ -101,12 +101,7 @@ class StudySparkApp extends StatelessWidget {
                 future: checkIfUserHasProfiles(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Scaffold(
-                      backgroundColor: Color(0xFF0D1117),
-                      body: Center(
-                        child: CircularProgressIndicator(color: Color(0xFF6C63FF)),
-                      ),
-                    );
+                    return const _SplashScreen();
                   }
 
                   final hasProfiles = snapshot.data ?? false;
@@ -120,19 +115,19 @@ class StudySparkApp extends StatelessWidget {
                         Navigator.of(context).pushReplacementNamed('/home');
                       }
                     });
-                    return const Scaffold(
-                      backgroundColor: Color(0xFF0D1117),
-                      body: Center(
-                        child: CircularProgressIndicator(color: Color(0xFF6C63FF)),
-                      ),
-                    );
+                    return const _SplashScreen();
                   } else {
                     return const QuestionnaireWelcomeScreen();
                   }
                 },
               );
             },
-            signedOutBuilder: (context, authState) => const LoginScreen(),
+            signedOutBuilder: (context, authState) {
+              if (authState.client.isEmpty) {
+                return const _SplashScreen();
+              }
+              return const LoginScreen();
+            },
           ),
         ),
         routes: {
@@ -166,6 +161,203 @@ class StudySparkApp extends StatelessWidget {
         },
       ),
 
+    );
+  }
+}
+
+class _SplashScreen extends StatefulWidget {
+  const _SplashScreen();
+
+  @override
+  State<_SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<_SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _pulse;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    )..repeat(reverse: true);
+    _pulse = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF0D1117),
+      body: Stack(
+        children: [
+          // Background glow blobs
+          Positioned(
+            top: -80,
+            left: -60,
+            child: AnimatedBuilder(
+              animation: _pulse,
+              builder: (_, __) => Opacity(
+                opacity: 0.25 + _pulse.value * 0.15,
+                child: Container(
+                  width: 280,
+                  height: 280,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(colors: [
+                      Color(0xFF6C63FF),
+                      Colors.transparent,
+                    ]),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: -60,
+            right: -40,
+            child: AnimatedBuilder(
+              animation: _pulse,
+              builder: (_, __) => Opacity(
+                opacity: 0.2 + (1 - _pulse.value) * 0.15,
+                child: Container(
+                  width: 220,
+                  height: 220,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(colors: [
+                      Color(0xFF4FC3F7),
+                      Colors.transparent,
+                    ]),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Centre content
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Logo with pulsing glow ring
+                AnimatedBuilder(
+                  animation: _pulse,
+                  builder: (_, __) => Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF6C63FF)
+                              .withValues(alpha: 0.25 + _pulse.value * 0.35),
+                          blurRadius: 32 + _pulse.value * 24,
+                          spreadRadius: 4 + _pulse.value * 8,
+                        ),
+                      ],
+                    ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          color: const Color(0xFF6C63FF),
+                          child: const Icon(Icons.bolt,
+                              color: Colors.white, size: 48),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 28),
+
+                // App name
+                ShaderMask(
+                  shaderCallback: (bounds) => const LinearGradient(
+                    colors: [Color(0xFF6C63FF), Color(0xFF4FC3F7)],
+                  ).createShader(bounds),
+                  child: const Text(
+                    'StudySpark',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+
+                const Text(
+                  'Personalised learning, powered by AI',
+                  style: TextStyle(
+                    color: Color(0xFF6B7A99),
+                    fontSize: 13,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+
+                const SizedBox(height: 56),
+
+                // Animated dots loader
+                _DotsLoader(animation: _pulse),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DotsLoader extends StatelessWidget {
+  const _DotsLoader({required this.animation});
+
+  final Animation<double> animation;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: animation,
+      builder: (_, __) {
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(3, (i) {
+            // Each dot is offset in phase
+            final phase = (animation.value + i / 3) % 1.0;
+            final scale = 0.5 + (phase < 0.5 ? phase : 1 - phase);
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Transform.scale(
+                scale: scale,
+                child: Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color.lerp(
+                      const Color(0xFF6C63FF),
+                      const Color(0xFF4FC3F7),
+                      i / 2,
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }),
+        );
+      },
     );
   }
 }

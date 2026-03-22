@@ -26,7 +26,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       fetchClerkToken = () async {
-        return ClerkAuth.of(context).session?.lastActiveToken?.jwt;
+        final auth = ClerkAuth.of(context);
+        try {
+          final sessionToken = await auth.sessionToken();
+          return sessionToken.jwt;
+        } catch (_) {
+          return auth.session?.lastActiveToken?.jwt;
+        }
       };
       _loadProfile();
     });
@@ -39,7 +45,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _loadProfile() async {
     try {
-      final user = ClerkAuth.of(context).user;
+      final auth = ClerkAuth.of(context);
+      try {
+        final sessionToken = await auth.sessionToken();
+        rawDio.options.headers['Authorization'] = 'Bearer ${sessionToken.jwt}';
+      } catch (_) {
+        final jwt = auth.session?.lastActiveToken?.jwt;
+        if (jwt != null) rawDio.options.headers['Authorization'] = 'Bearer $jwt';
+      }
+
+      final user = auth.user;
       final firstName = user?.firstName ?? '';
       final lastName = user?.lastName ?? '';
       final name = [firstName, lastName]
