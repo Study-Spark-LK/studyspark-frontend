@@ -98,7 +98,12 @@ class _PracticeScreenState extends State<PracticeScreen> {
                     const SizedBox(height: 18),
 
                     if (_documents.isEmpty)
-                      _buildEmptyState()
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.45,
+                        child: Center(
+                          child: _buildEmptyState(),
+                        ),
+                      )
                     else ...[
                       _buildCategoryChips(),
                       const SizedBox(height: 14),
