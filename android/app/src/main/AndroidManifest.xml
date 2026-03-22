@@ -13,7 +13,7 @@
     </queries>
 
     <application
-        android:label="studyspark_frontend"
+        android:label="StudySpark"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:enableOnBackInvokedCallback="true">
