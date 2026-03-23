@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
-class PremiumFeaturesActivatedScreen extends StatelessWidget {
+class PremiumFeaturesActivatedScreen extends StatefulWidget {
   const PremiumFeaturesActivatedScreen({Key? key}) : super(key: key);
 
+  @override
+  _PremiumFeaturesActivatedScreenState createState() => _PremiumFeaturesActivatedScreenState();
+}
+
+class _PremiumFeaturesActivatedScreenState extends State<PremiumFeaturesActivatedScreen> {
   static const _backgroundColor = Color(0xFF0F172A);
   static const _panelColor = Color(0xFF111827);
   static const _accentColor = Color(0xFFFACC15);
@@ -84,9 +89,9 @@ class PremiumFeaturesActivatedScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
-              const Row(
+              Row(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 22,
                     backgroundColor: Color(0xFF1F2937),
                     child: Text(
@@ -97,8 +102,8 @@ class PremiumFeaturesActivatedScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(width: 12),
-                  Text(
+                  const SizedBox(width: 12),
+                  const Text(
                     'Welcome, Alex!',
                     style: TextStyle(
                       color: _textColor,
