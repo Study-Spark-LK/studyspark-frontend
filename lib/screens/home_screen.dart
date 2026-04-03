@@ -6,11 +6,13 @@ import 'package:studyspark/api/models/status2.dart';
 import 'package:studyspark/state/app_state.dart';
 import 'package:clerk_flutter/clerk_flutter.dart';
 
+
+// Simple data model for uploaded lessons (for demo purposes)
 class UploadedLesson {
-  final String title;
-  final String subject;
+  final String title; //lesson title
+  final String subject; //subject name
   final String estimatedTime;
-  final double progress;
+  final double progress; // 0.0 to 1.0
   final String fileType; // 'pdf', 'video', 'doc', etc.
 
   const UploadedLesson({
@@ -21,6 +23,7 @@ class UploadedLesson {
     required this.fileType,
   });
 
+  //Convert progress to percentage string
   String get progressLabel => '${(progress * 100).round()}%';
 }
 
@@ -44,6 +47,8 @@ class LessonRepository {
   }
 }
 
+
+// Main home screen widget
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, this.onSeeAll});
 
@@ -53,20 +58,23 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+
+// State for home screen, handles data fetching and UI updates
 class _HomeScreenState extends State<HomeScreen> {
-  bool _isLoading = true;
-  String? _userName;
-  String? _dominantStyle;
-  List<double> _varkScores = [];
-  List<String> _hobbies = [];
-  List<Data5> _documents = [];
+  bool _isLoading = true; //show loader while fetching data
+  String? _userName; //user name for greeting
+  String? _dominantStyle; //dominant learning style VARK
+  List<double> _varkScores = []; //VARK scores for bars
+  List<String> _hobbies = []; //hobbies/interests for tags
+  List<Data5> _documents = []; //user's uploaded documents
   int _completedCount = 0;
   int _quizCount = 0;
 
   @override
   void initState() {
     super.initState();
-
+    
+    // Inject token into API calls
     fetchClerkToken = () async {
       final auth = ClerkAuth.of(context);
       try {
@@ -76,13 +84,14 @@ class _HomeScreenState extends State<HomeScreen> {
         return auth.session?.lastActiveToken?.jwt;
       }
     };
+    //Run after UI is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _loadData();
     });
   }
 
 
-
+// Load user info, profiles, and documents
   Future<void> _loadData() async {
     try {
       final auth = ClerkAuth.of(context);
@@ -97,14 +106,18 @@ class _HomeScreenState extends State<HomeScreen> {
         rawDio.options.headers['Authorization'] = 'Bearer $token';
       }
 
+      // Fetch user info, profiles, and documents in parallel
       final user = auth.user;
       final userName = user?.firstName ?? 'there';
 
+      // Fetch profiles and documents concurrently
       final profilesResponse =
           await apiClient.profiles.getProfiles(status: Status2.all);
       final documentsResponse = await apiClient.documents.getDocuments();
 
       final profiles = profilesResponse.data;
+
+      //Find ready profilre or null if none
       final readyProfile = profiles.cast<dynamic>().firstWhere(
             (p) => p.status == Status.ready,
             orElse: () => null,
@@ -113,15 +126,18 @@ class _HomeScreenState extends State<HomeScreen> {
       String? dominantStyle;
       List<double> varkScores = [];
       if (readyProfile != null) {
+        // Store profile ID in global state for later use
         AppState.profileId = readyProfile.id as String;
 
+        // Calculate VARK percentages
         final v = (readyProfile.visualScore as num).toDouble().clamp(0.0, double.infinity);
         final a = (readyProfile.auditoryScore as num).toDouble().clamp(0.0, double.infinity);
         final r = (readyProfile.readingScore as num).toDouble().clamp(0.0, double.infinity);
         final k = (readyProfile.kinestheticScore as num).toDouble().clamp(0.0, double.infinity);
-        final total = v + a + r + k;
-        final safe = total == 0 ? 1.0 : total;
+        final total = v + a + r + k; //Total score
+        final safe = total == 0 ? 1.0 : total; // prevent divide by zero
 
+        //Convert to percentages
         varkScores = [
           (v / safe) * 100,
           (a / safe) * 100,
@@ -129,6 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
           (k / safe) * 100,
         ];
 
+        //Find highest score and corresponding style
         final scoreMap = {
           'Visual': v,
           'Auditory': a,
@@ -140,9 +157,13 @@ class _HomeScreenState extends State<HomeScreen> {
       }
 
       final documents = documentsResponse.data;
+
+      // Count how many documents are completed (status == ready)
       final completedCount =
           documents.where((d) => d.status == Status.ready).length;
 
+
+      // updated UI with fetched data
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -165,6 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  // Generate greeting based on time of day
   String _greeting() {
     final h = DateTime.now().hour;
     if (h < 12) return 'Good morning,';
@@ -175,6 +197,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    // Show loading indicator while fetching data
     if (_isLoading) {
       return const Center(
         child: CircularProgressIndicator(color: Color(0xFF6C63FF)),
@@ -183,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return SafeArea(
       child: RefreshIndicator(
-        onRefresh: _loadData,
+        onRefresh: _loadData, //pull to refresh functionality
         color: const Color(0xFF6C63FF),
         backgroundColor: const Color(0xFF161B27),
         child: SingleChildScrollView(
@@ -208,6 +232,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+
+// Header UI
   Widget _buildHeader() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -267,6 +293,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+
+// Learning style card UI
   Widget _buildLearningStyleCard() {
     return Container(
       width: double.infinity,
@@ -363,6 +391,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+
+// VARK progress bar UI
   Widget _buildVarkBar(String label, double score, Color color) {
     final safeScore = score < 0 ? 0.0 : score;
     final progress = (safeScore / 100).clamp(0.0, 1.0);
@@ -396,6 +426,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+
+// Stats row UI
   Widget _buildStatsRow() {
     return Row(
       children: [
@@ -437,6 +469,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+
+// Continue learning section UI
   Widget _buildContinueLearning() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -489,6 +523,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+
+// Document card UI
   Widget _buildDocumentCard(Data5 doc) {
     final isReady = doc.status == Status.ready;
     final rawPct = doc.progressPercentage.toDouble();

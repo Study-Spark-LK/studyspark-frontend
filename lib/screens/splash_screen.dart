@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
-import 'dart:async';
+import 'package:flutter/material.dart'; // Flutter framework
+import 'dart:async'; // For timing animations
 
+
+// Splash screen with animated logo and tagline sequence
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -8,20 +10,27 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
+//State class with multiple animation controllers for logo and tagline sequence
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
+
+  // Animation controllers for each element in the sequence    
   late AnimationController _logoController;
   late AnimationController _line1Controller;
   late AnimationController _line2Controller;
   late AnimationController _line3Controller;
   late AnimationController _brandController;
 
+
+  // Animations for fading in each element
   late Animation<double> _logoFadeIn;
   late Animation<double> _line1FadeIn;
   late Animation<double> _line2FadeIn;
   late Animation<double> _line3FadeIn;
   late Animation<double> _brandFadeIn;
 
+
+  //Visibility control variables
   bool _showLogo = true;
   bool _showLine1 = false;
   bool _showLine2 = false;
@@ -32,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    // Initialize all controllers
+    // Initialize all controllers withdurations and vsync
     _logoController = AnimationController(
       duration: const Duration(milliseconds: 400),
       vsync: this,
@@ -58,7 +67,7 @@ class _SplashScreenState extends State<SplashScreen>
       vsync: this,
     );
 
-    // Create animations
+    // Create animations for fading in each element with easeIn curves
     _logoFadeIn = Tween<double>(
       begin: 0.0,
       end: 1.0,
