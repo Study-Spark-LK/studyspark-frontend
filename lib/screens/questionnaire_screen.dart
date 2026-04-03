@@ -17,19 +17,22 @@ class PersonalityTestQuestionnaireScreen extends StatefulWidget {
 
 class _PersonalityTestQuestionnaireScreenState
     extends State<PersonalityTestQuestionnaireScreen> {
-  int currentStep = 0;
-  final int totalSteps = 8;
+  int currentStep = 0; //Track current question (0-7)
+  final int totalSteps = 8; //Total 7 questions + 1 interests page
 
   @override
-  void initState() {
+  void initState() { 
     super.initState();
 
+    // Attach clerk token fetch function globally
     fetchClerkToken = () async {
       final auth = ClerkAuth.of(context);
       try {
+        // Try to get a fresh session token
         final sessionToken = await auth.sessionToken();
         return sessionToken.jwt;
       } catch (_) {
+        //fallback if session expired
         return auth.session?.lastActiveToken?.jwt;
       }
     };
@@ -47,6 +50,7 @@ class _PersonalityTestQuestionnaireScreenState
     'interests': <String>[],
   };
 
+  // Question texts for backend payload
   final Map<String, String> _questionTexts = {
     'question1': 'I prefer a presenter or teacher who uses:',
     'question2': 'I am assembling a piece of furniture that came in parts. I would:',
@@ -57,12 +61,13 @@ class _PersonalityTestQuestionnaireScreenState
     'question7': 'I want to learn to do something new on a computer. I would:',
     'interests': 'Mark your interests to create personalized learning content',
   };
-
+  // Controller for custom interest input
   final TextEditingController _customInterestController =
       TextEditingController();
 
   @override
   void dispose() {
+    //Dispose controller to prevent memory leaks
     _customInterestController.dispose();
     super.dispose();
   }
@@ -74,22 +79,26 @@ class _PersonalityTestQuestionnaireScreenState
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(),
-            Expanded(child: _buildCurrentStep()),
-            _buildNavigationButtons(),
+            _buildHeader(), //step indicator + progress bar
+            Expanded(child: _buildCurrentStep()), //current question content
+            _buildNavigationButtons(), //Previous/Next buttons
           ],
         ),
       ),
     );
   }
-
+  //header section( step count + progress bar)
   Widget _buildHeader() {
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
+
+          //Top row
           Row(
             children: [
+
+              //Back button
               IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.white),
                 onPressed: () {
@@ -114,6 +123,8 @@ class _PersonalityTestQuestionnaireScreenState
             ],
           ),
           const SizedBox(height: 16),
+
+          //Progress bar
           LinearProgressIndicator(
             value: (currentStep + 1) / totalSteps,
             backgroundColor: const Color(0xFF2A2A3E),
@@ -125,6 +136,7 @@ class _PersonalityTestQuestionnaireScreenState
     );
   }
 
+  //switch between questions
   Widget _buildCurrentStep() {
     switch (currentStep) {
       case 0:
