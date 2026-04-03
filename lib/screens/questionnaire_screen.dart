@@ -1,12 +1,14 @@
-import 'package:flutter/material.dart';
-import '../api/api_client.dart';
-import '../api/models/profiles_request_body.dart';
-import '../api/models/status.dart';
-import '../api/models/status2.dart';
+import 'package:flutter/material.dart'; // Flutter framework
+import '../api/api_client.dart'; // API client for backend communication
+import '../api/models/profiles_request_body.dart'; // Model for profile creation request body
+import '../api/models/status.dart'; // Model for profile status response
+import '../api/models/status2.dart'; /// Model for profile status response (alternative)
 import '../state/app_state.dart';
 import 'package:studyspark/api/models/qna.dart';
 import 'package:clerk_flutter/clerk_flutter.dart';
 
+
+// Personality test questionnaire screen with 7 questions + interests selection
 class PersonalityTestQuestionnaireScreen extends StatefulWidget {
   const PersonalityTestQuestionnaireScreen({super.key});
 
@@ -15,6 +17,7 @@ class PersonalityTestQuestionnaireScreen extends StatefulWidget {
       _PersonalityTestQuestionnaireScreenState();
 }
 
+// State class for managing questionnaire state, user answers, and API interactions
 class _PersonalityTestQuestionnaireScreenState
     extends State<PersonalityTestQuestionnaireScreen> {
   int currentStep = 0; //Track current question (0-7)
@@ -52,7 +55,7 @@ class _PersonalityTestQuestionnaireScreenState
 
   // Question texts for backend payload
   final Map<String, String> _questionTexts = {
-    'question1': 'I prefer a presenter or teacher who uses:',
+    'question1': 'I prefer a presenter or teacher who uses:', 
     'question2': 'I am assembling a piece of furniture that came in parts. I would:',
     'question3': 'When I am learning, I:',
     'question4': 'A website has a video showing how to make a special graph or chart. I would learn most from:',
@@ -343,6 +346,7 @@ class _PersonalityTestQuestionnaireScreenState
       'Dancing',
     ];
 
+    // Multi-select question with custom input for interests/hobbies 
     return _buildMultiSelectQuestion(
       stepLabel: 'Step 3 of 3',
       questionText:
@@ -377,6 +381,7 @@ class _PersonalityTestQuestionnaireScreenState
     );
   }
 
+  // Helper widget for single-select questions (1-7)
   Widget _buildSingleSelectQuestion({
     required String questionNumber,
     required String questionText,
@@ -420,6 +425,8 @@ class _PersonalityTestQuestionnaireScreenState
     );
   }
 
+
+  // Multi-select question widget for interests/hobbies with optional custom input
   Widget _buildMultiSelectQuestion({
     required String stepLabel,
     required String questionText,
@@ -589,6 +596,9 @@ class _PersonalityTestQuestionnaireScreenState
     );
   }
 
+
+
+  // Dialog for "Continue Later" option
   Widget _buildOptionButton({
     required String text,
     required bool isSelected,
@@ -627,6 +637,9 @@ class _PersonalityTestQuestionnaireScreenState
     );
   }
 
+
+
+  // Helper widget for interest chips in multi-select question
   Widget _buildInterestChip({
     required String text,
     required bool isSelected,
@@ -657,6 +670,8 @@ class _PersonalityTestQuestionnaireScreenState
     );
   }
 
+
+  // Navigation buttons at the bottom of the screen with Previous/Next logic
   Widget _buildNavigationButtons() {
     final bool canProceed = _canProceedToNext();
 
@@ -732,6 +747,8 @@ class _PersonalityTestQuestionnaireScreenState
     );
   }
 
+
+  // Check if the user can proceed to the next step based on their answers
   bool _canProceedToNext() {
     switch (currentStep) {
       case 0:
@@ -755,6 +772,8 @@ class _PersonalityTestQuestionnaireScreenState
     }
   }
 
+
+  // Handle Next button press: either go to next question or complete the test
   void _handleNext() {
     if (currentStep < totalSteps - 1) {
       setState(() => currentStep++);
@@ -789,6 +808,7 @@ class _PersonalityTestQuestionnaireScreenState
     return qnaList;
   }
 
+  // Finalize the test: build payload, call API, handle loading and navigation
   void _completeTest() async {
     // a. Build qna payload — includes interests/hobbies via answers['interests']
     final qnaList = _generateQnaPayload();
@@ -803,6 +823,7 @@ class _PersonalityTestQuestionnaireScreenState
         .trim();
     final profileName = rawName.isEmpty ? 'StudySpark User' : rawName;
 
+    // c. Fetch a fresh token and set it on rawDio for authentication with backend
     String? token;
     try {
       final sessionToken = await auth.sessionToken();
@@ -889,6 +910,8 @@ class _PersonalityTestQuestionnaireScreenState
     }
   }
 
+
+  // Dialog for "Continue Later" option
   void _showContinueLaterDialog() {
     showDialog(
       context: context,

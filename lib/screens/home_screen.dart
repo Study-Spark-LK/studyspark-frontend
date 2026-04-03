@@ -7,7 +7,7 @@ import 'package:studyspark/state/app_state.dart';
 import 'package:clerk_flutter/clerk_flutter.dart';
 
 
-// Simple data model for uploaded lessons (for demo purposes)
+// Simple data model for uploaded lessons 
 class UploadedLesson {
   final String title; //lesson title
   final String subject; //subject name
@@ -27,11 +27,16 @@ class UploadedLesson {
   String get progressLabel => '${(progress * 100).round()}%';
 }
 
+
+// Repository for managing uploaded lessons in memory
 class LessonRepository {
+  // In-memory list of lessons, simulating a simple data store
   static final List<UploadedLesson> lessons = [];
 
+  // Add a new lesson to the repository
   static void addLesson(UploadedLesson lesson) => lessons.add(lesson);
 
+  // Update progress of a lesson by title
   static void updateProgress(String title, double progress) {
     final i = lessons.indexWhere((l) => l.title == title);
     if (i != -1) {
@@ -50,6 +55,7 @@ class LessonRepository {
 
 // Main home screen widget
 class HomeScreen extends StatefulWidget {
+  // Constructor with optional callback for "See all" button in Continue Learning section
   const HomeScreen({super.key, this.onSeeAll});
 
   final VoidCallback? onSeeAll;
@@ -71,6 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _quizCount = 0;
 
   @override
+  // Initialize state and fetch data on load
   void initState() {
     super.initState();
     
@@ -93,15 +100,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
 // Load user info, profiles, and documents
   Future<void> _loadData() async {
+    // a. Get user name for greeting
     try {
       final auth = ClerkAuth.of(context);
       String? token;
+      // b. Fetch a fresh token and set it on rawDio for authentication with backend
       try {
         final sessionToken = await auth.sessionToken();
         token = sessionToken.jwt;
-      } catch (_) {
+      } 
+      // If fetching a new token fails, try to get the last active token from the session
+      catch (_) {
         token = auth.session?.lastActiveToken?.jwt;
       }
+      // Set the token in rawDio for authenticated API calls
       if (token != null) {
         rawDio.options.headers['Authorization'] = 'Bearer $token';
       }
@@ -117,12 +129,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final profiles = profilesResponse.data;
 
-      //Find ready profilre or null if none
+      //Find ready profile or null if none
       final readyProfile = profiles.cast<dynamic>().firstWhere(
             (p) => p.status == Status.ready,
             orElse: () => null,
           );
 
+      // Determine dominant learning style and calculate VARK percentages if profile is ready
       String? dominantStyle;
       List<double> varkScores = [];
       if (readyProfile != null) {
@@ -152,6 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
           'Reading/Writing': r,
           'Kinesthetic': k,
         };
+        // Get the style with the highest score, if there's a tie it will take the first one in the map order
         dominantStyle =
             scoreMap.entries.reduce((a, b) => a.value >= b.value ? a : b).key;
       }
@@ -176,9 +190,12 @@ class _HomeScreenState extends State<HomeScreen> {
           _quizCount = 0;
         });
       }
-    } catch (e) {
+    } 
+    // Show error if data fetching fails
+    catch (e) {
+      // Log the error and show a snackbar message
       if (mounted) {
-        setState(() => _isLoading = false);
+        setState(() => _isLoading = false); // stop loading indicator on error
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error loading data: $e')),
         );
@@ -196,6 +213,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   @override
+
+  // Build the main UI of the home screen, showing loading indicator, greeting, learning style card, stats, and continue learning section
   Widget build(BuildContext context) {
 
     // Show loading indicator while fetching data

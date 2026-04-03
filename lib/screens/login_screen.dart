@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:clerk_flutter/clerk_flutter.dart';
+import 'package:clerk_flutter/clerk_flutter.dart'; // clerk_flutter package for authentication UI components
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
+  // Main build method for the login screen
   Widget build(BuildContext context) {
+    // Scaffold provides the basic material design visual layout structure
     return Scaffold(
       backgroundColor: const Color(0xFF0D1117),
       body: Stack(

@@ -6,6 +6,8 @@ class QuestionnaireWelcomeScreen extends StatelessWidget {
   const QuestionnaireWelcomeScreen({super.key});
 
   @override
+
+  // Build method to construct the UI of the questionnaire welcome screen
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0D1117),
